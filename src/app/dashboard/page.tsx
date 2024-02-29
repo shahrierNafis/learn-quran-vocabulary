@@ -1,14 +1,7 @@
-import { redirect } from "next/navigation";
+"use client";
+import { createClient } from "@/utils/supabase/clients";
 
-import { createClient } from "@/utils/supabase/server";
+export default function PrivatePage() {
 
-export default async function PrivatePage() {
-  const supabase = createClient();
-
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    redirect("/");
-  }
-
-  return <p>Hello {data.user.email}</p>;
+  return <></>;
 }

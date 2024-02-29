@@ -2,15 +2,25 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClient } from "@/utils/supabase/clients";
-import { use } from "react";
+import { useEffect, useState } from "react";
 export default function Home() {
   const supabase = createClient();
-  const { data, error } = use(supabase.auth.getUser());
-  if (!error && data?.user) {
-    window.location.href = "/dashboard";
-  } else {
-    return (
-      <>
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+      if (!error && user) {
+        window.location.href = "/dashboard";
+      }
+      setIsLoading(false);
+    });
+  }, []);
+
+  return (
+    <>
+      {isLoading ? (
+        <></>
+      ) : (
         <Auth
           supabaseClient={supabase}
           view="magic_link"
@@ -20,7 +30,7 @@ export default function Home() {
           providers={[]}
           redirectTo="http://localhost:3000/auth/callback"
         />
-      </>
-    );
-  }
+      )}
+    </>
+  );
 }
