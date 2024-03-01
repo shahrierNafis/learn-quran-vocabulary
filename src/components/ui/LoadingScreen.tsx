@@ -5,11 +5,7 @@ import { WavyBackground } from "./wavy-background";
 function LoadingScreen() {
   return (
     <div className="w-full h-full fixed top-0 left-0 backdrop-blur">
-      <WavyBackground
-        children={<LoadingText />}
-        colors={["#3fcf8e80", "#ffffff80", "#3fcf8e80", "#ffffff80"]}
-        speed="slow"
-      />
+      <WavyBackground children={<LoadingText />} speed="slow" />
     </div>
   );
 }
