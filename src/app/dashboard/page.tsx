@@ -1,7 +1,11 @@
 "use client";
-import { createClient } from "@/utils/supabase/clients";
+
+import Lists from "@/components/Lists";
 
 export default function PrivatePage() {
-
-  return <></>;
+  return (
+    <>
+      <Lists />
+    </>
+  );
 }
