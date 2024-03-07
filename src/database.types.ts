@@ -81,6 +81,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_progress: {
+        Row: {
+          id: number
+          list: number
+          progress: Json
+          user: string
+        }
+        Insert: {
+          id?: number
+          list: number
+          progress: Json
+          user: string
+        }
+        Update: {
+          id?: number
+          list?: number
+          progress?: Json
+          user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_list_fkey"
+            columns: ["list"]
+            isOneToOne: false
+            referencedRelation: "lists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_progress_user_fkey"
+            columns: ["user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_to_list: {
         Row: {
           id: number
