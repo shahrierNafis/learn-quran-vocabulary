@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-import { WavyBackground } from "./wavy-background";
-
 function LoadingScreen() {
   return (
-    <div className="w-full h-full fixed top-0 left-0 backdrop-blur">
-      <WavyBackground children={<LoadingText />} speed="slow" />
+    <div className="w-full h-full flex items-center justify-center fixed top-0 left-0 backdrop-blur-3xl">
+      <LoadingText />
     </div>
   );
 }
