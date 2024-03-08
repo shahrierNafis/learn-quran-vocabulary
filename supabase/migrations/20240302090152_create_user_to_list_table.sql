@@ -8,6 +8,7 @@ create table
     constraint user_to_list_list_fkey foreign key (list) references lists (id) on delete cascade
   ) tablespace pg_default;
 
+alter table "public"."user_to_list" enable row level security;
 
 CREATE POLICY "user can only modify their own data" ON "public"."user_to_list"
 AS PERMISSIVE FOR ALL

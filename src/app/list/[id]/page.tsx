@@ -11,11 +11,12 @@ import getProgress, { Progress } from "@/utils/getProgress";
 import SetProgress from "./SetProgress";
 import { RowSelectionState } from "@tanstack/react-table";
 import Learn from "./Learn";
+import GotoDashboard from "@/components/GotoDashboard";
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const [name, setName] = useState<string>();
   const [list, setList] = useState<Json>([]);
   const [[progress, progressID], setProgress] = useState<
-    [Progress, number | undefined]
+    [Progress, number | undefined | null]
   >([[], undefined]);
 
   const [data, setData] = useState<TableData[]>();
@@ -26,6 +27,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
       setList(list);
       setName(name);
     });
+    getProgress(id).then(({ progress, progressId }) => {});
     getProgress(id).then(({ progress, progressId }) => {
       setProgress([progress as Progress, progressId]);
     });
@@ -41,6 +43,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
+      <GotoDashboard />
       {data && name ? (
         <>
           <div className="max-w-screen-md mx-auto">

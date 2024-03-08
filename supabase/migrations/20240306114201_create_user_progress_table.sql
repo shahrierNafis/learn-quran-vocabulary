@@ -8,7 +8,9 @@ create table
     constraint user_progress_list_fkey foreign key (list) references lists (id) on delete cascade,
     constraint user_progress_user_fkey foreign key ("user") references auth.users (id) on delete cascade
   ) tablespace pg_default;
-
+  
+  
+alter table "public"."user_progress" enable row level security;
 create policy "user can only modify their own data"
 on "public"."user_progress"
 as permissive

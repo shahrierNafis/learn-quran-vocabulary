@@ -14,9 +14,9 @@ export default async function getProgress(id: string) {
       if (error) {
         alert(error);
       } else {
-        return data[0] ?? { progress: {}, id: undefined };
+        return data[0] ?? { progress: null, id: null };
       }
-      return { progress: {}, id: undefined };
+      return { progress: null, id: null };
     });
 
   return { progress, progressId };

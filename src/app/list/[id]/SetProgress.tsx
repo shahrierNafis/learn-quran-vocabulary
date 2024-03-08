@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Slider } from "@/components/ui/slider";
-import { Database, Json } from "@/database.types";
 import { RowSelectionState } from "@tanstack/react-table";
-import { createClient } from "@/utils/supabase/clients";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/datePicker";
 import { Progress } from "@/utils/getProgress";
+import setProgressInDB from "@/utils/setProgress";
 
 export default function SetProgress({
   id,
@@ -16,19 +15,14 @@ export default function SetProgress({
 }: {
   id: string;
   setProgress: React.Dispatch<
-    React.SetStateAction<[Progress, number | undefined]>
+    React.SetStateAction<[Progress, number | undefined | null]>
   >;
   rowSelection: RowSelectionState;
   progress: Progress;
-  progressID: number | undefined;
+  progressID: number | undefined | null;
 }) {
   const [range, setRange] = useState<number[]>([0]);
-  const supabase = createClient<Database>();
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-
-  function handleValueChange(value: [number]) {
-    setRange(value);
-  }
 
   async function handleSet() {
     if (Object.keys(rowSelection).length == 0) {
@@ -42,7 +36,7 @@ export default function SetProgress({
       Object.assign(newProgress, oldProgress);
       // set new progress
       Object.keys(rowSelection).map((key) => {
-        // Skip subrows
+        // Skip subRows
         if (/^-?[0-9]+$/.test(key)) {
           const newObj = newProgress[+key] ?? {};
           newObj.percentage = range[0];
@@ -54,29 +48,10 @@ export default function SetProgress({
       return [newProgress, id];
     });
 
-    // update record
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-
-    user &&
-      supabase
-        .from("user_progress")
-        .upsert({
-          id: progressID,
-          list: +id,
-          progress: newProgress,
-          user: user.id,
-        })
-        .select("id") // If new record is created set progressID
-        .then(({ data, error }) => {
-          if (error) {
-            console.log(error);
-          } else {
-            setProgress(([progress, id]) => [progress, data[0].id]);
-          }
-        });
+    // update progress in DB
+    setProgressInDB({ progressID, listID: +id, progress: newProgress }).then(
+      setProgress
+    );
   }
   return (
     <>

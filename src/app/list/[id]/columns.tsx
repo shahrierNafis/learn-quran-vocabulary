@@ -5,13 +5,39 @@ import React, { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import getWord, { Word } from "@/utils/getWord";
 export type TableData = {
-  index: string;
+  index: `${string}:${string}:${string}`;
   subRows?: TableData[];
   progress?: number;
   updatedOn?: string;
 };
 
 export const columns: ColumnDef<TableData>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <>
+        {row.depth == 0 && (
+          <>
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label="Select row"
+            />
+          </>
+        )}
+      </>
+    ),
+  },
   {
     accessorKey: "index",
     id: "index",
@@ -24,15 +50,6 @@ export const columns: ColumnDef<TableData>[] = [
             style={{ paddingLeft: `${row.depth * 2}rem` }}
             key={row.id}
           >
-            {row.depth == 0 && (
-              <>
-                <Checkbox
-                  checked={row.getIsSelected()}
-                  onCheckedChange={(value) => row.toggleSelected(!!value)}
-                  aria-label="Select row"
-                />
-              </>
-            )}
             <>
               {row.getCanExpand() ? (
                 <button
@@ -57,7 +74,7 @@ export const columns: ColumnDef<TableData>[] = [
     header: "verse",
     cell: function Cell({ row, getValue }) {
       const [word, setWord] = useState<Word>();
-      const index = getValue() as string;
+      const index = getValue() as `${string}:${string}:${string}`;
       useEffect(() => {
         getWord(index).then(setWord);
       }, [index]);

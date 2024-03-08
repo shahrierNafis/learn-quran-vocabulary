@@ -2,8 +2,11 @@ export type Word = {
   text: string;
   translation: string;
   transliteration: string;
+  char_type_name: string;
 };
-export default async function getVerseWords(index: string): Promise<Word[]> {
+export default async function getVerseWords(
+  index: `${string}:${string}`
+): Promise<Word[]> {
   const [surahI, ayahI] = index.split(":");
   const verse = (
     await (

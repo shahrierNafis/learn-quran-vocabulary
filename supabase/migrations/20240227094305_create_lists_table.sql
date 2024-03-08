@@ -4,8 +4,6 @@ create table
     name text not null,
     description text null,
     list json not null,
-    dictionary json null,
-    cluster json null,
     constraint lists_pkey primary key (id),
     constraint lists_id_key unique (id)
   ) tablespace pg_default;

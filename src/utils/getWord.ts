@@ -3,7 +3,7 @@ export type Word = {
   translation: string;
   transliteration: string;
 };
-async function getWord(index: string): Promise<Word> {
+async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
   const [surahI, ayahI, wordI] = index.split(":");
   const verse = (
     await (
