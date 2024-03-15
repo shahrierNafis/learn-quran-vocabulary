@@ -45,21 +45,20 @@ export default function MCQ({
 
   // set allOptions
   useEffect(() => {
-    let shouldSkip = false;
-    if (shouldSkip) return;
     const shuffled = _.shuffle([...options, wordGroup[0]]);
-    Promise.all([
-      ...shuffled.map(async (option, index) => {
-        const { text } = await getWord(option);
-        return {
-          index: option,
-          text,
-        };
-      }),
-    ]).then(setAllOptions);
-    return () => {
-      shouldSkip = true;
-    };
+    (async () => {
+      const allOptions = await Promise.all([
+        ...shuffled.map(async (option) => {
+          const { text } = await getWord(option);
+          return {
+            index: option,
+            text,
+          };
+        }),
+      ]);
+      setAllOptions(allOptions);
+    })();
+    return () => {};
   }, [options, wordGroup]);
 
   function onClick(index: `${string}:${string}:${string}`) {
@@ -77,7 +76,7 @@ export default function MCQ({
       <div className="flex flex-col gap-4 justify-center items-center h-screen">
         <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
         {/* ARABIC */}
-        <div className="text-3xl text-center">
+        <div dir="rtl" className="text-3xl text-center">
           {sentence.map((word, index) => {
             if (word.char_type_name !== "word") return "";
             if (index == +wordGroup[0].split(":")[2] - 1)

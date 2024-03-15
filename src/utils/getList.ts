@@ -1,7 +1,7 @@
 import { Database } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 
-export default async function getList(id: string) {
+export default async function getList(id: number) {
   const supabase = createClient<Database>();
 
   const { list, name } = await supabase

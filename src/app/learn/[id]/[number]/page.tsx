@@ -5,11 +5,10 @@ import React, { useEffect, useState } from "react";
 import getIndexArr from "./getIndexArr";
 import MCQ from "@/components/MCQ";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import getRandomOptions from "@/utils/getRandomOptions";
-import getPreference from "./getPreference";
+import getOptions from "@/utils/getOptions";
+import getPreference from "../../../../utils/getPreference";
 import setProgressInDB from "@/utils/setProgress";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import GotoDashboard from "@/components/GotoDashboard";
 
 type ProgressState = [Progress | undefined | null, number | undefined | null];
@@ -34,7 +33,7 @@ export default function Page({
 
   //set List
   useEffect(() => {
-    getList(id).then(({ name, list }) => {
+    getList(+id).then(({ name, list }) => {
       setList(list as []);
       setName(name);
     });
@@ -62,14 +61,10 @@ export default function Page({
 
   //set Options
   useEffect(() => {
-    let shouldSkip = false;
-    if (shouldSkip) return;
     IndexArr?.length
-      ? list && getRandomOptions(list[IndexArr[0]]).then(setOptions)
+      ? list && getOptions(list[IndexArr[0]]).then(setOptions)
       : setOptions([]);
-    return () => {
-      shouldSkip = true;
-    };
+    return () => {};
   }, [IndexArr, list]);
   // set preference
   useEffect(() => {

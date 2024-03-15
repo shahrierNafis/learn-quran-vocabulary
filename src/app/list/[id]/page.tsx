@@ -23,7 +23,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
 
   useEffect(() => {
-    getList(id).then(({ name, list }) => {
+    getList(+id).then(({ name, list }) => {
       setList(list);
       setName(name);
     });

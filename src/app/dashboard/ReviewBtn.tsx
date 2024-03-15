@@ -12,19 +12,13 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 
-export default function Learn({
-  className,
-  id,
-}: {
-  className: string;
-  id: string;
-}) {
-  const [number, setNumber] = useState<number>(11);
+export default function ReviewBtn({ className }: { className?: string }) {
+  const [number, setNumber] = useState<number>(10);
   return (
     <>
       <Dialog>
         <DialogTrigger className={cn(className)}>
-          <Button>Learn</Button>
+          <Button>Review</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -42,7 +36,7 @@ export default function Learn({
             />
           </div>
           <Button className="w-fit ml-auto">
-            <Link href={`/learn/${id}/${number}`}>Start</Link>
+            <Link href={`/review/${number}`}>Start</Link>
           </Button>
         </DialogContent>
       </Dialog>
