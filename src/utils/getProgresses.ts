@@ -14,7 +14,7 @@ export default async function getProgresses(): Promise<{
       [key: number]: Tables<"user_progress">;
     };
     for (const progress of data) {
-      Progresses[progress.list] = progress;
+      Progresses[progress.collection] = progress;
     }
     return Progresses;
   }

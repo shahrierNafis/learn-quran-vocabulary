@@ -34,43 +34,26 @@ export type Database = {
   }
   public: {
     Tables: {
-      default_lists: {
+      collections: {
         Row: {
-          id: number
-        }
-        Insert: {
-          id: number
-        }
-        Update: {
-          id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "default_lists_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "lists"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      lists: {
-        Row: {
+          collection: Json
           description: string | null
           id: number
-          list: Json
+          is_default: boolean | null
           name: string
         }
         Insert: {
+          collection: Json
           description?: string | null
           id?: number
-          list: Json
+          is_default?: boolean | null
           name: string
         }
         Update: {
+          collection?: Json
           description?: string | null
           id?: number
-          list?: Json
+          is_default?: boolean | null
           name?: string
         }
         Relationships: []
@@ -80,24 +63,24 @@ export type Database = {
           id: number
           intervals: Json
           translation_id: number
-          user: string
+          user_id: string
         }
         Insert: {
           id?: number
           intervals?: Json
           translation_id?: number
-          user?: string
+          user_id?: string
         }
         Update: {
           id?: number
           intervals?: Json
           translation_id?: number
-          user?: string
+          user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "public_user_preference_user_fkey"
-            columns: ["user"]
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -106,67 +89,67 @@ export type Database = {
       }
       user_progress: {
         Row: {
+          collection_id: number
           id: number
-          list: number
           progress: Json
-          user: string
+          user_id: string
         }
         Insert: {
+          collection_id: number
           id?: number
-          list: number
           progress: Json
-          user: string
+          user_id: string
         }
         Update: {
+          collection_id?: number
           id?: number
-          list?: number
           progress?: Json
-          user?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_progress_list_fkey"
-            columns: ["list"]
+            foreignKeyName: "user_progress_collection_fkey"
+            columns: ["collection_id"]
             isOneToOne: false
-            referencedRelation: "lists"
+            referencedRelation: "collections"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "user_progress_user_fkey"
-            columns: ["user"]
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      user_to_list: {
+      user_to_collection: {
         Row: {
+          collection: number
           id: number
-          list: number
-          user: string
+          user_id: string
         }
         Insert: {
+          collection: number
           id?: number
-          list: number
-          user: string
+          user_id: string
         }
         Update: {
+          collection?: number
           id?: number
-          list?: number
-          user?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_to_list_list_fkey"
-            columns: ["list"]
+            foreignKeyName: "user_to_collection_collection_fkey"
+            columns: ["collection"]
             isOneToOne: false
-            referencedRelation: "lists"
+            referencedRelation: "collections"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_to_list_user_fkey"
-            columns: ["user"]
+            foreignKeyName: "user_to_collection_user_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]

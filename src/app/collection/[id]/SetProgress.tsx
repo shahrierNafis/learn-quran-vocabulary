@@ -49,9 +49,11 @@ export default function SetProgress({
     });
 
     // update progress in DB
-    setProgressInDB({ progressID, listID: +id, progress: newProgress }).then(
-      setProgress
-    );
+    setProgressInDB({
+      progressID,
+      collectionID: +id,
+      progress: newProgress,
+    }).then(setProgress);
   }
   return (
     <>

@@ -1,6 +1,6 @@
 "use client";
 import getProgress, { Progress } from "@/utils/getProgress";
-import getList from "@/utils/getList";
+import getCollection from "@/utils/getCollection";
 import React, { useEffect, useState } from "react";
 import getIndexArr from "./getIndexArr";
 import MCQ from "@/components/MCQ";
@@ -14,7 +14,7 @@ import GotoDashboard from "@/components/GotoDashboard";
 type ProgressState = [Progress | undefined | null, number | undefined | null];
 type PreferenceState = [
   intervals: { [key: number]: number } | undefined,
-  translation_id: number | undefined
+  translation_id: number | undefined,
 ];
 
 export default function Page({
@@ -23,7 +23,8 @@ export default function Page({
   params: { id: string; number: string };
 }) {
   const [name, setName] = useState<string>();
-  const [list, setList] = useState<`${string}:${string}:${string}`[][]>();
+  const [collection, setCollection] =
+    useState<`${string}:${string}:${string}`[][]>();
   const [[progress, progressID], setProgress] = //
     useState<ProgressState>([undefined, undefined]);
   const [[intervals, translation_id], setPreference] =
@@ -31,10 +32,10 @@ export default function Page({
   const [IndexArr, setIndexArr] = useState<number[]>();
   const [options, setOptions] = useState<`${string}:${string}:${string}`[]>();
 
-  //set List
+  //set Collection
   useEffect(() => {
-    getList(+id).then(({ name, list }) => {
-      setList(list as []);
+    getCollection(+id).then(({ name, collection }) => {
+      setCollection(collection as []);
       setName(name);
     });
     getProgress(id).then(({ progress, progressId }) => {
@@ -45,27 +46,27 @@ export default function Page({
 
   //set wordGroups
   useEffect(() => {
-    list &&
+    collection &&
       progress !== undefined &&
       progressID !== undefined &&
       IndexArr == undefined &&
       getIndexArr({
-        list,
+        collection,
         progressID,
         number: +number,
         progress: progress ?? {},
         id,
       }).then(setIndexArr);
     return () => {};
-  }, [list, progressID, number, progress, id, IndexArr]);
+  }, [collection, progressID, number, progress, id, IndexArr]);
 
   //set Options
   useEffect(() => {
     IndexArr?.length
-      ? list && getOptions(list[IndexArr[0]]).then(setOptions)
+      ? collection && getOptions(collection[IndexArr[0]]).then(setOptions)
       : setOptions([]);
     return () => {};
-  }, [IndexArr, list]);
+  }, [IndexArr, collection]);
   // set preference
   useEffect(() => {
     getPreference().then(({ intervals, translation_id }) =>
@@ -96,9 +97,11 @@ export default function Page({
       percentage,
       updatedOn: new Date().toISOString(),
     };
-    setProgressInDB({ progressID, listID: +id, progress: newProgress }).then(
-      setProgress
-    );
+    setProgressInDB({
+      progressID,
+      collectionID: +id,
+      progress: newProgress,
+    }).then(setProgress);
     setIndexArr([...IndexArr]);
     setOptions(undefined);
   }
@@ -106,17 +109,17 @@ export default function Page({
   return (
     <>
       <div className="text-xl inline-block p-2 border">
-        <Link href={`/list/${id}`}>{"<= List"}</Link>
+        <Link href={`/collection/${id}`}>{"<= Collection"}</Link>
       </div>
       <GotoDashboard />
       <div className="text-xl cursor-not-allowed inline-block p-2 border">
         {IndexArr?.length} more to go {"=>"}
       </div>
-      {list && IndexArr && options && translation_id && intervals ? (
+      {collection && IndexArr && options && translation_id && intervals ? (
         IndexArr?.length ? (
           <MCQ
             {...{
-              wordGroup: list[IndexArr[0]],
+              wordGroup: collection[IndexArr[0]],
               options,
               callback,
               translation_id,
@@ -125,8 +128,11 @@ export default function Page({
         ) : (
           <>
             No words to learn. go Back to{" "}
-            <Link className="text-blue-400 underline" href={`/list/${id}`}>
-              List
+            <Link
+              className="text-blue-400 underline"
+              href={`/collection/${id}`}
+            >
+              Collection
             </Link>
             .
           </>

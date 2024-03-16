@@ -1,13 +1,13 @@
 "use client";
 
-import Lists from "@/components/Lists";
+import Collections from "@/components/Collections";
 import Review from "./Review";
 
 export default function PrivatePage() {
   return (
     <>
       <Review />
-      <Lists />
+      <Collections />
     </>
   );
 }

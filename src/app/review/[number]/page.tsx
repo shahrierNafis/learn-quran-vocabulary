@@ -10,12 +10,12 @@ import GotoDashboard from "@/components/GotoDashboard";
 import getToReview, { ToReview } from "../../dashboard/getToReview";
 import { Tables } from "@/database.types";
 import getPreference from "@/utils/getPreference";
-import getLists from "./getLists";
+import getCollections from "./getCollections";
 import { Progress } from "@/utils/getProgress";
 
 type PreferenceState = [
   intervals: { [key: number]: number } | undefined,
-  translation_id: number | undefined
+  translation_id: number | undefined,
 ];
 
 export default function Page({
@@ -23,7 +23,7 @@ export default function Page({
 }: {
   params: { number: number };
 }) {
-  const [lists, setLists] = useState<{
+  const [collections, setCollections] = useState<{
     [key: number]: `${string}:${string}:${string}`[][];
   }>();
   const [progresses, setProgresses] = //
@@ -38,7 +38,7 @@ export default function Page({
     {
       wordGroup: `${string}:${string}:${string}`[];
       progressID: number;
-      listID: number;
+      collectionID: number;
       wordID: number;
     }[]
   >();
@@ -51,40 +51,40 @@ export default function Page({
     progresses && getToReview(progresses).then(setToReview);
   }, [progresses]);
 
-  //set Lists
+  //set Collections
   useEffect(() => {
     if (!toReview) return;
-    const idArr = toReview.map((l) => l.listId);
-    getLists(idArr).then(setLists);
+    const idArr = toReview.map((l) => l.collectionId);
+    getCollections(idArr).then(setCollections);
     return () => {};
   }, [toReview]);
 
   //set McqData
   useEffect(() => {
     if (McqData) return;
-    if (!(toReview && lists && progresses)) return;
+    if (!(toReview && collections && progresses)) return;
     const data: {
       wordGroup: `${string}:${string}:${string}`[];
       progressID: number;
-      listID: number;
+      collectionID: number;
       wordID: number;
     }[] = [];
     for (const i of toReview) {
-      const progressID = progresses[i.listId].id;
+      const progressID = progresses[i.collectionId].id;
       for (const wordID of i.toReview) {
         if (data.length == number) {
           break;
         }
         data.push({
-          wordGroup: lists[i.listId][wordID],
+          wordGroup: collections[i.collectionId][wordID],
           progressID,
           wordID,
-          listID: i.listId,
+          collectionID: i.collectionId,
         });
       }
     }
     setMcqData(data);
-  }, [lists, toReview, progresses, number, McqData]);
+  }, [collections, toReview, progresses, number, McqData]);
 
   //set Options
   useEffect(() => {
@@ -108,9 +108,9 @@ export default function Page({
     }
     let percentage: number;
 
-    // filtering to get the progress of the current list
-    const { wordID, listID, progressID } = McqData[0];
-    const progress = progresses[listID].progress as Progress;
+    // filtering to get the progress of the current collection
+    const { wordID, collectionID, progressID } = McqData[0];
+    const progress = progresses[collectionID].progress as Progress;
     // if correct increase progresses
     if (correct) {
       const currentProgresses = progress[wordID].percentage ?? 0;
@@ -129,18 +129,18 @@ export default function Page({
       percentage,
       updatedOn: new Date().toISOString(),
     };
-    progresses[listID].progress = newProgress;
+    progresses[collectionID].progress = newProgress;
     setProgresses({ ...progresses });
     setProgressesInDB({
       progressID: progressID,
-      listID: listID,
+      collectionID: collectionID,
       progress: newProgress,
     });
     setMcqData([...McqData]);
     setOptions(undefined);
   }
   console.log({
-    lists,
+    collections,
     toReview,
     McqData,
     options,

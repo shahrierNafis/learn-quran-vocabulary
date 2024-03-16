@@ -1,7 +1,7 @@
 import { Tables } from "@/database.types";
 import getPreference from "@/utils/getPreference";
 import { Progress } from "@/utils/getProgress";
-export type ToReview = { listId: number; toReview: number[] }[];
+export type ToReview = { collectionId: number; toReview: number[] }[];
 export default async function getToReview(progresses: {
   [key: number]: Tables<"user_progress">;
 }): Promise<ToReview> {
@@ -9,8 +9,8 @@ export default async function getToReview(progresses: {
     intervals: { [key: number]: number };
   };
   const toReview: ToReview = [];
-  for (const list of Object.keys(progresses)) {
-    const progress = progresses[+list].progress as Progress;
+  for (const collection of Object.keys(progresses)) {
+    const progress = progresses[+collection].progress as Progress;
     const arr = [];
     for (const wordID in progress) {
       const interval = getInterval(intervals, progress[+wordID].percentage);
@@ -20,7 +20,7 @@ export default async function getToReview(progresses: {
         arr.push(+wordID);
       }
     }
-    toReview.push({ listId: +list, toReview: arr });
+    toReview.push({ collectionId: +collection, toReview: arr });
   }
   return toReview;
 }

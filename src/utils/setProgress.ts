@@ -4,11 +4,11 @@ import { Progress } from "./getProgress";
 
 export default async function setProgress({
   progressID,
-  listID,
+  collectionID,
   progress,
 }: {
   progressID: number | null | undefined;
-  listID: number;
+  collectionID: number;
   progress: Progress;
 }): Promise<[Progress, number | null | undefined]> {
   const supabase = createClient<Database>();
@@ -24,7 +24,7 @@ export default async function setProgress({
       .from("user_progress")
       .upsert({
         id: progressID ?? undefined,
-        list: listID,
+        collection: collectionID,
         progress,
         user: user.id,
       })

@@ -14,7 +14,7 @@ export default async function getNewProgressID(id: number) {
         .from("user_progress")
         .insert({
           user: user.id,
-          list: id,
+          collection: id,
           progress: {},
         })
         .select("id")

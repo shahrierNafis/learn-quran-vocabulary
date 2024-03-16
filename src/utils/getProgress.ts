@@ -9,7 +9,7 @@ export default async function getProgress(id: string) {
   const { progress, id: progressId } = await supabase
     .from("user_progress")
     .select("progress,id")
-    .eq("list", id)
+    .eq("collection", id)
     .then(({ data, error }) => {
       if (error) {
         alert(error);

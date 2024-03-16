@@ -1,16 +1,17 @@
 import { createClient } from "@/utils/supabase/clients";
 import { Database, Tables } from "@/database.types";
 import { useEffect, useState } from "react";
-import List from "./List";
+import Collection from "./Collection";
 import _ from "lodash";
-export default function Lists() {
+export default function Collections() {
   const supabase = createClient<Database>();
-  const [data, setData] = useState<Tables<"lists">[]>([]);
+  const [data, setData] = useState<Tables<"collections">[]>([]);
 
   useEffect(() => {
     supabase
-      .from("default_lists")
-      .select("lists(id,name)")
+      .from("collections")
+      .select("id,name")
+      .eq("is_default", true)
       .then(({ data, error }) => {
         if (error) {
           console.log(error);
@@ -19,7 +20,7 @@ export default function Lists() {
             _.uniqBy(
               [
                 ...oldData,
-                ...(data.map((d) => d.lists as any)?.filter(Boolean) ?? []),
+                ...(data.map((d) => d as any)?.filter(Boolean) ?? []),
               ],
               "id"
             )
@@ -27,8 +28,8 @@ export default function Lists() {
         }
       });
     // supabase
-    //   .from("user_to_list")
-    //   .select("list:lists(id,name)")
+    //   .from("user_to_collection")
+    //   .select("collection:collections(id,name)")
     //   .then(({ data, error }) => {
     //     if (error) {
     //       console.log(error);
@@ -37,7 +38,7 @@ export default function Lists() {
     //         _.uniqBy(
     //           [
     //             ...oldData,
-    //             ...(data.map((d) => d.list as any)?.filter(Boolean) ?? []),
+    //             ...(data.map((d) => d.collection as any)?.filter(Boolean) ?? []),
     //           ],
     //           "id"
     //         )
@@ -49,9 +50,9 @@ export default function Lists() {
   return (
     <>
       <div className="p-2 border m-2">
-        <div className="text-3xl">Lists</div>
-        {data.map((list) => (
-          <List key={list.id} list={list} />
+        <div className="text-3xl">Collections</div>
+        {data.map((collection) => (
+          <Collection key={collection.id} collection={collection} />
         ))}
       </div>
     </>

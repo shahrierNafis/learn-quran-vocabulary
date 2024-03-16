@@ -1,12 +1,12 @@
 import { Database } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 
-export default async function getList(id: number) {
+export default async function getCollection(id: number) {
   const supabase = createClient<Database>();
 
-  const { list, name } = await supabase
-    .from("lists")
-    .select("name,list,id")
+  const { collection, name } = await supabase
+    .from("collections")
+    .select("name,collection,id")
     .eq("id", id)
     .then(({ data, error }) => {
       if (error) {
@@ -14,8 +14,8 @@ export default async function getList(id: number) {
       } else {
         return data[0];
       }
-      return { name: "", list: "", id: "" };
+      return { name: "", collection: "", id: "" };
     });
 
-  return { name, list, id };
+  return { name, collection, id };
 }

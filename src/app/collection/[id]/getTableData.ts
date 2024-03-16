@@ -2,9 +2,9 @@ import { Json } from "@/database.types";
 import { TableData } from "./columns";
 import { Progress } from "@/utils/getProgress";
 
-export default async function getData(list: Json, progress: Progress) {
+export default async function getData(collection: Json, progress: Progress) {
   const data = (await Promise.all(
-    (list as string[][]).map(async (group, index) => {
+    (collection as string[][]).map(async (group, index) => {
       return {
         index: group[0],
 

@@ -3,7 +3,7 @@ import { TableData, columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useEffect, useState } from "react";
 import getTableData from "./getTableData";
-import getList from "@/utils/getList";
+import getCollection from "@/utils/getCollection";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import React from "react";
 import { Json } from "@/database.types";
@@ -14,7 +14,7 @@ import Learn from "./Learn";
 import GotoDashboard from "@/components/GotoDashboard";
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const [name, setName] = useState<string>();
-  const [list, setList] = useState<Json>([]);
+  const [collection, setCollection] = useState<Json>([]);
   const [[progress, progressID], setProgress] = useState<
     [Progress, number | undefined | null]
   >([[], undefined]);
@@ -23,8 +23,8 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
 
   useEffect(() => {
-    getList(+id).then(({ name, list }) => {
-      setList(list);
+    getCollection(+id).then(({ name, collection }) => {
+      setCollection(collection);
       setName(name);
     });
     getProgress(id).then(({ progress, progressId }) => {});
@@ -35,11 +35,11 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
   }, [id]);
 
   useEffect(() => {
-    getTableData(list, progress).then((data) => {
+    getTableData(collection, progress).then((data) => {
       setData(data);
     });
     return () => {};
-  }, [list, progress]);
+  }, [collection, progress]);
 
   return (
     <>

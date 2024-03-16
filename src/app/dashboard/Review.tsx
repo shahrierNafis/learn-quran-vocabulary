@@ -26,8 +26,8 @@ export default function Review() {
       <div className="">Ready for Review</div>
       <div className="text-center">
         {toReview &&
-          Object.keys(toReview).reduce((count, list) => {
-            return +count + toReview[+list].toReview.length;
+          Object.keys(toReview).reduce((count, collection) => {
+            return +count + toReview[+collection].toReview.length;
           }, 0)}
       </div>
       <ReviewBtn />
