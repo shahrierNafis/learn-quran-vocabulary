@@ -2,63 +2,61 @@
 import { TableData, columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useEffect, useState } from "react";
-import getTableData from "./getTableData";
-import getCollection from "@/utils/getCollection";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import React from "react";
-import { Json } from "@/database.types";
-import getProgress, { Progress } from "@/utils/getProgress";
+import { Database, Tables } from "@/database.types";
 import SetProgress from "./SetProgress";
 import { RowSelectionState } from "@tanstack/react-table";
-import Learn from "./Learn";
+import PlayBtn from "../../../components/PlayBtn";
 import GotoDashboard from "@/components/GotoDashboard";
+import getCollectionName from "@/utils/getCollectionName";
+import { createClient } from "@/utils/supabase/clients";
 export default function Page({ params: { id } }: { params: { id: string } }) {
-  const [name, setName] = useState<string>();
-  const [collection, setCollection] = useState<Json>([]);
-  const [[progress, progressID], setProgress] = useState<
-    [Progress, number | undefined | null]
-  >([[], undefined]);
+  const [name, setName] = useState<string | null>();
+  const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
 
-  const [data, setData] = useState<TableData[]>();
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const supabase = createClient<Database>();
 
   useEffect(() => {
-    getCollection(+id).then(({ name, collection }) => {
-      setCollection(collection);
-      setName(name);
-    });
-    getProgress(id).then(({ progress, progressId }) => {});
-    getProgress(id).then(({ progress, progressId }) => {
-      setProgress([progress as Progress, progressId]);
-    });
+    getCollectionName(+id).then(setName);
     return () => {};
   }, [id]);
 
   useEffect(() => {
-    getTableData(collection, progress).then((data) => {
-      setData(data);
-    });
-    return () => {};
-  }, [collection, progress]);
+    !wordGroups &&
+      supabase
+        .rpc("get_word_groups", { collection_id: +id })
+        .then(({ data, error }) => {
+          if (error) {
+            console.log(error);
+          } else {
+            setWordGroups(data);
+          }
+        });
+  }, [id, supabase, wordGroups]);
 
   return (
     <>
       <GotoDashboard />
-      {data && name ? (
+      {wordGroups && name ? (
         <>
           <div className="max-w-screen-md mx-auto">
             <div className="text-3xl flex items-center justify-center">
               {name}
             </div>
             <div className="rounded-md border">
-              <Learn className="float-right" {...{ id }} />
+              <PlayBtn className="float-right" {...{ id }} />
               <DataTable
-                {...{ columns, data, rowSelection, setRowSelection }}
+                {...{
+                  columns,
+                  data: wordGroups,
+                  rowSelection,
+                  setRowSelection,
+                }}
               />
             </div>
-            <SetProgress
-              {...{ id, setProgress, rowSelection, progress, progressID }}
-            />
+            <SetProgress {...{ id, rowSelection, wordGroups }} />
           </div>
         </>
       ) : (

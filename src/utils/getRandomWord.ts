@@ -1,17 +1,26 @@
+import { Word } from "@/types/types";
 import _ from "lodash";
 
-async function getRandomWord() {
+async function getRandomWord(): Promise<Word> {
   const verse = await getRandomVerse();
   const {
-    text_imlaei: text,
-    translation: { text: translation },
-    transliteration: { text: transliteration },
+    text_imlaei,
+    translation,
+    transliteration,
     position,
+    char_type_name,
   } = selectRandomWord(verse);
   const index = //
     (verse.verse_key + ":" + position) as `${string}:${string}:${string}`;
 
-  return { text, translation, transliteration, index };
+  return {
+    text_imlaei,
+    translation,
+    transliteration,
+    position,
+    index,
+    char_type_name,
+  };
 }
 
 function selectRandomWord(verse: Verse) {
@@ -42,11 +51,4 @@ async function getRandomVerse() {
 type Verse = {
   words: Word[];
   verse_key: string;
-};
-type Word = {
-  text_imlaei: string;
-  translation: { text: string };
-  transliteration: { text: string };
-  char_type_name: string;
-  position: number;
 };

@@ -2,28 +2,34 @@
 import React, { useEffect, useState } from "react";
 import MCQ from "@/components/MCQ";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import { Tables } from "@/database.types";
-import getToReview from "@/utils/getToReview";
-import ReviewBtn from "@/components/ReviewBtn";
-import { Button } from "@/components/ui/button";
+import { Database, Tables } from "@/database.types";
+import { createClient } from "@/utils/supabase/clients";
+import PlayBtn from "@/components/PlayBtn";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Page({
-  params: { number },
+  params: { id, number },
 }: {
-  params: { number: string };
+  params: { id: string; number: string };
 }) {
   const [name, setName] = useState<string>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
-  const [toReviewCount, setToReviewCount] = useState<number>(0);
+  const supabase = createClient<Database>();
   //set wordGroups
   useEffect(() => {
-    getToReview().then((wordGroups) => {
-      setWordGroups(wordGroups.slice(0, +number));
-      setToReviewCount(wordGroups.length);
-    });
+    supabase
+      .rpc("get_0_word_groups", { collection_id: +id })
+      .limit(+number)
+      .then(({ data, error }) => {
+        if (error) {
+          console.log(error);
+        } else {
+          setWordGroups(data);
+        }
+      });
     return () => {};
-  }, [number]);
+  }, [id, number, supabase]);
 
   async function callback(correct: boolean) {
     if (!wordGroups) {
@@ -54,27 +60,17 @@ export default function Page({
             />
           ) : (
             <>
-              {" "}
               <div className="flex-grow grid place-items-center">
                 <div>
                   <div>
                     Round Complete.
-                    {toReviewCount - +number > 0
-                      ? toReviewCount - +number
-                      : 0}{" "}
-                    left to review.
-                    {toReviewCount - +number && (
-                      <>
-                        {" "}
-                        <ReviewBtn /> them?
-                      </>
-                    )}
+                    <PlayBtn {...{ id }} /> again?
                   </div>
                   <div>
-                    {toReviewCount - +number ? "Or go to " : "Go to "}
+                    Or go to{" "}
                     <Button size={"sm"} variant={"secondary"}>
                       <Link href={"/dashboard"}>dashboard</Link>
-                    </Button>{" "}
+                    </Button>
                     ?
                   </div>
                 </div>

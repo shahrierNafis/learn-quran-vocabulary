@@ -25,6 +25,7 @@ import {
 import { TableData } from "./columns";
 import React from "react";
 import { DataTablePagination } from "@/components/ui/DataTablePagination";
+import { Tables } from "@/database.types";
 
 interface DataTableProps<TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -50,7 +51,15 @@ export function DataTable<TValue>({
     enableExpanding: true,
     onRowSelectionChange: setRowSelection,
     onExpandedChange: setExpanded,
-    getSubRows: (originalRow) => originalRow.subRows,
+    getSubRows: (originalRow) => {
+      return originalRow.words.slice(1).map((word) => {
+        return {
+          collection_id: originalRow.collection_id,
+          id: originalRow.id,
+          words: [word],
+        };
+      });
+    },
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -1,8 +1,5 @@
-export type Word = {
-  text: string;
-  translation: string;
-  transliteration: string;
-};
+import { Word } from "@/types/types";
+
 async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
   const [surahI, ayahI, wordI] = index.split(":");
   const verse = (
@@ -13,11 +10,19 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
     ).json()
   ).verse;
   const {
-    text_imlaei: text,
-    translation: { text: translation },
-    transliteration: { text: transliteration },
+    text_imlaei,
+    translation,
+    transliteration,
+    position,
+    char_type_name,
   } = verse.words[+wordI - 1];
-
-  return { text, translation, transliteration };
+  return {
+    text_imlaei,
+    translation,
+    transliteration,
+    position,
+    char_type_name,
+    index,
+  };
 }
 export default getWord;

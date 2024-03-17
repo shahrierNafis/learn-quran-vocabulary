@@ -3,57 +3,36 @@ import { Slider } from "@/components/ui/slider";
 import { RowSelectionState } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/datePicker";
-import { Progress } from "@/utils/getProgress";
-import setProgressInDB from "@/utils/setProgress";
+import { Database, Tables } from "@/database.types";
+import { createClient } from "@/utils/supabase/clients";
 
 export default function SetProgress({
   id,
-  setProgress,
   rowSelection,
-  progress,
-  progressID,
+  wordGroups,
 }: {
   id: string;
-  setProgress: React.Dispatch<
-    React.SetStateAction<[Progress, number | undefined | null]>
-  >;
+  wordGroups: Tables<"word_groups">[];
   rowSelection: RowSelectionState;
-  progress: Progress;
-  progressID: number | undefined | null;
 }) {
   const [range, setRange] = useState<number[]>([0]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-
+  const supabase = createClient<Database>();
   async function handleSet() {
     if (Object.keys(rowSelection).length == 0) {
       return; // return if no row is selected
     }
-
-    const newProgress: Progress = {};
-    // update progress
-    setProgress(([oldProgress, id]) => {
-      // copy old progress
-      Object.assign(newProgress, oldProgress);
-      // set new progress
-      Object.keys(rowSelection).map((key) => {
-        // Skip subRows
-        if (/^-?[0-9]+$/.test(key)) {
-          const newObj = newProgress[+key] ?? {};
-          newObj.percentage = range[0];
-          newObj.updatedOn = date?.toISOString();
-          newProgress[+key] = newObj;
-        }
-      });
-      // update state
-      return [newProgress, id];
-    });
-
-    // update progress in DB
-    setProgressInDB({
-      progressID,
-      collectionID: +id,
-      progress: newProgress,
-    }).then(setProgress);
+    await supabase.from("user_progress").upsert(
+      Object.keys(rowSelection)
+        .filter((wordGroupIndex) => !wordGroupIndex.includes(".")) // skip sub rows
+        .map((wordGroupIndex) => {
+          return {
+            word_group_id: wordGroups[+wordGroupIndex].id,
+            progress: range[0],
+            updated_at: date ? date.toISOString() : new Date().toISOString(),
+          };
+        })
+    );
   }
   return (
     <>

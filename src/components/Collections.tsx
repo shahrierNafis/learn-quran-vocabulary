@@ -11,7 +11,7 @@ export default function Collections() {
     supabase
       .from("collections")
       .select("id,name")
-      .eq("is_default", true)
+      // .eq("is_default", true)
       .then(({ data, error }) => {
         if (error) {
           console.log(error);

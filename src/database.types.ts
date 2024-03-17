@@ -36,25 +36,40 @@ export type Database = {
     Tables: {
       collections: {
         Row: {
-          collection: Json
           description: string | null
           id: number
           is_default: boolean | null
           name: string
         }
         Insert: {
-          collection: Json
           description?: string | null
           id?: number
           is_default?: boolean | null
           name: string
         }
         Update: {
-          collection?: Json
           description?: string | null
           id?: number
           is_default?: boolean | null
           name?: string
+        }
+        Relationships: []
+      }
+      user_intervals: {
+        Row: {
+          interval_ms: number
+          progress: number
+          user_id: string
+        }
+        Insert: {
+          interval_ms: number
+          progress: number
+          user_id?: string
+        }
+        Update: {
+          interval_ms?: number
+          progress?: number
+          user_id?: string
         }
         Relationships: []
       }
@@ -89,69 +104,62 @@ export type Database = {
       }
       user_progress: {
         Row: {
-          collection_id: number
-          id: number
-          progress: Json
+          progress: number
+          updated_at: string
           user_id: string
+          word_group_id: number
         }
         Insert: {
-          collection_id: number
-          id?: number
-          progress: Json
-          user_id: string
+          progress: number
+          updated_at?: string
+          user_id?: string
+          word_group_id: number
         }
         Update: {
-          collection_id?: number
-          id?: number
-          progress?: Json
+          progress?: number
+          updated_at?: string
           user_id?: string
+          word_group_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "user_progress_collection_fkey"
-            columns: ["collection_id"]
-            isOneToOne: false
-            referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_progress_user_fkey"
+            foreignKeyName: "public_user_progress_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "public_user_progress_word_group_id_fkey"
+            columns: ["word_group_id"]
+            isOneToOne: false
+            referencedRelation: "word_groups"
             referencedColumns: ["id"]
           },
         ]
       }
-      user_to_collection: {
+      word_groups: {
         Row: {
-          collection: number
+          collection_id: number
           id: number
-          user_id: string
+          words: string[]
         }
         Insert: {
-          collection: number
+          collection_id: number
           id?: number
-          user_id: string
+          words: string[]
         }
         Update: {
-          collection?: number
+          collection_id?: number
           id?: number
-          user_id?: string
+          words?: string[]
         }
         Relationships: [
           {
-            foreignKeyName: "user_to_collection_collection_fkey"
-            columns: ["collection"]
+            foreignKeyName: "public_word_groups_collection_id_fkey"
+            columns: ["collection_id"]
             isOneToOne: false
             referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_to_collection_user_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -161,7 +169,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_0_word_groups: {
+        Args: {
+          collection_id: number
+        }
+        Returns: {
+          collection_id: number
+          id: number
+          words: string[]
+        }[]
+      }
+      get_ready_for_review: {
+        Args: {
+          collection_id: number
+        }
+        Returns: {
+          collection_id: number
+          id: number
+          words: string[]
+        }[]
+      }
+      get_word_groups: {
+        Args: {
+          collection_id: number
+        }
+        Returns: {
+          collection_id: number
+          id: number
+          words: string[]
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

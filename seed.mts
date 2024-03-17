@@ -19,14 +19,25 @@ const seed = await createSeedClient({
 });
 
 // Clears all existing data in the database, but keep the structure
-await seed.$resetDatabase();
+if (process.env.RESET) await seed.$resetDatabase();
 
 // This will create 3 records in the HttpResponses table
 // it reads HttpResponses times(x) 3
 await seed.collections([
-  { id: 1, name: "herf", collection: herf, is_default: true },
-  { id: 2, name: "ism+fiil", collection: ism_fill, is_default: true },
-  { id: 3, name: "affix", collection: affix, is_default: true },
+  { id: 1, name: "herf", isDefault: true },
+  { id: 2, name: "ism+fiil", isDefault: true },
+  { id: 3, name: "affix", isDefault: true },
+]);
+await seed.wordGroups([
+  ...herf.map((wordGroup) => {
+    return { words: wordGroup, collectionId: 1 };
+  }),
+  ...ism_fill.map((wordGroup) => {
+    return { words: wordGroup, collectionId: 2 };
+  }),
+  ...affix.map((wordGroup) => {
+    return { words: wordGroup, collectionId: 3 };
+  }),
 ]);
 
-// Run it with: DRY=0 npx tsx seed.mtaffixs
+// Run it with: DRY=0 npx tsx seed.mts

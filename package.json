@@ -19,11 +19,13 @@
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slider": "^1.1.2",
     "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-switch": "^1.0.3",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.1.0",
     "@supabase/supabase-js": "^2.39.7",
     "@tanstack/react-table": "^8.13.2",
+    "@uidotdev/usehooks": "^2.4.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.4.0",
@@ -45,6 +47,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@snaplet/copycat": "^5.0.0",
+    "@snaplet/seed": "^0.89.4",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -52,6 +56,7 @@
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "snaplet": "^0.89.4",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

@@ -3,13 +3,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import getWord, { Word } from "@/utils/getWord";
-export type TableData = {
-  index: `${string}:${string}:${string}`;
-  subRows?: TableData[];
-  progress?: number;
-  updatedOn?: string;
-};
+import getWord from "@/utils/getWord";
+import { Word } from "@/types/types";
+import { Database, Tables } from "@/database.types";
+import { createClient } from "@/utils/supabase/clients";
+export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
   {
@@ -39,7 +37,9 @@ export const columns: ColumnDef<TableData>[] = [
     ),
   },
   {
-    accessorKey: "index",
+    accessorFn: (originalRow: TableData, index: number) => {
+      return originalRow.words[0];
+    },
     id: "index",
     header: "Index",
     cell: ({ row, getValue }) => {
@@ -69,9 +69,11 @@ export const columns: ColumnDef<TableData>[] = [
     },
   },
   {
-    accessorKey: "index",
-    id: "verse",
-    header: "verse",
+    accessorFn: (originalRow: TableData, index: number) => {
+      return originalRow.words[0];
+    },
+    id: "word",
+    header: "word",
     cell: function Cell({ row, getValue }) {
       const [word, setWord] = useState<Word>();
       const index = getValue() as `${string}:${string}:${string}`;
@@ -82,7 +84,7 @@ export const columns: ColumnDef<TableData>[] = [
         <>
           {word ? (
             <>
-              <div className={`md:text-3xl`}>{word.text}</div>
+              <div className={`md:text-3xl`}>{word.text_imlaei}</div>
             </>
           ) : (
             <div className="h-[2.25rem] opacity-50 text-sm">loading...</div>
@@ -92,43 +94,118 @@ export const columns: ColumnDef<TableData>[] = [
     },
   },
   {
-    accessorKey: "progress",
+    accessorFn: (originalRow: TableData, index: number) => {
+      return originalRow.words[0];
+    },
     id: "progress",
     header: "progress",
-    cell: ({ row, getValue }) => {
-      if (row.depth == 0) {
+    cell: function Cell({ row, getValue }) {
+      const [progress, setProgress] = useState<number | null>();
+      const supabase = createClient<Database>();
+      useEffect(() => {
+        if (row.depth == 0) {
+          supabase
+            .from("user_progress")
+            .select("progress")
+            .eq("word_group_id", row.original.id)
+            .single()
+            .then(({ data, error }) => {
+              if (error) {
+                // console.error(error);
+              } else {
+                setProgress(data.progress);
+              }
+            });
+
+          const realtime = supabase
+            .channel("progress" + row.original.id)
+            .on(
+              "postgres_changes",
+              {
+                event: "*",
+                schema: "public",
+                table: "user_progress",
+                filter: `word_group_id=eq.${row.original.id}`,
+              },
+              (payload) => {
+                setProgress((payload.new as Tables<"user_progress">).progress);
+              }
+            )
+            .subscribe();
+
+          return () => {
+            realtime.unsubscribe();
+          };
+        }
+      }, [getValue, progress, row, supabase]);
+
+      if (progress) {
         return (
           <>
-            <div>{getValue() as string}%</div>
+            <div>{progress}%</div>
           </>
         );
       }
-      return <></>;
+      return <>0%</>;
     },
   },
   {
     accessorKey: "updatedOn",
     id: "updatedOn",
     header: "updatedOn",
-    cell: ({ row, getValue }) => {
-      if (row.depth == 0) {
-        return (
-          <>
-            {getValue() ? (
-              <div>
-                {
-                  new Date(getValue() as string)
-                    .toLocaleString("en-GB")
-                    .split(",")[0]
-                }
-              </div>
-            ) : (
-              <>----</>
-            )}
-          </>
-        );
-      }
-      return <></>;
+    cell: function Cell({ row, getValue }) {
+      const [updatedAt, setUpdatedAt] = useState<string | null>();
+      const supabase = createClient<Database>();
+      useEffect(() => {
+        if (row.depth == 0) {
+          supabase
+            .from("user_progress")
+            .select("updated_at")
+            .eq("word_group_id", row.original.id)
+            .single()
+            .then(({ data, error }) => {
+              if (error) {
+                // console.error(error);
+              } else {
+                setUpdatedAt(data.updated_at);
+              }
+            });
+
+          const realtime = supabase
+            .channel("updatedOn" + row.original.id)
+            .on(
+              "postgres_changes",
+              {
+                event: "*",
+                schema: "public",
+                table: "user_progress",
+                filter: `word_group_id=eq.${row.original.id}`,
+              },
+              (payload) => {
+                setUpdatedAt(
+                  (payload.new as Tables<"user_progress">).updated_at
+                );
+              }
+            )
+            .subscribe();
+
+          return () => {
+            realtime.unsubscribe();
+          };
+        }
+      }, [getValue, row, supabase]);
+
+      return (
+        <>
+          {updatedAt ? (
+            <div>
+              {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
+            </div>
+          ) : (
+            <>----</>
+          )}
+        </>
+      );
     },
   },
 ];

@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import { ColumnDef } from "@tanstack/react-table";
-import getVerseWords, { Word } from "@/utils/getVerseWords";
+import getVerseWords from "@/utils/getVerseWords";
 
 import {
   flexRender,
@@ -20,11 +20,16 @@ import {
 } from "@/components/ui/table";
 import getVerseTranslation from "@/utils/getVerseTranslation";
 import { DataTablePagination } from "./ui/DataTablePagination";
-export default function SimilarWordsTable({
+import { Word } from "@/types/types";
+import { Tables } from "@/database.types";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { cn } from "@/lib/utils";
+
+export default memo(function SimilarWordsTable({
   wordGroup,
   translation_id,
 }: {
-  wordGroup: string[];
+  wordGroup: Tables<"word_groups">;
   translation_id: number;
 }) {
   const columns: ColumnDef<string>[] = [
@@ -47,8 +52,9 @@ export default function SimilarWordsTable({
       },
     },
   ];
+  const data = useMemo(() => wordGroup.words.slice(1), [wordGroup.words]);
   const table = useReactTable({
-    data: wordGroup,
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -100,7 +106,7 @@ export default function SimilarWordsTable({
       <DataTablePagination table={table} />
     </div>
   );
-}
+});
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -113,7 +119,11 @@ function CellComponent({
 }) {
   const [sentence, setSentence] = useState<Word[]>();
   const [translation, setTranslation] = useState<string>();
-
+  const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
+  const [showTransliteration] = useLocalStorage<boolean>(
+    "showTransliteration",
+    true
+  );
   // set sentence
   useEffect(() => {
     getVerseWords(verse_key).then(setSentence);
@@ -126,24 +136,49 @@ function CellComponent({
     getVerseTranslation(translation_id, `${surah}:${verse}`).then(
       setTranslation
     );
+
     return () => {};
   }, [translation_id, verse_key]);
   return (
     <>
       {sentence && translation && (
         <>
-          <div className="text-2xl text-center">
-            {/* ARABIC */}
-            {sentence.map((word, index) => {
-              if (word.char_type_name !== "word") return "";
-              if (index == +verse_key.split(":")[2] - 1)
+          <div className="flex flex-col justify-center items-center">
+            <div
+              dir="rtl"
+              className="flex gap-2 flex-wrap  text-center text-2xl"
+            >
+              {/* ARABIC */}
+              {sentence.map((word, index) => {
+                if (word.char_type_name !== "word") return "";
                 return (
                   <>
-                    <div className="inline text-green-500"> {word.text} </div>
+                    <div className="flex flex-col">
+                      <div
+                        className={cn(
+                          index == +verse_key.split(":")[2] - 1 &&
+                            "text-green-500"
+                        )}
+                      >
+                        {word.text_imlaei}
+                      </div>
+                      <div className="">
+                        {showTransliteration && (
+                          <div className="text-green-100 text-sm">
+                            {word.transliteration.text}
+                          </div>
+                        )}
+                        {showTranslation && (
+                          <div className="text-red-100 text-xs">
+                            {word.translation.text}{" "}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </>
                 );
-              return <> {word.text} </>;
-            })}
+              })}
+            </div>
             {/* TRANSLATION */}
             <div className="text-xl">
               {translation?.replaceAll(/<sup.*>.*<\/sup>/g, "")}

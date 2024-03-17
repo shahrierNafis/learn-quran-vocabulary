@@ -16,24 +16,24 @@ export default function Learn({
   className,
   id,
 }: {
-  className: string;
+  className?: string;
   id: string;
 }) {
-  const [number, setNumber] = useState<number>(11);
+  const [number, setNumber] = useState<number>(10);
   return (
     <>
       <Dialog>
-        <DialogTrigger className={cn(className)}>
-          <Button>Learn</Button>
+        <DialogTrigger className={cn(className)} asChild>
+          <Button size={"sm"}>Play</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Learn</DialogTitle>
+            <DialogTitle>Play</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
 
           <div className="flex items-center gap-2">
-            <div className="">Words per round:</div>
+            <div className="">sentences per round:</div>
             <Input
               className="w-20"
               type="number"
@@ -42,7 +42,7 @@ export default function Learn({
             />
           </div>
           <Button className="w-fit ml-auto">
-            <Link href={`/learn/${id}/${number}`}>Start</Link>
+            <Link href={`/play/${id}/${number}`}>Start</Link>
           </Button>
         </DialogContent>
       </Dialog>

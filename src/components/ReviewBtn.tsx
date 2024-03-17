@@ -17,12 +17,12 @@ export default function ReviewBtn({ className }: { className?: string }) {
   return (
     <>
       <Dialog>
-        <DialogTrigger className={cn(className)}>
-          <Button>Review</Button>
+        <DialogTrigger className={cn(className)} asChild>
+          <Button size={"sm"}>Review</Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Learn</DialogTitle>
+            <DialogTitle>Review</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
 
@@ -35,9 +35,9 @@ export default function ReviewBtn({ className }: { className?: string }) {
               onChange={(e) => setNumber(Number(e.target.value))}
             />
           </div>
-          <Button className="w-fit ml-auto">
-            <Link href={`/review/${number}`}>Start</Link>
-          </Button>
+          <Link href={`/review/${number}`}>
+            <Button className="w-fit ml-auto">Start</Button>
+          </Link>
         </DialogContent>
       </Dialog>
     </>

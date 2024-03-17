@@ -2,34 +2,18 @@
 
 import { Tables } from "@/database.types";
 import React, { useEffect, useState } from "react";
-import getProgresses from "../../utils/getProgresses";
-import getToReview, { ToReview } from "./getToReview";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import ReviewBtn from "./ReviewBtn";
-import { Progress } from "@/utils/getProgress";
+import getToReview from "../../utils/getToReview";
+import ReviewBtn from "../../components/ReviewBtn";
 
 export default function Review() {
-  const [progresses, setProgresses] = useState<{
-    [key: number]: Tables<"user_progress">;
-  }>();
-  const [toReview, setToReview] = useState<ToReview>();
+  const [toReview, setToReview] = useState<Tables<"word_groups">[]>();
   useEffect(() => {
-    getProgresses().then(setProgresses);
-    return () => {};
+    getToReview().then(setToReview);
   }, []);
-  useEffect(() => {
-    progresses && getToReview(progresses).then(setToReview);
-  }, [progresses]);
   return (
     <div className="flex flex-col p-2 border mx-auto max-w-fit">
       <div className="">Ready for Review</div>
-      <div className="text-center">
-        {toReview &&
-          Object.keys(toReview).reduce((count, collection) => {
-            return +count + toReview[+collection].toReview.length;
-          }, 0)}
-      </div>
+      <div className="text-center">{toReview && toReview.length}</div>
       <ReviewBtn />
     </div>
   );

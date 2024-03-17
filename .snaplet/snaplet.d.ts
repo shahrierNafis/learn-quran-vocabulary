@@ -42,7 +42,6 @@ interface Table_public_collections {
   id: number;
   name: string;
   description: string | null;
-  collection: Json;
   is_default: boolean | null;
 }
 interface Table_auth_flow_state {
@@ -236,13 +235,9 @@ interface Table_public_user_preference {
 interface Table_public_user_progress {
   id: number;
   collection_id: number;
+  word_group_id: number;
   user_id: string;
-  progress: Json;
-}
-interface Table_public_user_to_collection {
-  id: number;
-  user_id: string;
-  collection: number;
+  progress: number;
 }
 interface Table_auth_users {
   instance_id: string | null;
@@ -279,6 +274,11 @@ interface Table_auth_users {
   is_sso_user: boolean;
   deleted_at: string | null;
   is_anonymous: boolean;
+}
+interface Table_public_word_groups {
+  id: number;
+  words: string[];
+  collection_id: number;
 }
 interface Schema_analytics {
 
@@ -326,7 +326,7 @@ interface Schema_public {
   collections: Table_public_collections;
   user_preference: Table_public_user_preference;
   user_progress: Table_public_user_progress;
-  user_to_collection: Table_public_user_to_collection;
+  word_groups: Table_public_word_groups;
 }
 interface Schema_realtime {
 
@@ -383,8 +383,8 @@ interface Tables_relationships {
 
     };
     children: {
-       user_progress_collection_fkey: "public.user_progress";
-       user_to_collection_collection_fkey: "public.user_to_collection";
+       public_user_progress_collection_id_fkey: "public.user_progress";
+       public_word_groups_collection_id_fkey: "public.word_groups";
     };
   };
   "auth.flow_state": {
@@ -514,17 +514,9 @@ interface Tables_relationships {
   };
   "public.user_progress": {
     parent: {
-       user_progress_user_fkey: "auth.users";
-       user_progress_collection_fkey: "public.collections";
-    };
-    children: {
-
-    };
-  };
-  "public.user_to_collection": {
-    parent: {
-       user_to_collection_user_fkey: "auth.users";
-       user_to_collection_collection_fkey: "public.collections";
+       public_user_progress_user_id_fkey: "auth.users";
+       public_user_progress_collection_id_fkey: "public.collections";
+       public_user_progress_word_group_id_fkey: "public.word_groups";
     };
     children: {
 
@@ -539,8 +531,15 @@ interface Tables_relationships {
        mfa_factors_user_id_fkey: "auth.mfa_factors";
        sessions_user_id_fkey: "auth.sessions";
        public_user_preference_user_fkey: "public.user_preference";
-       user_progress_user_fkey: "public.user_progress";
-       user_to_collection_user_fkey: "public.user_to_collection";
+       public_user_progress_user_id_fkey: "public.user_progress";
+    };
+  };
+  "public.word_groups": {
+    parent: {
+       public_word_groups_collection_id_fkey: "public.collections";
+    };
+    children: {
+       public_user_progress_word_group_id_fkey: "public.user_progress";
     };
   };
 }

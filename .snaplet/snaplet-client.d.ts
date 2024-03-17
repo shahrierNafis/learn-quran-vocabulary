@@ -59,10 +59,9 @@ type Override = {
       id?: string;
       name?: string;
       description?: string;
-      collection?: string;
       is_default?: string;
       user_progress?: string;
-      user_to_collection?: string;
+      word_groups?: string;
     };
   }
   flow_state?: {
@@ -349,20 +348,12 @@ type Override = {
     fields?: {
       id?: string;
       collection_id?: string;
+      word_group_id?: string;
       user_id?: string;
       progress?: string;
       users?: string;
       collections?: string;
-    };
-  }
-  user_to_collection?: {
-    name?: string;
-    fields?: {
-      id?: string;
-      user_id?: string;
-      collection?: string;
-      users?: string;
-      collections?: string;
+      word_groups?: string;
     };
   }
   users?: {
@@ -408,7 +399,16 @@ type Override = {
       sessions?: string;
       user_preference?: string;
       user_progress?: string;
-      user_to_collection?: string;
+    };
+  }
+  word_groups?: {
+    name?: string;
+    fields?: {
+      id?: string;
+      words?: string;
+      collection_id?: string;
+      collections?: string;
+      user_progress?: string;
     };
   }}
 export type Alias = {
@@ -452,9 +452,8 @@ export interface Fingerprint {
   }
   collections?: {
     id?: FingerprintNumberField;
-    collection?: FingerprintJsonField;
     userProgresses?: FingerprintRelationField;
-    userToCollectionsByCollection?: FingerprintRelationField;
+    wordGroups?: FingerprintRelationField;
   }
   flowStates?: {
     createdAt?: FingerprintDateField;
@@ -580,15 +579,11 @@ export interface Fingerprint {
   userProgresses?: {
     id?: FingerprintNumberField;
     collectionId?: FingerprintNumberField;
-    progress?: FingerprintJsonField;
+    wordGroupId?: FingerprintNumberField;
+    progress?: FingerprintNumberField;
     user?: FingerprintRelationField;
     collection?: FingerprintRelationField;
-  }
-  userToCollections?: {
-    id?: FingerprintNumberField;
-    collection?: FingerprintNumberField;
-    user?: FingerprintRelationField;
-    collectionByCollection?: FingerprintRelationField;
+    wordGroup?: FingerprintRelationField;
   }
   users?: {
     emailConfirmedAt?: FingerprintDateField;
@@ -613,5 +608,10 @@ export interface Fingerprint {
     sessions?: FingerprintRelationField;
     userPreferences?: FingerprintRelationField;
     userProgresses?: FingerprintRelationField;
-    userToCollections?: FingerprintRelationField;
+  }
+  wordGroups?: {
+    id?: FingerprintNumberField;
+    collectionId?: FingerprintNumberField;
+    collection?: FingerprintRelationField;
+    userProgresses?: FingerprintRelationField;
   }}
