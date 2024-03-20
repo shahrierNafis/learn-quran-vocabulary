@@ -45,7 +45,7 @@ export default function Collections() {
     //       );
     //     }
     //   });
-  }, []);
+  }, [supabase]);
 
   return (
     <>

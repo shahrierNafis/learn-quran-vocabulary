@@ -17,7 +17,7 @@ export default function CheckAuth() {
     });
 
     return () => {};
-  }, []);
+  }, [pathname, supabase.auth]);
   if (isLoading) {
     return <LoadingScreen />;
   }

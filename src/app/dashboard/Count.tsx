@@ -10,7 +10,7 @@ export default function Count() {
       .rpc("get_todays_count")
       .then(({ data }) => setCount(data?.length ?? 0));
     return () => {};
-  }, []);
+  }, [supabase]);
 
   return (
     <>

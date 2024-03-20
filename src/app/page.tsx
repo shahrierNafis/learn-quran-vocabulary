@@ -20,7 +20,7 @@ export default function Home() {
       }
       setIsLoading(false);
     });
-  }, []);
+  }, [supabase.auth]);
 
   function handleOTPInput(token: any) {
     supabase.auth

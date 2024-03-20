@@ -35,13 +35,13 @@ await seed.collections([
     id: 2,
     name: "Ḩarf",
     isDefault: true,
-    description: `In Arabic grammar, "Harf" ( حرف ) refers to words that function like particles in English. These words don't have inherent meaning on their own, but they establish context and relationships between other words in a sentence. So they are grouped by their spelling and their meaning.`,
+    description: `In Arabic grammar, "Harf" ( حرف ) refers to words that function like particles in English. These words don't have inherent meaning on their own, but they establish context and relationships between other words in a sentence. So they are grouped by their spelling and their translation.`,
   },
   {
     id: 3,
     name: "Affix",
     isDefault: true,
-    description: `In this collection words are grouped by affixes, it could be hard to understand what affix the group is grouped by, since Arabic words can have multiple affixes at the same time, it is highly recommended to use the "show similar words" button to get a better understanding how affixes affect the meaning of the word.`,
+    description: `In this collection words are grouped by affixes, it could be hard to recognize what affix the group is grouped by, since Arabic words can have multiple affixes at the same time, it is highly recommended to use the "show similar words" button to get a better understanding how affixes affect the meaning of the word.`,
   },
 ]);
 await seed.wordGroups([
