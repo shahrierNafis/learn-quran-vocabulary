@@ -7,6 +7,7 @@ import getWord from "@/utils/getWord";
 import { Word } from "@/types/types";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
+import { useLocalStorage } from "@uidotdev/usehooks";
 export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
@@ -41,12 +42,12 @@ export const columns: ColumnDef<TableData>[] = [
       return originalRow.words[0];
     },
     id: "index",
-    header: "Index",
+    header: () => <div className="text-center">Index</div>,
     cell: ({ row, getValue }) => {
       return (
         <>
           <div
-            className={`flex items-center gap-2`}
+            className={`flex items-center justify-center gap-2`}
             style={{ paddingLeft: `${row.depth * 2}rem` }}
             key={row.id}
           >
@@ -73,7 +74,7 @@ export const columns: ColumnDef<TableData>[] = [
       return originalRow.words[0];
     },
     id: "word",
-    header: "word",
+    header: () => <div className="text-center">word</div>,
     cell: function Cell({ row, getValue }) {
       const [word, setWord] = useState<Word>();
       const index = getValue() as `${string}:${string}:${string}`;
@@ -82,15 +83,39 @@ export const columns: ColumnDef<TableData>[] = [
       }, [index]);
       return (
         <>
-          {word ? (
-            <>
-              <div className={`md:text-3xl`}>{word.text_imlaei}</div>
-            </>
-          ) : (
-            <div className="h-[2.25rem] opacity-50 text-sm">loading...</div>
-          )}
+          <div className="flex justify-center">
+            {word ? (
+              <>
+                <div className="flex flex-col">
+                  <div className={`md:text-3xl text-center text-xl`}>
+                    {word.text_imlaei}
+                  </div>
+
+                  <div className="dark:text-green-100 text-green-950 text-center text-sm">
+                    {word.transliteration.text}
+                  </div>
+                  {/* <div className="dark:text-red-100 text-red-950 text-center text-sm">
+                    {word.translation.text}
+                  </div> */}
+                </div>
+              </>
+            ) : (
+              <div className="h-[2.25rem] opacity-50 text-sm">loading...</div>
+            )}
+          </div>
         </>
       );
+    },
+  },
+  {
+    accessorFn: (originalRow: TableData, index: number) => {
+      return originalRow.words.length;
+    },
+    id: "Frequency",
+    header: () => <div className="text-center">Frequency</div>,
+    cell: ({ row, getValue }) => {
+      if (row.depth != 0) return "";
+      return <div className="text-center">{getValue() as string}</div>;
     },
   },
   {
@@ -98,7 +123,7 @@ export const columns: ColumnDef<TableData>[] = [
       return originalRow.words[0];
     },
     id: "progress",
-    header: "progress",
+    header: () => <div className="text-center">progress</div>,
     cell: function Cell({ row, getValue }) {
       const [progress, setProgress] = useState<number | null>();
       const supabase = createClient<Database>();
@@ -138,21 +163,21 @@ export const columns: ColumnDef<TableData>[] = [
           };
         }
       }, [getValue, progress, row, supabase]);
-
+      if (row.depth != 0) return "";
       if (progress) {
         return (
           <>
-            <div>{progress}%</div>
+            <div className="text-center">{progress}%</div>
           </>
         );
       }
-      return <>0%</>;
+      return <div className="text-center">0%</div>;
     },
   },
   {
     accessorKey: "updatedOn",
     id: "updatedOn",
-    header: "updatedOn",
+    header: () => <div className="text-center">updatedOn</div>,
     cell: function Cell({ row, getValue }) {
       const [updatedAt, setUpdatedAt] = useState<string | null>();
       const supabase = createClient<Database>();
@@ -194,11 +219,11 @@ export const columns: ColumnDef<TableData>[] = [
           };
         }
       }, [getValue, row, supabase]);
-
+      if (row.depth != 0) return "";
       return (
         <>
           {updatedAt ? (
-            <div>
+            <div className="text-center">
               {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
             </div>
           ) : (

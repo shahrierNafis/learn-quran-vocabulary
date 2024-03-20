@@ -9,7 +9,9 @@ import { cn } from "@/utils/cn";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Learn Quran Vocabulary",
+  title: "Learn Quran/Arabic",
+  description:
+    "Using Cloze Testing And Spaced Repetition To Make Learning Arabic Faster And More Effective",
 };
 
 export default function RootLayout({
@@ -19,6 +21,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:title" content="Learn Quran/Arabic" />
+        <meta property="og:image" content="/image.jpg" />
+        <meta
+          property="og:description"
+          content="Using Cloze Testing And Spaced Repetition To Make Learning Arabic Faster And More Effective"
+        />
+      </head>
       <body className={cn(inter.className)}>
         <ThemeProvider
           attribute="class"

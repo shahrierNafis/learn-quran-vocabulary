@@ -25,6 +25,8 @@ function LoadingText() {
     return () => clearInterval(interval);
   });
   return (
-    <div className="font-mono font-bold text-[#ffffff50]">{loadingText}</div>
+    <div className="font-mono font-bold text-black dark:text-[#ffffff50]">
+      {loadingText}
+    </div>
   );
 }

@@ -164,12 +164,12 @@ function CellComponent({
                       </div>
                       <div className="">
                         {showTransliteration && (
-                          <div className="text-green-100 text-sm">
+                          <div className="dark:text-green-100 text-green-950 text-sm">
                             {word.transliteration.text}
                           </div>
                         )}
                         {showTranslation && (
-                          <div className="text-red-100 text-xs">
+                          <div className="dark:text-red-100 text-red-950 text-xs">
                             {word.translation.text}{" "}
                           </div>
                         )}

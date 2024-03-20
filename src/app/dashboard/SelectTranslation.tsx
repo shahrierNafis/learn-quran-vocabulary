@@ -32,7 +32,10 @@ export default function SelectTranslation() {
     <>
       <div className="flex items-center">
         <div> Translation:</div>
-        <Select defaultValue={`${translation_id}`}>
+        <Select
+          defaultValue={`${translation_id}`}
+          onValueChange={(translation_id) => setTranslation_id(+translation_id)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select a translation" />
           </SelectTrigger>
@@ -40,11 +43,7 @@ export default function SelectTranslation() {
             {translations &&
               translations.map((translation) => {
                 return (
-                  <SelectItem
-                    key={translation.id}
-                    value={`${translation.id}`}
-                    onClick={() => setTranslation_id(translation_id)}
-                  >
+                  <SelectItem key={translation.id} value={`${translation.id}`}>
                     {translation.name}
                   </SelectItem>
                 );
