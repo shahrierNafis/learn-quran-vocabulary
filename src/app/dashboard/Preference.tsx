@@ -16,7 +16,7 @@ export default function Preference() {
     <>
       <Dialog>
         <DialogTrigger className="flex">
-          <div className="flex flex-col p-2 border justify-center items-center flex-grow h-full cursor-pointer hover:bg-accent hover:text-accent-foreground">
+          <div className="flex flex-col p-2 border justify-center items-center flex-grow  basis-0 h-full cursor-pointer hover:bg-accent hover:text-accent-foreground">
             <Settings />
             Preference
           </div>

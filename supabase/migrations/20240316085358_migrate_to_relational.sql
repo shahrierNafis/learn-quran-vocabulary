@@ -83,3 +83,9 @@ where public.word_groups.collection_id = $1
     or public.user_progress.progress = 0
   )
 order by array_length(public.word_groups.words, 1) DESC $$;
+--
+create or replace function get_todays_count() returns setof public.user_progress language sql as $$
+SELECT *
+FROM public.user_progress
+WHERE public.user_progress.updated_at::DATE = CURRENT_DATE;
+$$;

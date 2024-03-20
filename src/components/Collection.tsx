@@ -19,7 +19,7 @@ export default function Collection({
           </div>
           <div className="flex gap-2 flex-col md:flex-row">
             <Button size={"sm"}>
-              <Link href={`/collections/${collection.id}`}>Manage</Link>
+              <Link href={`/collection/${collection.id}`}>Manage</Link>
             </Button>
             <PlayBtn id={"" + collection.id} />
           </div>
