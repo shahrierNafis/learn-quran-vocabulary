@@ -10,8 +10,8 @@ export default function Collections() {
   useEffect(() => {
     supabase
       .from("collections")
-      .select("id,name")
-      // .eq("is_default", true)
+      .select("*")
+      .eq("is_default", true)
       .then(({ data, error }) => {
         if (error) {
           console.log(error);
@@ -50,7 +50,7 @@ export default function Collections() {
   return (
     <>
       <div className="p-2 border m-2">
-        <div className="text-3xl">Collections</div>
+        <div className="text-3xl text-center">Collections</div>
         {data.map((collection) => (
           <Collection key={collection.id} collection={collection} />
         ))}

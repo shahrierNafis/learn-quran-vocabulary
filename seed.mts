@@ -24,17 +24,34 @@ if (process.env.RESET) await seed.$resetDatabase();
 // This will create 3 records in the HttpResponses table
 // it reads HttpResponses times(x) 3
 await seed.collections([
-  { id: 1, name: "herf", isDefault: true },
-  { id: 2, name: "ism+fiil", isDefault: true },
-  { id: 3, name: "affix", isDefault: true },
+  {
+    id: 1,
+    name: "ism & Fiʻl",
+    isDefault: true,
+    description:
+      "Collection of word groups where word groups are words that are similar in a way that learning one of them can be considered as learning the whole word group, this collection in particular is for all the nouns (ism) and verbs (fiʻl) in the Quran grouped by their spelling.",
+  },
+  {
+    id: 2,
+    name: "Ḩarf",
+    isDefault: true,
+    description: `In Arabic grammar, "Harf" ( حرف ) refers to words that function like particles in English. These words don't have inherent meaning on their own, but they establish context and relationships between other words in a sentence. So they are grouped by their spelling and their meaning.`,
+  },
+  {
+    id: 3,
+    name: "Affix",
+    isDefault: true,
+    description: `In this collection words are grouped by affixes, it could be hard to understand what affix the group is grouped by, since Arabic words can have multiple affixes at the same time, it is highly recommended to use the "show similar words" button to get a better understanding how affixes affect the meaning of the word.`,
+  },
 ]);
 await seed.wordGroups([
-  ...herf.map((wordGroup) => {
+  ...ism_fill.map((wordGroup) => {
     return { words: wordGroup, collectionId: 1 };
   }),
-  ...ism_fill.map((wordGroup) => {
+  ...herf.map((wordGroup) => {
     return { words: wordGroup, collectionId: 2 };
   }),
+
   ...affix.map((wordGroup) => {
     return { words: wordGroup, collectionId: 3 };
   }),
