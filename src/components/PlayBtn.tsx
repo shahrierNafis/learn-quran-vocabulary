@@ -36,6 +36,7 @@ export default function Learn({
             <div className="">sentences per round:</div>
             <Input
               className="w-20"
+              min={1}
               type="number"
               value={number}
               onChange={(e) => setNumber(Number(e.target.value))}

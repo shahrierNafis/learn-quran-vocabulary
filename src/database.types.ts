@@ -73,35 +73,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_preference: {
-        Row: {
-          id: number
-          intervals: Json
-          translation_id: number
-          user_id: string
-        }
-        Insert: {
-          id?: number
-          intervals?: Json
-          translation_id?: number
-          user_id?: string
-        }
-        Update: {
-          id?: number
-          intervals?: Json
-          translation_id?: number
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_user_preference_user_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_progress: {
         Row: {
           progress: number
@@ -170,16 +141,6 @@ export type Database = {
     }
     Functions: {
       get_0_word_groups: {
-        Args: {
-          collection_id: number
-        }
-        Returns: {
-          collection_id: number
-          id: number
-          words: string[]
-        }[]
-      }
-      get_ready_for_review: {
         Args: {
           collection_id: number
         }
@@ -349,7 +310,7 @@ export type Database = {
         Args: {
           name: string
         }
-        Returns: unknown
+        Returns: string[]
       }
       get_size_by_bucket: {
         Args: Record<PropertyKey, never>

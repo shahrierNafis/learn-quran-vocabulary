@@ -35,7 +35,10 @@ select to public using (auth.uid() is not null);
 create table public.user_progress (
 word_group_id bigint not null,
 user_id uuid not null default auth.uid (),
-progress smallint not null,
+progress smallint not null CHECK (
+  progress >= 0
+  AND progress <= 100
+),
 updated_at timestamp with time zone not null default now(),
 constraint user_progress_pkey primary key (word_group_id, user_id),
 constraint public_user_progress_user_id_fkey foreign key (user_id) references auth.users (id),
@@ -50,7 +53,10 @@ CREATE POLICY "Users can only alter their own data" ON "public"."user_progress" 
 --
 create table public.user_intervals (
 user_id uuid not null default auth.uid (),
-progress smallint not null,
+progress smallint not null CHECK (
+  progress >= 0
+  AND progress <= 100
+),
 interval_ms bigint not null,
 constraint user_intervals_pkey primary key (user_id, progress)
 ) tablespace pg_default;
