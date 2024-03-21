@@ -2,6 +2,7 @@ import React from "react";
 import GotoDashboard from "./GotoDashboard";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { Switch } from "./ui/switch";
+import { Button } from "./ui/button";
 export default function McqNav({ leftToGo }: { leftToGo: number }) {
   const [showTranslation, setShowTranslation] = useLocalStorage<boolean>(
     "showTranslation",
@@ -12,23 +13,23 @@ export default function McqNav({ leftToGo }: { leftToGo: number }) {
   return (
     <div className="flex flex-wrap items-center">
       <GotoDashboard />
-      <div className="flex shrink-0 items-center border p-2 gap-2">
-        <Switch
-          checked={showTransliteration}
-          onCheckedChange={setShowTransliteration}
-        />
+      <Button
+        variant={"outline"}
+        onClick={() => setShowTransliteration(!showTransliteration)}
+      >
+        <Switch checked={showTransliteration} />
         Show Transliteration
-      </div>
-      <div className="flex items-center border p-2  gap-2">
-        <Switch
-          checked={showTranslation}
-          onCheckedChange={setShowTranslation}
-        />
+      </Button>
+      <Button
+        variant={"outline"}
+        onClick={() => setShowTranslation(!showTranslation)}
+      >
+        <Switch checked={showTranslation} />
         Show Translation
-      </div>{" "}
-      <div className=" cursor-not-allowed  p-2 border">
+      </Button>
+      <Button variant={"outline"} disabled>
         {leftToGo} more to go ⇒
-      </div>
+      </Button>
     </div>
   );
 }

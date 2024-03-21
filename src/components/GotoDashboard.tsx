@@ -1,10 +1,13 @@
 import Link from "next/link";
 import React from "react";
+import { Button } from "./ui/button";
 
 export default function GotoDashboard() {
   return (
-    <div className="border inline-block p-2">
-      <Link href={"/dashboard"}>Goto Dashboard</Link>
-    </div>
+    <>
+      <Button variant={"outline"}>
+        <Link href={"/dashboard"}>Goto Dashboard</Link>
+      </Button>
+    </>
   );
 }
