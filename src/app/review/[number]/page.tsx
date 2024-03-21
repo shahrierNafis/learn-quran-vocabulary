@@ -31,12 +31,19 @@ export default function Page({
     }
     // if correct increase progress
     if (correct) {
-      setWordGroups((prev) => prev?.slice(1));
+      setWordGroups((prev) => {
+        if (prev) {
+          return prev.slice(1);
+        }
+      });
     } else {
       // else set progress to 0
       setWordGroups((prev) => {
-        prev?.push(prev.shift()!);
-        return prev;
+        if (prev) {
+          const newArr = [...prev];
+          newArr.push(newArr.shift()!);
+          return newArr;
+        }
       });
     }
   }
