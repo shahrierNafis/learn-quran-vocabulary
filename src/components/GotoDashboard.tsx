@@ -1,13 +1,13 @@
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import React from "react";
 import { Button } from "./ui/button";
 
 export default function GotoDashboard() {
   return (
     <>
-      <Button variant={"outline"}>
-        <Link href={"/dashboard"}>Goto Dashboard</Link>
-      </Button>
+      <Link href={"/dashboard"}>
+        <Button variant={"outline"}>Goto Dashboard</Button>
+      </Link>
     </>
   );
 }

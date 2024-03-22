@@ -6,7 +6,7 @@ import { Tables } from "@/database.types";
 import getToReview from "@/utils/getToReview";
 import ReviewBtn from "@/components/ReviewBtn";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 
 export default function Page({
   params: { number },
@@ -79,9 +79,11 @@ export default function Page({
                   </div>
                   <div>
                     {toReviewCount - +number ? "Or go to " : "Go to "}
-                    <Button size={"sm"} variant={"secondary"}>
-                      <Link href={"/dashboard"}>dashboard</Link>
-                    </Button>{" "}
+                    <Link href={"/dashboard"}>
+                      <Button size={"sm"} variant={"secondary"}>
+                        dashboard{" "}
+                      </Button>
+                    </Link>
                     ?
                   </div>
                 </div>

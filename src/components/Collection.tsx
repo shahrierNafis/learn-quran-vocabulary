@@ -1,5 +1,5 @@
 import { Tables } from "@/database.types";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import React from "react";
 import PlayBtn from "@/components/PlayBtn";
 import { Button } from "./ui/button";
@@ -18,9 +18,10 @@ export default function Collection({
             <p className="">{collection.description}</p>
           </div>
           <div className="flex gap-2 flex-col md:flex-row">
-            <Button size={"sm"}>
-              <Link href={`/collection/${collection.id}`}>Manage</Link>
-            </Button>
+            <Link href={`/collection/${collection.id}`}>
+              <Button size={"sm"}>Manage </Button>
+            </Link>
+
             <PlayBtn id={"" + collection.id} />
           </div>
         </div>

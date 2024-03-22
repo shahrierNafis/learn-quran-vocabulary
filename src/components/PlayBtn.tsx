@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 
 export default function Learn({
   className,
@@ -42,9 +42,10 @@ export default function Learn({
               onChange={(e) => setNumber(Number(e.target.value))}
             />
           </div>
-          <Button className="w-fit ml-auto">
-            <Link href={`/play/${id}/${number}`}>Start</Link>
-          </Button>
+
+          <Link href={`/play/${id}/${number}`}>
+            <Button className="w-fit ml-auto">Start </Button>
+          </Link>
         </DialogContent>
       </Dialog>
     </>

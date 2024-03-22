@@ -5,7 +5,7 @@ import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 import PlayBtn from "@/components/PlayBtn";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { Button } from "@/components/ui/button";
 
 export default function Page({
@@ -75,9 +75,11 @@ export default function Page({
                   </div>
                   <div>
                     Or go to{" "}
-                    <Button size={"sm"} variant={"secondary"}>
-                      <Link href={"/dashboard"}>dashboard</Link>
-                    </Button>
+                    <Link href={"/dashboard"}>
+                      <Button size={"sm"} variant={"secondary"}>
+                        dashboard
+                      </Button>
+                    </Link>
                     ?
                   </div>
                 </div>

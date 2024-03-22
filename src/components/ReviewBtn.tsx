@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
+import Link from "@/components/ui/Link";
 import { ChevronRight } from "lucide-react";
 
 export default function ReviewBtn({ className }: { className?: string }) {
