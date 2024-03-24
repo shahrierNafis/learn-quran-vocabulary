@@ -1,3 +1,7 @@
+Learn Quranic Arabic Faster And More Effectively Using Cloze Testing And Spaced Repetition
+
+clone of Cloze master with Quran verses
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
