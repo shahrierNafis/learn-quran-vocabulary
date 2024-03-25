@@ -13,7 +13,8 @@ import { createClient } from "@/utils/supabase/clients";
 import getIntervals from "@/utils/getIntervals";
 import getOptions from "@/utils/getOptions";
 import McqNav from "./McqNav";
-
+import { Skeleton } from "@/components/ui/skeleton";
+import Sentence from "./Sentence";
 type Intervals = {
   [key: number]: number;
 };
@@ -25,7 +26,9 @@ function MCQ({
   callback: (bool: boolean) => void;
 }) {
   const [sentence, setSentence] = useState<Word[]>();
+  const [preloadedSentence, setPreloadedSentence] = useState<Promise<Word[]>>();
   const [translation, setTranslation] = useState<string>();
+
   const [allOptions, setAllOptions] = useState<Word[]>([]);
   const [correct, setCorrect] = useState<boolean>();
   const [selected, setSelected] = useState<`${string}:${string}:${string}`>();
@@ -34,11 +37,7 @@ function MCQ({
   const [intervals, setIntervals] = useState<Intervals>();
   const [options, setOptions] = useState<Word[]>();
   const [preLoadedOp, setPreLoadedOp] = useState<Promise<Word[]>>();
-  const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
-  const [showTransliteration] = useLocalStorage<boolean>(
-    "showTransliteration",
-    true
-  );
+
   const [translation_id] = useLocalStorage<number>("translation_id", 20);
 
   //set Options (once)
@@ -59,10 +58,22 @@ function MCQ({
     getIntervals().then(setIntervals);
     return () => {};
   }, []);
-  // set sentence
+  // set sentence (once)
   useEffect(() => {
-    getVerseWords(wordGroups[0].words[0] as `${string}:${string}`).then(
-      setSentence
+    !sentence &&
+      getVerseWords(wordGroups[0].words[0] as `${string}:${string}`).then(
+        setSentence
+      );
+    return () => {};
+  }, [sentence, wordGroups]);
+  // set Preloaded Sentence
+  useEffect(() => {
+    setPreloadedSentence(
+      getVerseWords(
+        (wordGroups.length > 1
+          ? wordGroups[1].words[0]
+          : wordGroups[0].words[0]) as `${string}:${string}`
+      )
     );
     return () => {};
   }, [wordGroups]);
@@ -128,6 +139,7 @@ function MCQ({
     setCorrect(undefined);
     setSelected(undefined);
     setShowSimilarWords(false);
+    setSentence(await preloadedSentence);
     setOptions(await preLoadedOp);
   }
   if (!intervals) {
@@ -145,44 +157,23 @@ function MCQ({
             dir="rtl"
             className="text-3xl flex justify-between items-center gap-2 flex-wrap "
           >
-            {sentence?.map((word, index) => {
-              if (word.char_type_name !== "word") return "";
-              if (
-                index == +wordGroups[0].words[0].split(":")[2] - 1 &&
-                !selected
-              )
-                return <>{"{{ _._._._ }}"}</>;
-              return (
-                <>
-                  <div className="flex flex-col">
-                    <div
-                      className={cn(
-                        index == +wordGroups[0].words[0].split(":")[2] - 1 &&
-                          "text-green-500"
-                      )}
-                    >
-                      {word.text_imlaei}
-                    </div>
-                    <div className="">
-                      {showTransliteration && (
-                        <div className="dark:text-green-100 text-green-950  text-sm">
-                          {word.transliteration.text}
-                        </div>
-                      )}
-                      {showTranslation && (
-                        <div className="dark:text-red-100 text-red-950 text-xs">
-                          {word.translation.text}{" "}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              );
-            })}
+            <Sentence
+              {...{
+                selected,
+                sentence,
+                correctIndex: +wordGroups[0].words[0].split(":")[2] - 1,
+              }}
+            />
           </div>
           {/* TRANSLATION */}
           <div className="text-xl text-center">
-            {translation?.replaceAll(/<sup.*>.*<\/sup>/g, "")}
+            {translation ? (
+              translation.replaceAll(/<sup.*>.*<\/sup>/g, "")
+            ) : (
+              <>
+                <Skeleton className="w-[45vw] h-[45px] rounded-full" />
+              </>
+            )}
           </div>
           <div>
             {/* NEXT BTN */}
@@ -218,7 +209,14 @@ function MCQ({
                 })
               ) : (
                 <>
-                  <LoadingScreen />
+                  {[1, 2, 3, 4].map((index) => {
+                    return (
+                      <Skeleton
+                        key={index}
+                        className=" text-3xl h-full px-24 py-12"
+                      />
+                    );
+                  })}
                 </>
               )}
             </div>

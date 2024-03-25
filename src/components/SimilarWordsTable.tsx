@@ -24,6 +24,7 @@ import { Word } from "@/types/types";
 import { Tables } from "@/database.types";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 export default memo(function SimilarWordsTable({
   wordGroup,
@@ -141,15 +142,12 @@ function CellComponent({
   }, [translation_id, verse_key]);
   return (
     <>
-      {sentence && translation && (
-        <>
-          <div className="flex flex-col justify-center items-center">
-            <div
-              dir="rtl"
-              className="flex gap-2 flex-wrap  text-center text-2xl"
-            >
-              {/* ARABIC */}
-              {sentence.map((word, index) => {
+      <>
+        <div className="flex flex-col gap-2 justify-center items-center">
+          <div dir="rtl" className="flex gap-2 flex-wrap  text-center text-2xl">
+            {/* ARABIC */}
+            {sentence ? (
+              sentence.map((word, index) => {
                 if (word.char_type_name !== "word") return "";
                 return (
                   <>
@@ -177,15 +175,25 @@ function CellComponent({
                     </div>
                   </>
                 );
-              })}
-            </div>
-            {/* TRANSLATION */}
-            <div className="text-xl">
-              {translation?.replaceAll(/<sup.*>.*<\/sup>/g, "")}
-            </div>
+              })
+            ) : (
+              <>
+                <Skeleton className="w-[75vw] h-[45px] rounded-full" />
+              </>
+            )}
           </div>
-        </>
-      )}
+          {/* TRANSLATION */}
+          <div className="text-xl">
+            {translation ? (
+              translation.replaceAll(/<sup.*>.*<\/sup>/g, "")
+            ) : (
+              <>
+                <Skeleton className="w-[64vw] h-[45px] rounded-full" />
+              </>
+            )}
+          </div>
+        </div>
+      </>
     </>
   );
 }
