@@ -150,15 +150,6 @@ export type Database = {
           words: string[]
         }[]
       }
-      get_todays_count: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          progress: number
-          updated_at: string
-          user_id: string
-          word_group_id: number
-        }[]
-      }
       get_word_groups: {
         Args: {
           collection_id: number

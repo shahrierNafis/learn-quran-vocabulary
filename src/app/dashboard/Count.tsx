@@ -7,8 +7,28 @@ export default function Count() {
   const supabase = createClient<Database>();
   useEffect(() => {
     supabase
-      .rpc("get_todays_count")
-      .then(({ data }) => setCount(data?.length ?? 0));
+      .from("user_progress")
+      .select("updated_at")
+      .then(({ data }) =>
+        setCount(
+          data?.filter((progress) => {
+            const updated_at = new Date(progress.updated_at);
+            const today = new Date();
+            return (
+              updated_at.getFullYear() +
+                "-" +
+                updated_at.getMonth() +
+                "-" +
+                updated_at.getDate() ===
+              today.getFullYear() +
+                "-" +
+                today.getMonth() +
+                "-" +
+                today.getDate()
+            );
+          }).length ?? 0
+        )
+      );
     return () => {};
   }, [supabase]);
 
