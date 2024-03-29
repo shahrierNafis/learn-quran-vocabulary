@@ -117,10 +117,11 @@ function MCQ({
         .eq("word_group_id", word_group_id)
         .then(({ data, error }) => {
           if (error) {
-            console.log(error);
+            alert(error);
           } else {
             return data[0] ? data[0].progress : 0;
           }
+          return 0;
         });
       percentage = getNextProgress(intervals!, currentProgress);
     } else {
