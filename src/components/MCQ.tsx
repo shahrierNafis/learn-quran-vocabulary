@@ -90,12 +90,11 @@ function MCQ({
 
   // set allOptions
   useEffect(() => {
-    if (sentence && options) {
+    if (sentence && options?.every((el) => el)) {
       const shuffled = _.shuffle([
         ...options,
         sentence[+wordGroups[0].words[0].split(":")[2] - 1],
       ]);
-
       setAllOptions(shuffled);
     }
 
@@ -185,7 +184,7 @@ function MCQ({
             )}
             {/* OPTIONS */}
             <div className="grid grid-cols-2 gap-8">
-              {allOptions.length == 4 ? (
+              {allOptions.length == 4 && allOptions.every((el) => el) ? (
                 allOptions.map(({ index, text_imlaei }) => {
                   return (
                     <Button
