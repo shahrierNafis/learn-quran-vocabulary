@@ -1,0 +1,86 @@
+import React, { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { createClient } from "@/utils/supabase/clients";
+import { Database } from "@/database.types";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { DialogHeader } from "./ui/dialog";
+import { Slider } from "./ui/slider";
+import { DatePicker } from "./ui/datePicker";
+
+export default function McqProgress({
+  currentProgress,
+  setCurrentProgress,
+  word_group_id,
+  setCorrect,
+}: {
+  word_group_id: number;
+  setCorrect: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  currentProgress: number | undefined;
+  setCurrentProgress: React.Dispatch<React.SetStateAction<number | undefined>>;
+}) {
+  const [range, setRange] = useState<number[]>([0]);
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const supabase = createClient<Database>();
+  useEffect(() => {
+    setRange(currentProgress ? [currentProgress] : [0]);
+  }, [currentProgress]);
+  async function handleSet() {
+    if (currentProgress === range[0]) return;
+    const { data, error } = await supabase
+      .from("user_progress")
+      .upsert({
+        word_group_id,
+        progress: range[0],
+        updated_at: date ? date.toISOString() : new Date().toISOString(),
+      })
+      .select();
+    if (error) {
+      alert(error);
+    } else {
+      setCorrect(true);
+      setCurrentProgress(range[0]);
+    }
+  }
+  return (
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <div>
+            <Button
+              className="m-2 float-right font-bold text-gray-500"
+              variant={"outline"}
+            >
+              progress: {currentProgress ?? 0}%
+            </Button>
+          </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Set Progress</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className="m-2 flex flex-col justify-center items-center mx-auto">
+            Set Progress of selected rows:
+            <div className="w-full flex flex-col m-4 gap-8 items-center">
+              <Slider
+                className="w-[75%] sm:w-full flex-shrink-0 border-primary"
+                onValueChange={setRange}
+                value={range}
+                max={100}
+                step={1}
+              />
+              <DatePicker {...{ date, setDate }} />
+              <Button onClick={handleSet}>Set {range}%</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

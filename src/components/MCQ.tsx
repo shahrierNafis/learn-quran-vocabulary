@@ -15,6 +15,7 @@ import getOptions from "@/utils/getOptions";
 import McqNav from "./McqNav";
 import { Skeleton } from "@/components/ui/skeleton";
 import Sentence from "./Sentence";
+import McqProgress from "./McqProgress";
 type Intervals = {
   [key: number]: number;
 };
@@ -40,6 +41,7 @@ function MCQ({
 
   const [translation_id] = useLocalStorage<number>("translation_id", 20);
 
+  const [currentProgress, setCurrentProgress] = useState<number>();
   //set Options (once)
   useEffect(() => {
     !options && wordGroups && getOptions(wordGroups[0]).then(setOptions);
@@ -101,36 +103,42 @@ function MCQ({
     return () => {};
   }, [options, sentence, wordGroups]);
 
+  //setCurrent progress
+  useEffect(() => {
+    const word_group_id = wordGroups[0].id;
+    supabase
+      .from("user_progress")
+      .select("progress")
+      .eq("word_group_id", word_group_id)
+      .then(({ data, error }) => {
+        if (error) {
+          alert(error);
+        } else {
+          return data[0] ? data[0].progress : 0;
+        }
+        return 0;
+      })
+      .then(setCurrentProgress);
+  }, [supabase, wordGroups]);
+
   async function onClick(index: `${string}:${string}:${string}`) {
     const correct = wordGroups[0].words[0] === index;
     setCorrect(correct);
     setSelected(index);
 
-    let percentage: number;
+    let newProgress: number;
     const word_group_id = wordGroups[0].id;
     // if correct increase progress
     if (correct) {
-      const currentProgress = await supabase
-        .from("user_progress")
-        .select("progress")
-        .eq("word_group_id", word_group_id)
-        .then(({ data, error }) => {
-          if (error) {
-            alert(error);
-          } else {
-            return data[0] ? data[0].progress : 0;
-          }
-          return 0;
-        });
-      percentage = getNextProgress(intervals!, currentProgress);
+      newProgress = getNextProgress(intervals!, currentProgress);
     } else {
       // else set progress to 0
-      percentage = 0;
+      newProgress = 0;
     }
-
+    setCurrentProgress(newProgress);
     await supabase.from("user_progress").upsert({
       word_group_id,
-      progress: percentage,
+      progress: newProgress,
       updated_at: new Date().toISOString(),
     });
   }
@@ -149,9 +157,19 @@ function MCQ({
     <>
       {/* Nav */}
       <McqNav leftToGo={correct ? wordGroups.length - 1 : wordGroups.length} />
+      {/* Progress */}
+      <McqProgress
+        {...{
+          word_group_id: wordGroups[0].id,
+          setCorrect,
+          currentProgress,
+          setCurrentProgress,
+        }}
+      />
       <div className="grid place-items-center grow">
         <div className="flex flex-col m-4 gap-4 justify-center items-center my-auto">
           <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
+
           {/* ARABIC */}
           <div
             dir="rtl"
@@ -177,7 +195,7 @@ function MCQ({
           </div>
           <div>
             {/* NEXT BTN */}
-            {selected && (
+            {(correct || selected) && (
               <Button className="mx-auto block my-4" onClick={nextClick}>
                 Next
               </Button>
@@ -188,7 +206,7 @@ function MCQ({
                 allOptions.map(({ index, text_imlaei }) => {
                   return (
                     <Button
-                      disabled={selected && true}
+                      disabled={(correct || selected) && true}
                       className={cn(
                         "text-3xl h-full px-8 py-6", //
                         selected &&
