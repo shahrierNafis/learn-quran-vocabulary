@@ -253,7 +253,10 @@ function MCQ({
         {selected && showSimilarWords && (
           <SimilarWordsTable
             {...{
-              wordGroup: wordGroups[0],
+              wordGroup: {
+                ...wordGroups[0],
+                words: wordGroups[0].words.slice(1),
+              },
               translation_id,
             }}
           />

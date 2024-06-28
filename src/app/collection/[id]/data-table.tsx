@@ -26,6 +26,7 @@ import { TableData } from "./columns";
 import React from "react";
 import { DataTablePagination } from "@/components/ui/DataTablePagination";
 import { Tables } from "@/database.types";
+import Link from "next/link";
 
 interface DataTableProps<TValue> {
   columns: ColumnDef<TableData, TValue>[];
@@ -55,6 +56,8 @@ export function DataTable<TValue>({
       return originalRow.words.slice(1).map((word) => {
         return {
           collection_id: originalRow.collection_id,
+          name: originalRow.name,
+          description: originalRow.description,
           id: originalRow.id,
           words: [word],
         };
@@ -111,12 +114,16 @@ export function DataTable<TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                    <>
+                      {
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      }
+                    </>
                   ))}
                 </TableRow>
               ))

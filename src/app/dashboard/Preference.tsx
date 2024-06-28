@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import SelectTranslation from "./SelectTranslation";
 import SetIntervals from "./SetIntervals";
+import UpdatePassword from "@/components/ChangePassword";
 
 export default function Preference() {
   return (
@@ -28,6 +29,7 @@ export default function Preference() {
           </DialogHeader>
           <SelectTranslation />
           <SetIntervals />
+          <UpdatePassword />
         </DialogContent>
       </Dialog>
     </>

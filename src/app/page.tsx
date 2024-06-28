@@ -12,6 +12,7 @@ import {
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 import ScrollDown from "@/components/ui/ScrollDown";
+import UpdatePassword from "@/components/ChangePassword";
 6;
 export default function Home() {
   const [user, setUser] = useState<User | null>();
@@ -19,6 +20,17 @@ export default function Home() {
   useEffect(() => {
     supabase.auth.getUser().then(({ data, error }) => {
       setUser(data.user);
+    });
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event == "SIGNED_IN") {
+        supabase.auth.getUser().then(({ data, error }) => {
+          setUser(data.user);
+        });
+      }
+      setTimeout(async () => {
+        // await on other Supabase function here
+        // this runs right after the callback has finished
+      }, 0);
     });
   }, [supabase.auth]);
   return (
@@ -47,13 +59,13 @@ export default function Home() {
                   supabaseClient={supabase}
                   appearance={{ theme: ThemeSupa }}
                   providers={["google", "github"]}
-                  onlyThirdPartyProviders
                   theme="dark"
                   redirectTo="/dashboard"
                 />
               ) : (
                 <>
-                  <GotoDashboard />
+                  <GotoDashboard variant={"default"} />
+                  <UpdatePassword />
                   <Logout />
                 </>
               )}

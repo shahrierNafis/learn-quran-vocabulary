@@ -1,7 +1,8 @@
 import { createSeedClient } from "@snaplet/seed";
-import herf from "./.seed-data/herf.json";
-import ism_fill from "./.seed-data/ism+fiil.json";
-import affix from "./.seed-data/affix.json";
+import herf from "./.seed-data/harfList.json";
+import ism from "./.seed-data/ismList.json";
+import fill from "./.seed-data/fi'lList.json";
+import affix from "./.seed-data/affixList.json";
 
 // You can use @snaplet/copycat to generate fake data for a field, for example:
 // ```
@@ -26,34 +27,62 @@ if (process.env.RESET) await seed.$resetDatabase();
 await seed.collections([
   {
     id: 1,
-    name: "ism & Fiʻl",
+    name: "ism",
     isDefault: true,
-    description:
-      "Collection of word groups where word groups are words that are similar in a way that learning one of them can be considered as learning the whole word group, this collection in particular is for all the nouns (ism) and verbs (fiʻl) in the Quran grouped by their spelling.",
+    description: `Ism (اسم) translates to "name" and encompasses nouns, adjectives, pronouns, and proper names. Ism words have grammatical features like gender (masculine or feminine) and number (singular, dual, or plural).`,
   },
   {
     id: 2,
-    name: "Ḩarf",
+    name: "Fiʻl",
     isDefault: true,
-    description: `In Arabic grammar, "Harf" ( حرف ) refers to words that function like particles in English. These words don't have inherent meaning on their own, but they establish context and relationships between other words in a sentence. So they are grouped by their spelling and their translation.`,
+    description: `Fiʻl means "verb" and refers to words expressing actions or states of being. Arabic verbs can conjugate based on tense, person, and number.`,
   },
   {
     id: 3,
-    name: "Affix",
+    name: "herf",
     isDefault: true,
-    description: `In this collection words are grouped by affixes, it could be hard to recognize what affix the group is grouped by, since Arabic words can have multiple affixes at the same time, it is highly recommended to use the "show similar words" button to get a better understanding how affixes affect the meaning of the word.`,
+    description: `Harf (حرف) translates to "letter" but refers to particles. These are function words that connect other words in a sentence and indicate grammatical relationships. Prepositions and conjunctions fall under this category.`,
+  },
+  {
+    id: 4,
+    name: "affix",
+    isDefault: true,
+    description: `Arabic has a rich morphology and a single word can function as an entire sentence in English. For example the Arabic word fajaʿalnāhum (فَجَعَلْنَٰهُمُ) found in verse (23:41) can be translated into the English sentence "and We made them". Affixes are used to modify words and add features to them. For example, features for person, gender and number`,
   },
 ]);
 await seed.wordGroups([
-  ...ism_fill.map((wordGroup) => {
-    return { words: wordGroup, collectionId: 1 };
+  ...ism.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 1,
+      name: wordGroup.name,
+      description: wordGroup.description,
+    };
   }),
-  ...herf.map((wordGroup) => {
-    return { words: wordGroup, collectionId: 2 };
+  ...fill.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 2,
+      name: wordGroup.name,
+      description: wordGroup.description,
+    };
   }),
 
+  ...herf.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 3,
+      name: wordGroup.name,
+      description: wordGroup.description,
+    };
+  }),
   ...affix.map((wordGroup) => {
-    return { words: wordGroup, collectionId: 3 };
+    return {
+      words: wordGroup.positions,
+      collectionId: 4,
+      name: wordGroup.name,
+      description: wordGroup.description,
+    };
   }),
 ]);
 

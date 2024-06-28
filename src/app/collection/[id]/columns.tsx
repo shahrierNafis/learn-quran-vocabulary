@@ -8,6 +8,8 @@ import { Word } from "@/types/types";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 import { useLocalStorage } from "@uidotdev/usehooks";
+import Link from "@/components/ui/Link";
+import { Button } from "@/components/ui/button";
 export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
@@ -62,7 +64,11 @@ export const columns: ColumnDef<TableData>[] = [
               ) : (
                 row.depth == 0 && <ChevronRight className="opacity-50" />
               )}
-              {getValue()}
+              <div>
+                <Link href={"\\wordGroup\\" + row.original.id}>
+                  {getValue() as string}
+                </Link>
+              </div>
             </>
           </div>
         </>
@@ -83,25 +89,34 @@ export const columns: ColumnDef<TableData>[] = [
       }, [index]);
       return (
         <>
-          <div className="flex justify-center">
-            {word ? (
-              <>
-                <div className="flex flex-col">
-                  <div className={`md:text-3xl text-center text-xl`}>
-                    {word.text_imlaei}
-                  </div>
+          <div className="flex justify-center items-center">
+            <Link href={"\\wordGroup\\" + row.original.id}>
+              <div className="flex justify-center h-fit w-40 border border-input bg-background hover:bg-accent hover:text-accent-foreground">
+                {word ? (
+                  <>
+                    <div className="flex flex-col">
+                      <div className="text-center p-2 m-2 dark:text-red-100 text-red-950 text-sm">
+                        {row.original.name}
+                      </div>
+                      <div className={`md:text-2xl text-center text-xl`}>
+                        {word.text_imlaei}
+                      </div>
 
-                  <div className="dark:text-green-100 text-green-950 text-center text-sm">
-                    {word.transliteration.text}
-                  </div>
-                  {/* <div className="dark:text-red-100 text-red-950 text-center text-sm">
+                      <div className="dark:text-green-100 text-green-950 text-center text-sm">
+                        {word.transliteration.text}
+                      </div>
+                      {/* <div className="dark:text-red-100 text-red-950 text-center text-sm">
                     {word.translation.text}
                   </div> */}
-                </div>
-              </>
-            ) : (
-              <div className="h-[2.25rem] opacity-50 text-sm">loading...</div>
-            )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="h-[2.25rem] opacity-50 text-sm">
+                    loading...
+                  </div>
+                )}
+              </div>
+            </Link>
           </div>
         </>
       );
@@ -115,7 +130,14 @@ export const columns: ColumnDef<TableData>[] = [
     header: () => <div className="text-center">Frequency</div>,
     cell: ({ row, getValue }) => {
       if (row.depth != 0) return "";
-      return <div className="text-center">{getValue() as string}</div>;
+      return (
+        <>
+          <div className="flex"></div>
+          <Link href={"\\wordGroup\\" + row.original.id}>
+            <div className="text-center">{getValue() as string}</div>
+          </Link>
+        </>
+      );
     },
   },
   {
@@ -167,11 +189,21 @@ export const columns: ColumnDef<TableData>[] = [
       if (progress) {
         return (
           <>
-            <div className="text-center">{progress}%</div>
+            <div className="flex"></div>
+            <Link href={"\\wordGroup\\" + row.original.id}>
+              <div className="text-center">{progress}%</div>
+            </Link>
           </>
         );
       }
-      return <div className="text-center">0%</div>;
+      return (
+        <>
+          <div className="flex"></div>
+          <Link href={"\\wordGroup\\" + row.original.id}>
+            <div className="text-center">0%</div>
+          </Link>
+        </>
+      );
     },
   },
   {
@@ -222,13 +254,17 @@ export const columns: ColumnDef<TableData>[] = [
       if (row.depth != 0) return "";
       return (
         <>
-          {updatedAt ? (
-            <div className="text-center">
-              {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
-            </div>
-          ) : (
-            <>----</>
-          )}
+          <div className="flex">
+            <Link href={"\\wordGroup\\" + row.original.id}>
+              {updatedAt ? (
+                <div className="text-center">
+                  {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
+                </div>
+              ) : (
+                <>----</>
+              )}
+            </Link>
+          </div>
         </>
       );
     },

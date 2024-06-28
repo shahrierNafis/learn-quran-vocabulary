@@ -53,7 +53,7 @@ export default memo(function SimilarWordsTable({
       },
     },
   ];
-  const data = useMemo(() => wordGroup.words.slice(1), [wordGroup.words]);
+  const data = useMemo(() => wordGroup.words, [wordGroup.words]);
   const table = useReactTable({
     data,
     columns,
