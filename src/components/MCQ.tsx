@@ -251,12 +251,19 @@ function MCQ({
         </div>
         {/* similar words table */}
         {selected && showSimilarWords && (
-          <SimilarWordsTable
-            {...{
-              wordGroup: wordGroups[0],
-              translation_id,
-            }}
-          />
+          <>
+            <div className="text-center text-3xl">{wordGroups[0].name}</div>
+            <div>{wordGroups[0].description}</div>
+            <SimilarWordsTable
+              {...{
+                wordGroup: {
+                  ...wordGroups[0],
+                  words: wordGroups[0].words.slice(1),
+                },
+                translation_ids,
+              }}
+            />
+          </>
         )}
       </div>
     </>
