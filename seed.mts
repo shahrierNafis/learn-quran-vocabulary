@@ -2,7 +2,8 @@ import { createSeedClient } from "@snaplet/seed";
 import herf from "./.seed-data/harfList.json";
 import ism from "./.seed-data/ismList.json";
 import fill from "./.seed-data/fi'lList.json";
-import affix from "./.seed-data/affixList.json";
+import suffix from "./.seed-data/suffixList.json";
+import prefix from "./.seed-data/prefixList.json";
 
 // You can use @snaplet/copycat to generate fake data for a field, for example:
 // ```
@@ -45,38 +46,44 @@ await seed.collections([
   },
   {
     id: 4,
-    name: "affix",
+    name: "suffix",
     isDefault: true,
-    description: `Arabic has a rich morphology and a single word can function as an entire sentence in English. For example the Arabic word fajaʿalnāhum (فَجَعَلْنَٰهُمُ) found in verse (23:41) can be translated into the English sentence "and We made them". Affixes are used to modify words and add features to them. For example, features for person, gender and number`,
+    description: `Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete sentence in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English sentence 'and We made them'. In Arabic, suffixes could be attached to words to indicate the subjects and objects.`,
+  },
+  {
+    id: 5,
+    name: "prefix",
+    isDefault: true,
+    description: `Arabic also utilizes prefixes to add meaning and function to words. Unlike suffixes, however, these prefixes are less numerous and often serve specific grammatical purposes.  One prominent example is the definite article "al-" (الـ), which transforms indefinite nouns and adjectives into definite ones. For instance, "kitab" (كتاب) means "book," but "al-kitab" (الكتاب) translates to "the book."`,
   },
 ]);
 await seed.wordGroups([
-  ...ism.map((wordGroup) => {
-    return {
-      words: wordGroup.positions,
-      collectionId: 1,
-      name: wordGroup.name,
-      description: wordGroup.description,
-    };
-  }),
-  ...fill.map((wordGroup) => {
-    return {
-      words: wordGroup.positions,
-      collectionId: 2,
-      name: wordGroup.name,
-      description: wordGroup.description,
-    };
-  }),
+  // ...ism.map((wordGroup) => {
+  //   return {
+  //     words: wordGroup.positions,
+  //     collectionId: 1,
+  //     name: wordGroup.name,
+  //     description: wordGroup.description,
+  //   };
+  // }),
+  // ...fill.map((wordGroup) => {
+  //   return {
+  //     words: wordGroup.positions,
+  //     collectionId: 2,
+  //     name: wordGroup.name,
+  //     description: wordGroup.description,
+  //   };
+  // }),
 
-  ...herf.map((wordGroup) => {
-    return {
-      words: wordGroup.positions,
-      collectionId: 3,
-      name: wordGroup.name,
-      description: wordGroup.description,
-    };
-  }),
-  ...affix.map((wordGroup) => {
+  // ...herf.map((wordGroup) => {
+  //   return {
+  //     words: wordGroup.positions,
+  //     collectionId: 3,
+  //     name: wordGroup.name,
+  //     description: wordGroup.description,
+  //   };
+  // }),
+  ...suffix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collectionId: 4,
@@ -84,6 +91,14 @@ await seed.wordGroups([
       description: wordGroup.description,
     };
   }),
+  // ...prefix.map((wordGroup) => {
+  //   return {
+  //     words: wordGroup.positions,
+  //     collectionId: 5,
+  //     name: wordGroup.name,
+  //     description: wordGroup.description,
+  //   };
+  // }),
 ]);
 
 // Run it with: DRY=0 npx tsx seed.mts

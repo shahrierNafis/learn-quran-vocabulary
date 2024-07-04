@@ -7,7 +7,9 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import React, { useEffect, useState } from "react";
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
-  const [translation_id] = useLocalStorage<number>("translation_id", 20);
+  const [translation_ids] = useLocalStorage<string[]>("translation_ids", [
+    "20",
+  ]);
   const supabase = createClient<Database>();
   const [wordGroup, setWordGroup] = useState<Tables<"word_groups">>();
   useEffect(() => {
@@ -36,7 +38,7 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
             <SimilarWordsTable
               {...{
                 wordGroup,
-                translation_id,
+                translation_ids,
               }}
             />
           </div>

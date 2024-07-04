@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/clients";
-import { Database } from "@/database.types";
+import { Database, Tables } from "@/database.types";
 import {
   Dialog,
   DialogTrigger,
@@ -16,13 +16,17 @@ import { DatePicker } from "./ui/datePicker";
 export default function McqProgress({
   currentProgress,
   setCurrentProgress,
-  word_group_id,
+  word_group,
   setCorrect,
+  setSelected,
 }: {
-  word_group_id: number;
+  word_group: Tables<"word_groups">;
   setCorrect: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   currentProgress: number | undefined;
   setCurrentProgress: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setSelected: React.Dispatch<
+    React.SetStateAction<`${string}:${string}:${string}` | undefined>
+  >;
 }) {
   const [range, setRange] = useState<number[]>([0]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -35,7 +39,7 @@ export default function McqProgress({
     const { data, error } = await supabase
       .from("user_progress")
       .upsert({
-        word_group_id,
+        word_group_id: word_group.id,
         progress: range[0],
         updated_at: date ? date.toISOString() : new Date().toISOString(),
       })
@@ -44,6 +48,7 @@ export default function McqProgress({
       alert(error);
     } else {
       setCorrect(true);
+      setSelected(word_group.words[0] as `${string}:${string}:${string}`);
       setCurrentProgress(range[0]);
     }
   }

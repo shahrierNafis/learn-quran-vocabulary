@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocalStorage } from "@uidotdev/usehooks";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { MultiSelect } from "@/components/MultiSelect";
 export default function SelectTranslation() {
-  const [translation_id, setTranslation_id] = useLocalStorage<number>(
-    "translation_id",
-    20
+  const [translation_id, setTranslation_id] = useLocalStorage<string[]>(
+    "translation_ids",
+    ["20"]
   );
   const [translations, setTranslations] = useState<
     {
@@ -30,27 +24,17 @@ export default function SelectTranslation() {
 
   return (
     <>
-      <div className="flex items-center">
-        <div> Translation:</div>
-        <Select
-          defaultValue={`${translation_id}`}
-          onValueChange={(translation_id) => setTranslation_id(+translation_id)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a translation" />
-          </SelectTrigger>
-          <SelectContent>
-            {translations &&
-              translations.map((translation) => {
-                return (
-                  <SelectItem key={translation.id} value={`${translation.id}`}>
-                    {translation.name}
-                  </SelectItem>
-                );
-              })}
-          </SelectContent>
-        </Select>
-      </div>
+      <MultiSelect
+        options={
+          translations?.map((t) => {
+            return { label: t.name, value: t.id + "" };
+          }) ?? []
+        }
+        onValueChange={setTranslation_id}
+        defaultValue={translation_id}
+        placeholder="Select translations"
+        variant="default"
+      />
     </>
   );
 }

@@ -25,13 +25,15 @@ import { Tables } from "@/database.types";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
+import getVerseTranslations from "@/utils/getVerseTranslations";
+import Translations from "./Translations";
 
 export default memo(function SimilarWordsTable({
   wordGroup,
-  translation_id,
+  translation_ids,
 }: {
   wordGroup: Tables<"word_groups">;
-  translation_id: number;
+  translation_ids: string[];
 }) {
   const columns: ColumnDef<string>[] = [
     {
@@ -45,7 +47,7 @@ export default memo(function SimilarWordsTable({
         return (
           <CellComponent
             {...{
-              translation_id,
+              translation_ids,
               verse_key: getValue() as `${string}:${string}${string}`,
             }}
           />
@@ -113,13 +115,14 @@ export default memo(function SimilarWordsTable({
 // You can use a Zod schema here if you want.
 function CellComponent({
   verse_key,
-  translation_id,
+  translation_ids,
 }: {
   verse_key: `${string}:${string}${string}`;
-  translation_id: number;
+  translation_ids: string[];
 }) {
   const [sentence, setSentence] = useState<Word[]>();
-  const [translation, setTranslation] = useState<string>();
+  const [translations, setTranslations] =
+    useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
   const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
   const [showTransliteration] = useLocalStorage<boolean>(
     "showTransliteration",
@@ -134,12 +137,12 @@ function CellComponent({
   // set translation
   useEffect(() => {
     const [surah, verse] = verse_key.split(":");
-    getVerseTranslation(translation_id, `${surah}:${verse}`).then(
-      setTranslation
+    getVerseTranslations(translation_ids, `${surah}:${verse}`).then((r) =>
+      setTranslations(r)
     );
 
     return () => {};
-  }, [translation_id, verse_key]);
+  }, [translation_ids, verse_key]);
   return (
     <>
       <>
@@ -151,7 +154,7 @@ function CellComponent({
                 if (word.char_type_name !== "word") return "";
                 return (
                   <>
-                    <div className="flex flex-col">
+                    <div key={word.index} className="flex flex-col">
                       <div
                         className={cn(
                           index == +verse_key.split(":")[2] - 1 &&
@@ -183,15 +186,7 @@ function CellComponent({
             )}
           </div>
           {/* TRANSLATION */}
-          <div className="text-xl">
-            {translation ? (
-              translation.replaceAll(/<sup.*>.*<\/sup>/g, "")
-            ) : (
-              <>
-                <Skeleton className="w-[64vw] h-[45px] rounded-full" />
-              </>
-            )}
-          </div>
+          <Translations {...{ translations }}></Translations>
         </div>
       </>
     </>

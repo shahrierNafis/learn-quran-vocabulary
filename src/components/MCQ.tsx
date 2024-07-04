@@ -1,21 +1,21 @@
 import React, { memo, use, useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import getVerseWords from "@/utils/getVerseWords";
-import { useLocalStorage } from "@uidotdev/usehooks";
-import getVerseTranslation from "@/utils/getVerseTranslation";
+import { Database, Tables } from "@/database.types";
 import _ from "lodash";
-import { cn } from "@/lib/utils";
 import LoadingScreen from "./ui/LoadingScreen";
 import SimilarWordsTable from "./SimilarWordsTable";
-import { Database, Tables } from "@/database.types";
-import { Word } from "@/types/types";
-import { createClient } from "@/utils/supabase/clients";
-import getIntervals from "@/utils/getIntervals";
-import getOptions from "@/utils/getOptions";
 import McqNav from "./McqNav";
-import { Skeleton } from "@/components/ui/skeleton";
 import Sentence from "./Sentence";
 import McqProgress from "./McqProgress";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { createClient } from "@/utils/supabase/clients";
+import useSentence from "./useSentence";
+import useOptions from "./useOptions";
+import useProgress from "./useProgress";
+import getIntervals from "@/utils/getIntervals";
+import Options from "./Options";
+import getVerseTranslations from "@/utils/getVerseTranslations";
+import Translations from "./Translations";
 type Intervals = {
   [key: number]: number;
 };
@@ -26,101 +26,124 @@ function MCQ({
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
 }) {
-  const [sentence, setSentence] = useState<Word[]>();
-  const [preloadedSentence, setPreloadedSentence] = useState<Promise<Word[]>>();
-  const [translation, setTranslation] = useState<string>();
+  const supabase = createClient<Database>();
+  const { sentence, setSentence, preloadedSentence } = useSentence(wordGroups);
 
-  const [allOptions, setAllOptions] = useState<Word[]>([]);
+  const [translations, setTranslations] =
+    useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
+
+  const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
   const [correct, setCorrect] = useState<boolean>();
   const [selected, setSelected] = useState<`${string}:${string}:${string}`>();
-  const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
-  const supabase = createClient<Database>();
   const [intervals, setIntervals] = useState<Intervals>();
-  const [options, setOptions] = useState<Word[]>();
-  const [preLoadedOp, setPreLoadedOp] = useState<Promise<Word[]>>();
 
-  const [translation_id] = useLocalStorage<number>("translation_id", 20);
-
-  const [currentProgress, setCurrentProgress] = useState<number>();
-  //set Options (once)
-  useEffect(() => {
-    !options && wordGroups && getOptions(wordGroups[0]).then(setOptions);
-    return () => {};
-  }, [options, wordGroups]);
-
-  //set PreLoaded Options
-  useEffect(() => {
-    setPreLoadedOp(
-      getOptions(wordGroups.length > 1 ? wordGroups[1] : wordGroups[0])
-    );
-    return () => {};
-  }, [options, wordGroups]);
+  const [translation_ids] = useLocalStorage<string[]>("translation_ids", [
+    "20",
+  ]);
+  const { allOptions, preLoadedOp, setOptions } = useOptions(
+    wordGroups,
+    sentence
+  );
+  const { currentProgress, setCurrentProgress } = useProgress(wordGroups[0].id);
   // set Intervals
   useEffect(() => {
     getIntervals().then(setIntervals);
     return () => {};
   }, []);
-  // set sentence (once)
-  useEffect(() => {
-    !sentence &&
-      getVerseWords(wordGroups[0].words[0] as `${string}:${string}`).then(
-        setSentence
-      );
-    return () => {};
-  }, [sentence, wordGroups]);
-  // set Preloaded Sentence
-  useEffect(() => {
-    setPreloadedSentence(
-      getVerseWords(
-        (wordGroups.length > 1
-          ? wordGroups[1].words[0]
-          : wordGroups[0].words[0]) as `${string}:${string}`
-      )
-    );
-    return () => {};
-  }, [wordGroups]);
+  const [surah, verse] = wordGroups[0].words[0].split(":");
   // set translation
   useEffect(() => {
-    const [surah, verse] = wordGroups[0].words[0].split(":");
-    getVerseTranslation(translation_id, `${surah}:${verse}`).then(
-      setTranslation
+    const translation_ids = JSON.parse(
+      localStorage.getItem("translation_ids") ?? ""
+    ) ?? ["20"];
+    getVerseTranslations(translation_ids, `${surah}:${verse}`).then(
+      setTranslations
     );
     return () => {};
-  }, [translation_id, wordGroups]);
-  const [surah, verse] = wordGroups[0].words[0].split(":");
-  wordGroups[0].words[0];
+  }, [surah, verse]);
 
-  // set allOptions
-  useEffect(() => {
-    if (sentence && options?.every((el) => el)) {
-      const shuffled = _.shuffle([
-        ...options,
-        sentence[+wordGroups[0].words[0].split(":")[2] - 1],
-      ]);
-      setAllOptions(shuffled);
-    }
-
-    return () => {};
-  }, [options, sentence, wordGroups]);
-
-  //setCurrent progress
-  useEffect(() => {
-    const word_group_id = wordGroups[0].id;
-    supabase
-      .from("user_progress")
-      .select("progress")
-      .eq("word_group_id", word_group_id)
-      .then(({ data, error }) => {
-        if (error) {
-          alert(error);
-        } else {
-          return data[0] ? data[0].progress : 0;
-        }
-        return 0;
-      })
-      .then(setCurrentProgress);
-  }, [supabase, wordGroups]);
-
+  if (!intervals) {
+    return <LoadingScreen />;
+  }
+  return (
+    <>
+      {/* Nav */}
+      <McqNav leftToGo={correct ? wordGroups.length - 1 : wordGroups.length} />
+      {/* Progress */}
+      <McqProgress
+        {...{
+          word_group: wordGroups[0],
+          setCorrect,
+          setSelected,
+          currentProgress,
+          setCurrentProgress,
+        }}
+      />
+      <div className="grid place-items-center grow">
+        <div className="flex flex-col m-4 gap-4 justify-center items-center my-auto">
+          <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
+          {/* ARABIC */}
+          <div
+            dir="rtl"
+            className="text-3xl flex justify-between items-center gap-2 flex-wrap "
+          >
+            <Sentence
+              {...{
+                selected,
+                sentence,
+                correctIndex: +wordGroups[0].words[0].split(":")[2] - 1,
+              }}
+            />
+          </div>
+          {/* TRANSLATION */}{" "}
+          <Translations {...{ translations }}></Translations>
+          <div>
+            {/* NEXT BTN */}
+            {(correct || selected) && (
+              <Button className="mx-auto block my-4" onClick={nextClick}>
+                Next
+              </Button>
+            )}
+            {/* OPTIONS */}
+            <Options
+              {...{
+                allOptions,
+                correct,
+                currentWord: wordGroups[0].words[0],
+                selected,
+                onClick,
+              }}
+            ></Options>
+          </div>
+          {/* show similar words */}
+          {(correct || selected) && (
+            <Button
+              className="mx-auto block my-4"
+              onClick={() => setShowSimilarWords(!showSimilarWords)}
+            >
+              {showSimilarWords ? "Hide" : "Show"} similar words
+            </Button>
+          )}
+        </div>
+        {/* similar words table */}
+        {(correct || selected) && showSimilarWords && (
+          <>
+            <div className="text-center text-3xl">{wordGroups[0].name}</div>
+            <div>{wordGroups[0].description}</div>
+            <SimilarWordsTable
+              {...{
+                wordGroup: {
+                  ...wordGroups[0],
+                  words: wordGroups[0].words.slice(1),
+                },
+                translation_ids,
+              }}
+            />
+          </>
+        )}
+      </div>
+    </>
+  );
   async function onClick(index: `${string}:${string}:${string}`) {
     const correct = wordGroups[0].words[0] === index;
     setCorrect(correct);
@@ -149,125 +172,8 @@ function MCQ({
     setShowSimilarWords(false);
     setSentence(await preloadedSentence);
     setOptions(await preLoadedOp);
+    setTranslations([]);
   }
-  if (!intervals) {
-    return <LoadingScreen />;
-  }
-  return (
-    <>
-      {/* Nav */}
-      <McqNav leftToGo={correct ? wordGroups.length - 1 : wordGroups.length} />
-      {/* Progress */}
-      <McqProgress
-        {...{
-          word_group_id: wordGroups[0].id,
-          setCorrect,
-          currentProgress,
-          setCurrentProgress,
-        }}
-      />
-      <div className="grid place-items-center grow">
-        <div className="flex flex-col m-4 gap-4 justify-center items-center my-auto">
-          <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
-
-          {/* ARABIC */}
-          <div
-            dir="rtl"
-            className="text-3xl flex justify-between items-center gap-2 flex-wrap "
-          >
-            <Sentence
-              {...{
-                selected,
-                sentence,
-                correctIndex: +wordGroups[0].words[0].split(":")[2] - 1,
-              }}
-            />
-          </div>
-          {/* TRANSLATION */}
-          <div className="text-xl text-center">
-            {translation ? (
-              translation.replaceAll(/<sup.*>.*<\/sup>/g, "")
-            ) : (
-              <>
-                <Skeleton className="w-[45vw] h-[45px] rounded-full" />
-              </>
-            )}
-          </div>
-          <div>
-            {/* NEXT BTN */}
-            {(correct || selected) && (
-              <Button className="mx-auto block my-4" onClick={nextClick}>
-                Next
-              </Button>
-            )}
-            {/* OPTIONS */}
-            <div className="grid grid-cols-2 gap-8">
-              {allOptions.length == 4 && allOptions.every((el) => el) ? (
-                allOptions.map(({ index, text_imlaei }) => {
-                  return (
-                    <Button
-                      disabled={(correct || selected) && true}
-                      className={cn(
-                        "text-3xl h-full px-8 py-6", //
-                        selected &&
-                          (wordGroups[0].words[0] === index
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-500 text-white"),
-                        selected === index &&
-                          (index === wordGroups[0].words[0]
-                            ? "ring-4 ring-white"
-                            : "ring-4 ring-red-500")
-                      )}
-                      key={index}
-                      onClick={() => onClick(index)}
-                    >
-                      {text_imlaei}
-                    </Button>
-                  );
-                })
-              ) : (
-                <>
-                  {[1, 2, 3, 4].map((index) => {
-                    return (
-                      <Skeleton
-                        key={index}
-                        className=" text-3xl h-full px-24 py-12"
-                      />
-                    );
-                  })}
-                </>
-              )}
-            </div>
-          </div>
-          {/* show similar words */}
-          {selected && (
-            <Button
-              className="mx-auto block my-4"
-              onClick={() => setShowSimilarWords(!showSimilarWords)}
-            >
-              {showSimilarWords ? "Hide" : "Show"} similar words
-            </Button>
-          )}
-        </div>
-        {/* similar words table */}
-        {selected && showSimilarWords && (
-          <>
-            <div className="text-center text-3xl">{wordGroups[0].name}</div>
-            <div>{wordGroups[0].description}</div>
-            <SimilarWordsTable
-              {...{
-                wordGroup: {
-                  ...wordGroups[0],
-                  words: wordGroups[0].words.slice(1),
-                },
-                translation_ids,
-              }}
-            />
-          </>
-        )}
-      </div>
-    </>
-  );
 }
 
 export default memo(MCQ, (prev, next) => {

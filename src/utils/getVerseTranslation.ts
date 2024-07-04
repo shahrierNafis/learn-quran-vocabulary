@@ -10,7 +10,7 @@ export default async function getVerseTranslation(
     ).json();
     return res.translations[0].text;
   } catch (error) {
-    alert(
+    console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/quran/translations/${translation_id}?verse_key=${verse_key} \n ${error}`
     );
     return getVerseTranslation(translation_id, verse_key);

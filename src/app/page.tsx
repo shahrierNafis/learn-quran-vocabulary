@@ -58,7 +58,7 @@ export default function Home() {
                 <Auth
                   supabaseClient={supabase}
                   appearance={{ theme: ThemeSupa }}
-                  providers={["google", "github"]}
+                  providers={["github"]}
                   theme="dark"
                   redirectTo="/dashboard"
                 />

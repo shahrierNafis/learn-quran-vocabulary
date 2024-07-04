@@ -25,7 +25,7 @@ export default async function getVerseWords(
       };
     });
   } catch (error) {
-    alert(
+    console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`
     );
     return getVerseWords(index);
