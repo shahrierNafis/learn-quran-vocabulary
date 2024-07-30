@@ -58,47 +58,52 @@ await seed.collections([
   },
 ]);
 await seed.wordGroups([
-  // ...ism.map((wordGroup) => {
-  //   return {
-  //     words: wordGroup.positions,
-  //     collectionId: 1,
-  //     name: wordGroup.name,
-  //     description: wordGroup.description,
-  //   };
-  // }),
-  // ...fill.map((wordGroup) => {
-  //   return {
-  //     words: wordGroup.positions,
-  //     collectionId: 2,
-  //     name: wordGroup.name,
-  //     description: wordGroup.description,
-  //   };
-  // }),
+  ...ism.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 1,
+      name: wordGroup.name,
+      description: wordGroup.description,
+      options: wordGroup.options,
+    };
+  }),
+  ...fill.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 2,
+      name: wordGroup.name,
+      description: wordGroup.description,
+      options: wordGroup.options,
+    };
+  }),
 
-  // ...herf.map((wordGroup) => {
-  //   return {
-  //     words: wordGroup.positions,
-  //     collectionId: 3,
-  //     name: wordGroup.name,
-  //     description: wordGroup.description,
-  //   };
-  // }),
+  ...herf.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 3,
+      name: wordGroup.name,
+      description: wordGroup.description,
+      options: wordGroup.options,
+    };
+  }),
   ...suffix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collectionId: 4,
       name: wordGroup.name,
       description: wordGroup.description,
+      options: wordGroup.options,
     };
   }),
-  // ...prefix.map((wordGroup) => {
-  //   return {
-  //     words: wordGroup.positions,
-  //     collectionId: 5,
-  //     name: wordGroup.name,
-  //     description: wordGroup.description,
-  //   };
-  // }),
+  ...prefix.map((wordGroup) => {
+    return {
+      words: wordGroup.positions,
+      collectionId: 5,
+      name: wordGroup.name,
+      description: wordGroup.description,
+      options: wordGroup.options,
+    };
+  }),
 ]);
 
 // Run it with: DRY=0 npx tsx seed.mts
