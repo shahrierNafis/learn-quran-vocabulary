@@ -31,9 +31,10 @@ export default function useOptions(
 
   //set PreLoaded Options
   useEffect(() => {
-    setPreLoadedOp(
-      getOptions(wordGroups.length > 1 ? wordGroups[1] : wordGroups[0])
-    );
+    if (wordGroups.length > 1) {
+      setPreLoadedOp(getOptions(wordGroups[1]));
+    }
+
     return () => {};
   }, [options, wordGroups]);
   return { allOptions, preLoadedOp, setOptions };

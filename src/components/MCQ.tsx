@@ -14,8 +14,8 @@ import useOptions from "./useOptions";
 import useProgress from "./useProgress";
 import getIntervals from "@/utils/getIntervals";
 import Options from "./Options";
-import getVerseTranslations from "@/utils/getVerseTranslations";
 import Translations from "./Translations";
+import useTranslations from "./useTranslations";
 type Intervals = {
   [key: number]: number;
 };
@@ -29,8 +29,8 @@ function MCQ({
   const supabase = createClient<Database>();
   const { sentence, setSentence, preloadedSentence } = useSentence(wordGroups);
 
-  const [translations, setTranslations] =
-    useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
+  const { translations, setTranslations, preLoadedT } =
+    useTranslations(wordGroups);
 
   const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
   const [correct, setCorrect] = useState<boolean>();
@@ -51,16 +51,6 @@ function MCQ({
     return () => {};
   }, []);
   const [surah, verse] = wordGroups[0].words[0].split(":");
-  // set translation
-  useEffect(() => {
-    const translation_ids = JSON.parse(
-      localStorage.getItem("translation_ids") ?? ""
-    ) ?? ["20"];
-    getVerseTranslations(translation_ids, `${surah}:${verse}`).then(
-      setTranslations
-    );
-    return () => {};
-  }, [surah, verse]);
 
   if (!intervals) {
     return <LoadingScreen />;
@@ -172,7 +162,7 @@ function MCQ({
     setShowSimilarWords(false);
     setSentence(await preloadedSentence);
     setOptions(await preLoadedOp);
-    setTranslations([]);
+    setTranslations(await preLoadedT);
   }
 }
 

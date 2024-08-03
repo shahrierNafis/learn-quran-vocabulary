@@ -11,7 +11,7 @@ function Translations({
   return (
     <>
       <div className="text-xl">
-        {translations ? (
+        {translations?.length ? (
           translation_ids
             .map((id) => translations.filter((t) => t.id == id)[0])
             .map((translation) => {
