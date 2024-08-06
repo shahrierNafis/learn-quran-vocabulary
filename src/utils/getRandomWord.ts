@@ -45,7 +45,7 @@ async function getRandomVerse() {
     }
     return verse;
   } catch (error) {
-    alert(
+    console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/verses/random?words=true&word_fields=text_imlaei \n ${error}`
     );
     return await getRandomVerse();

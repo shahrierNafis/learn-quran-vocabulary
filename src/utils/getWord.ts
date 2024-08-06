@@ -26,7 +26,7 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
       index,
     };
   } catch (error) {
-    alert(
+    console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`
     );
     return getWord(index);
