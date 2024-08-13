@@ -107,7 +107,8 @@ async function main() {
     console.log(error);
   }
 }
-main()
+console.log("Seeding data...");
+await main()
   .then(async () => {
     await prisma.$disconnect();
   })

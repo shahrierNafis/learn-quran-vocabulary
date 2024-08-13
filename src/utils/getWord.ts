@@ -1,4 +1,5 @@
 import { Word } from "@/types/types";
+import getWordImage from "./getWordImage";
 
 async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
   const [surahI, ayahI, wordI] = index.split(":");
@@ -10,6 +11,8 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
         )
       ).json()
     ).verse;
+    const wordImage = await getWordImage(index);
+
     const {
       text_imlaei,
       translation,
@@ -18,6 +21,7 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<Word> {
       char_type_name,
     } = verse.words[+wordI - 1];
     return {
+      wordImage,
       text_imlaei,
       translation,
       transliteration,

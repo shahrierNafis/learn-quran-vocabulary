@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
 import getVerseTranslations from "@/utils/getVerseTranslations";
 import Translations from "./Translations";
+import WordImage from "./WordImage";
 
 export default memo(function SimilarWordsTable({
   wordGroup,
@@ -157,11 +158,12 @@ function CellComponent({
                     <div key={word.index} className="flex flex-col">
                       <div
                         className={cn(
+                          "p-2",
                           index == +verse_key.split(":")[2] - 1 &&
-                            "text-green-500"
+                            "border-2 p-2 rounded border-green-500"
                         )}
                       >
-                        {word.text_imlaei}
+                        <WordImage {...{ word }} />
                       </div>
                       <div className="">
                         {showTransliteration && (

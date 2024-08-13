@@ -3,6 +3,7 @@ import { Word } from "@/types/types";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import React from "react";
 import { Skeleton } from "./ui/skeleton";
+import WordImage from "./WordImage";
 
 export default function Sentence({
   sentence,
@@ -23,12 +24,23 @@ export default function Sentence({
       {sentence ? (
         sentence.map((word, index) => {
           if (word.char_type_name !== "word") return "";
-          if (index == correctIndex && !selected) return <>{"{{ _._._._ }}"}</>;
+          if (index == correctIndex && !selected)
+            return (
+              <div className={"md:mb-[4rem] mb-[3rem]"} key={word.index}>
+                {"{{ _._._._ }}"}
+              </div>
+            );
           return (
             <>
-              <div className="flex flex-col">
-                <div className={cn(index == correctIndex && "text-green-500")}>
-                  {word.text_imlaei}
+              <div className="flex flex-col justify-center items-center">
+                <div
+                  className={cn(
+                    "p-2",
+                    index == correctIndex &&
+                      "border-2 p-2 rounded border-green-500"
+                  )}
+                >
+                  <WordImage {...{ word }} />
                 </div>
                 <div className="">
                   {showTransliteration && (

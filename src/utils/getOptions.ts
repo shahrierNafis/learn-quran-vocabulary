@@ -1,5 +1,4 @@
 import { Word } from "@/types/types";
-import getRandomWord from "./getRandomWord";
 import getWord from "./getWord";
 import { Tables } from "@/database.types";
 

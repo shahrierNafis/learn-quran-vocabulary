@@ -10,6 +10,8 @@ import { createClient } from "@/utils/supabase/clients";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import Link from "@/components/ui/Link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import WordImage from "@/components/WordImage";
 export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
@@ -98,9 +100,8 @@ export const columns: ColumnDef<TableData>[] = [
                       <div className="text-center p-2 m-2 dark:text-red-100 text-red-950 text-sm">
                         {row.original.name}
                       </div>
-                      <div className={`md:text-2xl text-center text-xl`}>
-                        {word.text_imlaei}
-                      </div>
+
+                      <WordImage {...{ word }} />
 
                       <div className="dark:text-green-100 text-green-950 text-center text-sm">
                         {word.transliteration.text}

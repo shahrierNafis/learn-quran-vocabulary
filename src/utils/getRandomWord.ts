@@ -1,5 +1,6 @@
 import { Word } from "@/types/types";
 import _ from "lodash";
+import getWordImage from "./getWordImage";
 
 async function getRandomWord(): Promise<Word> {
   const verse = await getRandomVerse();
@@ -13,7 +14,9 @@ async function getRandomWord(): Promise<Word> {
   const index = //
     (verse.verse_key + ":" + position) as `${string}:${string}:${string}`;
 
+  const wordImage = await getWordImage(index);
   return {
+    wordImage,
     text_imlaei,
     translation,
     transliteration,
