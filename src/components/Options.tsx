@@ -34,7 +34,7 @@ function Options({
                   "text-3xl h-full px-8 py-6", //
                   selected &&
                     (currentWord === word.index
-                      ? "bg-green-100 dark:bg-white"
+                      ? "bg-green-100"
                       : "bg-gray-100 dark:bg-stone-300"),
                   selected === word.index &&
                     (word.index === currentWord

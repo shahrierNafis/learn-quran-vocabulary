@@ -27,7 +27,7 @@ export default function Sentence({
           if (index == correctIndex && !selected)
             return (
               <div className={"md:mb-[4rem] mb-[3rem]"} key={word.index}>
-                {"{{ _._._._ }}"}
+                {"_?_?_?_"}
               </div>
             );
           return (
