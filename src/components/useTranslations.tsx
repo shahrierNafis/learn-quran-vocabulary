@@ -8,7 +8,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
   const [preLoadedT, setPreLoadedT] =
     useState<ReturnType<typeof getVerseTranslations>>();
   const translation_ids = useMemo(
-    () => JSON.parse(localStorage.getItem("translation_ids") ?? "") ?? ["20"],
+    () => JSON.parse(localStorage.getItem("translation_ids") ?? '["20"]'),
     []
   );
   //set translations (once)
