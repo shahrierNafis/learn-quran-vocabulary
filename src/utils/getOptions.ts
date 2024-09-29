@@ -1,13 +1,14 @@
-import { Word } from "@/types/types";
-import getWord from "./getWord";
+"use server";
+import { OPTION, WordData } from "@/types/types";
 import { Tables } from "@/database.types";
 
-export default async function getOptions(wordGroup: Tables<"word_groups">) {
-  const options: Word[] = [];
-  for (const index of wordGroup.options) {
-    const word = await getWord(index as `${string}:${string}:${string}`);
-    options.push(word);
-  }
-
-  return options;
+export default async function getOptions(
+  wordGroup: Tables<"word_groups">
+): Promise<OPTION[]> {
+  const wordSegmentsArr = wordGroup.options as [WordData, WordData, WordData];
+  return wordSegmentsArr.map((wordSegments, index) => ({
+    wordSegments,
+    index: (index + 1) as 1 | 2 | 3 | 4,
+    isCorrect: false,
+  }));
 }

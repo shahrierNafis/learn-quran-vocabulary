@@ -24,9 +24,7 @@ export default function McqProgress({
   setCorrect: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   currentProgress: number | undefined;
   setCurrentProgress: React.Dispatch<React.SetStateAction<number | undefined>>;
-  setSelected: React.Dispatch<
-    React.SetStateAction<`${string}:${string}:${string}` | undefined>
-  >;
+  setSelected: React.Dispatch<React.SetStateAction<1 | 2 | 3 | 4 | undefined>>;
 }) {
   const [range, setRange] = useState<number[]>([0]);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -48,7 +46,7 @@ export default function McqProgress({
       alert(error);
     } else {
       setCorrect(true);
-      setSelected(word_group.words[0] as `${string}:${string}:${string}`);
+      setSelected(1);
       setCurrentProgress(range[0]);
     }
   }

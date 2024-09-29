@@ -38,3 +38,7 @@ next-env.d.ts
 /.seed-data/
 
 .env
+
+/quran-word-lists/*.json
+/quran-word-lists/*/*.json
+src/data.json

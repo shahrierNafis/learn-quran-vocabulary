@@ -4,14 +4,12 @@ import { ChevronRight, ChevronDown } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import getWord from "@/utils/getWord";
-import { Word } from "@/types/types";
+import { WORD } from "@/types/types";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import Link from "@/components/ui/Link";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import WordImage from "@/components/WordImage";
+
+import Word from "@/components/Word";
 export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
@@ -84,7 +82,7 @@ export const columns: ColumnDef<TableData>[] = [
     id: "word",
     header: () => <div className="text-center">word</div>,
     cell: function Cell({ row, getValue }) {
-      const [word, setWord] = useState<Word>();
+      const [word, setWord] = useState<WORD>();
       const index = getValue() as `${string}:${string}:${string}`;
       useEffect(() => {
         getWord(index).then(setWord);
@@ -101,7 +99,7 @@ export const columns: ColumnDef<TableData>[] = [
                         {row.original.name}
                       </div>
 
-                      <WordImage {...{ word }} />
+                      <Word wordSegments={word.wordSegments} />
 
                       <div className="dark:text-green-100 text-green-950 text-center text-sm">
                         {word.transliteration.text}

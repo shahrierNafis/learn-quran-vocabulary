@@ -1,18 +1,18 @@
 import { cn } from "@/lib/utils";
-import { Word } from "@/types/types";
+import { WORD } from "@/types/types";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import React from "react";
 import { Skeleton } from "./ui/skeleton";
-import WordImage from "./WordImage";
+import Word from "./Word";
 
 export default function Sentence({
   sentence,
   correctIndex,
   selected,
 }: {
-  sentence: Word[] | undefined;
+  sentence: WORD[] | undefined;
   correctIndex: number;
-  selected: `${string}:${string}:${string}` | undefined;
+  selected: 1 | 2 | 3 | 4 | undefined;
 }) {
   const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
   const [showTransliteration] = useLocalStorage<boolean>(
@@ -23,10 +23,12 @@ export default function Sentence({
     <>
       {sentence ? (
         sentence.map((word, index) => {
+          const [s, v, w] = word.index.split(":");
+
           if (word.char_type_name !== "word") return "";
           if (index == correctIndex && !selected)
             return (
-              <div className={"md:mb-[4rem] mb-[3rem]"} key={word.index}>
+              <div className={""} key={word.index}>
                 {"_?_?_?_"}
               </div>
             );
@@ -40,7 +42,7 @@ export default function Sentence({
                       "border-2 p-2 rounded border-green-500"
                   )}
                 >
-                  <WordImage {...{ word }} />
+                  <Word {...{ wordSegments: word.wordSegments }} />
                 </div>
                 <div className="">
                   {showTransliteration && (

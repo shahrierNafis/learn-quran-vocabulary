@@ -23,7 +23,7 @@ words text [] not null,
 collection_id bigint not null,
 name text null,
 description text null,
-options text [] not null,
+options jsonb [] not null,
 constraint word_groups_pkey primary key (id),
 constraint public_word_groups_collection_id_fkey foreign key (collection_id) references collections (id) on update cascade on delete cascade
 ) tablespace pg_default;

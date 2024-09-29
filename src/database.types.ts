@@ -115,7 +115,7 @@ export type Database = {
           description: string | null
           id: number
           name: string | null
-          options: string[]
+          options: Json[]
           words: string[]
         }
         Insert: {
@@ -123,7 +123,7 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string | null
-          options: string[]
+          options: Json[]
           words: string[]
         }
         Update: {
@@ -131,7 +131,7 @@ export type Database = {
           description?: string | null
           id?: number
           name?: string | null
-          options?: string[]
+          options?: Json[]
           words?: string[]
         }
         Relationships: [
@@ -158,7 +158,7 @@ export type Database = {
           description: string | null
           id: number
           name: string | null
-          options: string[]
+          options: Json[]
           words: string[]
         }[]
       }
@@ -171,7 +171,7 @@ export type Database = {
           description: string | null
           id: number
           name: string | null
-          options: string[]
+          options: Json[]
           words: string[]
         }[]
       }
@@ -257,6 +257,7 @@ export type Database = {
           owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
+          user_metadata: Json | null
           version: string | null
         }
         Insert: {
@@ -270,6 +271,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Update: {
@@ -283,6 +285,7 @@ export type Database = {
           owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
+          user_metadata?: Json | null
           version?: string | null
         }
         Relationships: [
@@ -304,6 +307,7 @@ export type Database = {
           key: string
           owner_id: string | null
           upload_signature: string
+          user_metadata: Json | null
           version: string
         }
         Insert: {
@@ -314,6 +318,7 @@ export type Database = {
           key: string
           owner_id?: string | null
           upload_signature: string
+          user_metadata?: Json | null
           version: string
         }
         Update: {
@@ -324,6 +329,7 @@ export type Database = {
           key?: string
           owner_id?: string | null
           upload_signature?: string
+          user_metadata?: Json | null
           version?: string
         }
         Relationships: [

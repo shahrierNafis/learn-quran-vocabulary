@@ -34,7 +34,7 @@ function MCQ({
 
   const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
   const [correct, setCorrect] = useState<boolean>();
-  const [selected, setSelected] = useState<`${string}:${string}:${string}`>();
+  const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
   const [intervals, setIntervals] = useState<Intervals>();
 
   const [translation_ids] = useLocalStorage<string[]>("translation_ids", [
@@ -134,15 +134,14 @@ function MCQ({
       </div>
     </>
   );
-  async function onClick(index: `${string}:${string}:${string}`) {
-    const correct = wordGroups[0].words[0] === index;
-    setCorrect(correct);
+  async function onClick(isCorrect: boolean, index: 1 | 2 | 3 | 4) {
+    setCorrect(isCorrect);
     setSelected(index);
 
     let newProgress: number;
     const word_group_id = wordGroups[0].id;
     // if correct increase progress
-    if (correct) {
+    if (isCorrect) {
       newProgress = getNextProgress(intervals!, currentProgress);
     } else {
       // else set progress to 0
