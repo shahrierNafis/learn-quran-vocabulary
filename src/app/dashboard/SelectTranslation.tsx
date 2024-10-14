@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { MultiSelect } from "@/components/MultiSelect";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 export default function SelectTranslation() {
-  const [translation_id, setTranslation_id] = useLocalStorage<string[]>(
-    "translation_ids",
-    ["20"]
+  const [translation_ids, setTranslation_ids] = usePreferenceStore(
+    useShallow((a) => [a.translation_ids, a.setTranslation_ids])
   );
+
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
+
   const [translations, setTranslations] = useState<
     {
       id: number;
@@ -30,8 +35,8 @@ export default function SelectTranslation() {
             return { label: t.name, value: t.id + "" };
           }) ?? []
         }
-        onValueChange={setTranslation_id}
-        defaultValue={translation_id}
+        onValueChange={setTranslation_ids}
+        defaultValue={translation_ids}
         placeholder="Select translations"
         variant="default"
       />

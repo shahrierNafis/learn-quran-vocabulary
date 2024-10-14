@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import { WORD } from "@/types/types";
-import { useLocalStorage } from "@uidotdev/usehooks";
-import React from "react";
+import React, { useEffect } from "react";
 import { Skeleton } from "./ui/skeleton";
 import Word from "./Word";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function Sentence({
   sentence,
@@ -14,11 +15,13 @@ export default function Sentence({
   correctIndex: number;
   selected: 1 | 2 | 3 | 4 | undefined;
 }) {
-  const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
-  const [showTransliteration] = useLocalStorage<boolean>(
-    "showTransliteration",
-    true
+  const [showTranslation, showTransliteration] = usePreferenceStore(
+    useShallow((a) => [a.showTranslation, a.showTransliteration])
   );
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
+
   return (
     <>
       {sentence ? (

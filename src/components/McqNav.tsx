@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import GotoDashboard from "./GotoDashboard";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 export default function McqNav({ leftToGo }: { leftToGo: number }) {
-  const [showTranslation, setShowTranslation] = useLocalStorage<boolean>(
-    "showTranslation",
-    true
+  const [
+    setShowTransliteration,
+    showTransliteration,
+    setShowTranslation,
+    showTranslation,
+  ] = usePreferenceStore(
+    useShallow((a) => [
+      a.setShowTransliteration,
+      a.showTransliteration,
+      a.setShowTranslation,
+      a.showTranslation,
+    ])
   );
-  const [showTransliteration, setShowTransliteration] =
-    useLocalStorage<boolean>("showTransliteration", true);
+
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
+
   return (
     <div className="flex flex-wrap items-center">
       <GotoDashboard />

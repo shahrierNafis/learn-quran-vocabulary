@@ -4,8 +4,6 @@ import getVerseWords from "@/utils/getVerseWords";
 
 import { WORD } from "@/types/types";
 
-import { useLocalStorage } from "@uidotdev/usehooks";
-
 import { cn } from "@/lib/utils";
 
 import { Skeleton } from "./ui/skeleton";
@@ -15,6 +13,8 @@ import getVerseTranslations from "@/utils/getVerseTranslations";
 import Translations from "./Translations";
 
 import Word from "./Word";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function CellComponent({
   verse_key,
@@ -26,11 +26,13 @@ export default function CellComponent({
   const [sentence, setSentence] = useState<WORD[]>();
   const [translations, setTranslations] =
     useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
-  const [showTranslation] = useLocalStorage<boolean>("showTranslation", true);
-  const [showTransliteration] = useLocalStorage<boolean>(
-    "showTransliteration",
-    true
+  const [showTranslation, showTransliteration] = usePreferenceStore(
+    useShallow((a) => [a.showTranslation, a.showTransliteration])
   );
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
+
   // set sentence
   useEffect(() => {
     getVerseWords(verse_key).then(setSentence);

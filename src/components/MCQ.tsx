@@ -7,7 +7,6 @@ import SimilarWordsTable from "./SimilarWordsTable";
 import McqNav from "./McqNav";
 import Sentence from "./Sentence";
 import McqProgress from "./McqProgress";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { createClient } from "@/utils/supabase/clients";
 import useSentence from "./useSentence";
 import useOptions from "./useOptions";
@@ -16,6 +15,8 @@ import getIntervals from "@/utils/getIntervals";
 import Options from "./Options";
 import Translations from "./Translations";
 import useTranslations from "./useTranslations";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 type Intervals = {
   [key: number]: number;
 };
@@ -37,9 +38,12 @@ function MCQ({
   const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
   const [intervals, setIntervals] = useState<Intervals>();
 
-  const [translation_ids] = useLocalStorage<string[]>("translation_ids", [
-    "20",
-  ]);
+  const [translation_ids] = usePreferenceStore(
+    useShallow((a) => [a.translation_ids])
+  );
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
   const { allOptions, preLoadedOp, setOptions } = useOptions(
     wordGroups,
     sentence

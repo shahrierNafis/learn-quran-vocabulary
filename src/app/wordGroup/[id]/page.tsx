@@ -2,14 +2,21 @@
 import GotoDashboard from "@/components/GotoDashboard";
 import SimilarWordsTable from "@/components/SimilarWordsTable";
 import { Database, Tables } from "@/database.types";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
+
 import { createClient } from "@/utils/supabase/clients";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import React, { useEffect, useState } from "react";
 
 export default function Page({ params: { id } }: { params: { id: string } }) {
-  const [translation_ids] = useLocalStorage<string[]>("translation_ids", [
-    "20",
-  ]);
+  const [translation_ids] = usePreferenceStore(
+    useShallow((a) => [a.translation_ids])
+  );
+
+  useEffect(() => {
+    usePreferenceStore.persist.rehydrate();
+  }, []);
+
   const supabase = createClient<Database>();
   const [wordGroup, setWordGroup] = useState<Tables<"word_groups">>();
   useEffect(() => {
