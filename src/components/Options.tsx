@@ -28,7 +28,8 @@ function Options({
           allOptions.map((option, mapIndex) => {
             return (
               <Button
-                variant={theme === "dark" ? "default" : "outline"}
+                variant={"outline"}
+                dir="rtl"
                 disabled={(correct || selected) && true}
                 className={cn(
                   "text-3xl h-full px-8 py-6", //

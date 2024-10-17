@@ -1,0 +1,61 @@
+import { PartOfSpeech } from "@/types/types";
+
+const relations: { [key in PartOfSpeech]: any } = {
+  N: "Noun",
+  PN: "ProperNoun",
+  PRON: "Pronoun",
+  DEM: "Demonstrative",
+  REL: "Relative",
+  ADJ: "Adjective",
+  V: "Verb",
+  P: "Preposition",
+  INTG: "Interrogative",
+  VOC: "Vocative",
+  NEG: "Negative",
+  EMPH: "Emphatic",
+  PRP: "particle of purpose",
+  IMPV: "Imperative",
+  FUT: "Future",
+  CONJ: "Conjunction",
+  DET: "Determiner",
+  INL: "Initials",
+  T: "Time",
+  LOC: "Location",
+  ACC: "Accusative",
+  COND: "Conditional",
+  SUB: "SubordinatingConjunction",
+  RES: "Restriction",
+  EXP: "Exceptive",
+  AVR: "Aversion",
+  CERT: "Certainty",
+  RET: "Retraction",
+  PREV: "Preventive",
+  ANS: "Answer",
+  INC: "Inceptive",
+  SUR: "Surprise",
+  SUP: "Supplemental",
+  EXH: "Exhortation",
+  IMPN: "ImperativeVerbalNoun",
+  EXL: "Explanation",
+  EQ: "Equalization",
+  REM: "Resumption",
+  CAUS: "Cause",
+  AMD: "Amendment",
+  PRO: "Prohibition",
+  CIRC: "Circumstantial",
+  RSLT: "Result",
+  INT: "Interpretation",
+  COM: "Comitative",
+  SUBJ: "Subject pronoun",
+  OBJ: "Object pronoun",
+  OBJ2: "possessive pronoun",
+};
+
+export default relations;
+const invertKeyValues = (obj: any) =>
+  Object.fromEntries(
+    Object.entries(obj).map((entry) => [
+      (entry[1] as string).toUpperCase(),
+      entry[0],
+    ])
+  );

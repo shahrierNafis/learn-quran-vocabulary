@@ -11,6 +11,8 @@ import {
 import SelectTranslation from "./SelectTranslation";
 import SetIntervals from "./SetIntervals";
 import UpdatePassword from "@/components/ChangePassword";
+import ChangeColours from "@/components/ui/ChangeColours";
+import ChangeFont from "@/components/ui/ChangeFont";
 
 export default function Preference() {
   return (
@@ -28,6 +30,8 @@ export default function Preference() {
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <SelectTranslation />
+          <ChangeColours />
+          <ChangeFont />
           <SetIntervals />
           <UpdatePassword />
         </DialogContent>
