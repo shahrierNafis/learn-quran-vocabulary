@@ -5,8 +5,10 @@ import { useShallow } from "zustand/react/shallow";
 
 function Translations({
   translations,
+  index,
 }: {
   translations?: Awaited<ReturnType<typeof getVerseTranslations>>;
+  index: string;
 }) {
   const [translation_ids] = usePreferenceStore(
     useShallow((a) => [a.translation_ids])
@@ -20,7 +22,7 @@ function Translations({
             .map((translation) => {
               return (
                 <>
-                  <div key={translation?.resource_id}>
+                  <div key={index + translation?.id}>
                     {translation?.text.replaceAll(/<sup.*>.*<\/sup>/g, "")}
                   </div>
                   <div className="text-gray-500 text-xs">

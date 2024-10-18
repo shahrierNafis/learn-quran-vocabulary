@@ -71,7 +71,8 @@ export default memo(
                         <div
                           className={cn(
                             "p-2",
-                            index == +verse_key.split(":")[2] - 1 &&
+                            +verse_key.split(":")[2] &&
+                              index == +verse_key.split(":")[2] - 1 &&
                               "border-2 p-2 rounded border-green-500"
                           )}
                         >
@@ -100,7 +101,9 @@ export default memo(
               )}
             </div>
             {/* TRANSLATION */}
-            <Translations {...{ translations }}></Translations>
+            <Translations
+              {...{ translations, index: verse_key }}
+            ></Translations>
           </div>
         </>
       </>

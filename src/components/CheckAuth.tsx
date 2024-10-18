@@ -9,7 +9,12 @@ export default function CheckAuth() {
   const pathname = usePathname();
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user }, error }) => {
-      if (error && !user && !["/"].includes(pathname)) {
+      if (
+        error &&
+        !user &&
+        !(pathname == "/") &&
+        !pathname.startsWith("/quran")
+      ) {
         alert(error.message);
         window.location.href = "/";
       }

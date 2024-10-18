@@ -90,7 +90,9 @@ function MCQ({
             />
           </div>
           {/* TRANSLATION */}{" "}
-          <Translations {...{ translations }}></Translations>
+          <Translations
+            {...{ translations, index: wordGroups[0].words[0] }}
+          ></Translations>
           <div>
             {/* NEXT BTN */}
             {(correct || selected) && (
