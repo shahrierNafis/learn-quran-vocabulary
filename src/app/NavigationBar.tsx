@@ -4,10 +4,10 @@ import Link from "@/components/ui/Link";
 import React from "react";
 import Preference from "./Preference";
 import { usePathname } from "next/navigation";
+import ReadQuranBtn from "./ReadQuranBtn";
 
 export default function NavigationBar() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <>
@@ -29,16 +29,7 @@ export default function NavigationBar() {
         <div>
           <Preference />
         </div>
-        <div>
-          <Link href="/quran/1" disabled={pathname.startsWith("/quran")}>
-            <Button
-              disabled={pathname.startsWith("/quran")}
-              variant={"outline"}
-            >
-              Read Quran
-            </Button>
-          </Link>
-        </div>
+        <ReadQuranBtn />
       </div>
     </>
   );
