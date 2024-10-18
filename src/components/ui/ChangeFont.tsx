@@ -10,48 +10,24 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { fontNames } from "@/utils/fontNames";
-import {
-  Noto_Sans_Arabic,
-  Noto_Kufi_Arabic,
-  Noto_Naskh_Arabic,
-  Amiri_Quran,
-} from "next/font/google";
+
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Button } from "./button";
-const sans = Noto_Sans_Arabic({
-  weight: "400",
-  subsets: ["arabic"],
-});
-const kufi = Noto_Kufi_Arabic({
-  weight: "400",
-  subsets: ["arabic"],
-});
-const naskh = Noto_Naskh_Arabic({
-  weight: "400",
-  subsets: ["arabic"],
-});
-
-const amiri_quran = Amiri_Quran({
-  weight: "400",
-  subsets: ["arabic"],
-});
-const googleFonts = {
-  Noto_Sans_Arabic: sans,
-  Noto_Kufi_Arabic: kufi,
-  Noto_Naskh_Arabic: naskh,
-  Amiri_Quran: amiri_quran,
-};
+import useFont from "@/utils/useFont";
 
 export default function ChangeFont() {
-  const [font, setFont] = usePreferenceStore(
+  const [fontName, setFont] = usePreferenceStore(
     useShallow((a) => [a.font, a.setFont])
   );
+  const [font, , googleFont] = useFont();
   return (
     <>
       <Dialog>
-        <DialogTrigger>
-          <Button>Change Font</Button>
+        <DialogTrigger className="flex">
+          <Button variant={"outline"} className="flex-grow">
+            Change Font
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -63,14 +39,14 @@ export default function ChangeFont() {
                     <>
                       <div className="flex items-center gap-2">
                         <Checkbox
-                          checked={f == font}
+                          checked={f == fontName}
                           onClick={() => setFont(f)}
                         />{" "}
                         <div className="text-xl">{f}</div>
                       </div>
                       <div
                         className={
-                          googleFonts[f].className +
+                          googleFont[f]?.className +
                           " " +
                           "text-2xl md:text-4xl py-8 ml-4"
                         }
