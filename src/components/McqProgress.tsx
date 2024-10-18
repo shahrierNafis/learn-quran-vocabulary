@@ -55,10 +55,7 @@ export default function McqProgress({
       <Dialog>
         <DialogTrigger asChild>
           <div>
-            <Button
-              className="m-2 float-right font-bold text-gray-500"
-              variant={"outline"}
-            >
+            <Button className="font-bold text-gray-500" variant={"outline"}>
               progress: {currentProgress ?? 0}%
             </Button>
           </div>

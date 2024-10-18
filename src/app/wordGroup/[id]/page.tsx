@@ -35,13 +35,13 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
-      <GotoDashboard />
-
       {wordGroup && (
         <>
           <div className="p-4">
             <div className="text-center text-3xl">{wordGroup.name}</div>
-            <div>{wordGroup.description}</div>
+            <div className={`${!wordGroup.name && "text-center text-3xl"}`}>
+              {wordGroup.description}
+            </div>
             <SimilarWordsTable
               {...{
                 wordGroup,

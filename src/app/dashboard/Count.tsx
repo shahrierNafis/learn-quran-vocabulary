@@ -35,9 +35,7 @@ export default function Count() {
   return (
     <>
       <div className="flex flex-col w-full flex-grow basis-0 justify-center items-center">
-        <div className=""></div>
-        <div>{count}</div>
-        <div>words learned</div>
+        <div>{count} words learned</div>
         <div>today</div>
       </div>
     </>

@@ -16,9 +16,10 @@ export default function Review() {
     getToReview().then(setToReview);
   }, []);
   return (
-    <div className="flex flex-col p-2 border basis-0 flex-grow justify-center items-center">
-      <div className="text-nowrap">Ready for Review</div>
-      <div className="text-center">{toReview && toReview.length}</div>
+    <div className="flex flex-col p-2 basis-0 flex-grow justify-center items-center">
+      <div className="text-nowrap">
+        Ready for Review {toReview && toReview.length}
+      </div>
       <ReviewBtn />
       <Popover>
         <PopoverTrigger>

@@ -38,7 +38,6 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
 
   return (
     <>
-      <GotoDashboard />
       {wordGroups && name ? (
         <>
           <div className="max-w-screen-md mx-auto">

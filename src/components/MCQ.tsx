@@ -61,19 +61,23 @@ function MCQ({
   }
   return (
     <>
-      {/* Nav */}
-      <McqNav leftToGo={correct ? wordGroups.length - 1 : wordGroups.length} />
-      {/* Progress */}
-      <McqProgress
-        {...{
-          word_group: wordGroups[0],
-          setCorrect,
-          setSelected,
-          currentProgress,
-          setCurrentProgress,
-        }}
-      />
-      <div className="grid place-items-center grow">
+      <div className="flex mx-auto">
+        {/* Nav */}
+        <Button variant={"outline"} disabled>
+          {correct ? wordGroups.length - 1 : wordGroups.length} more to go ⇒
+        </Button>
+        {/* Progress */}
+        <McqProgress
+          {...{
+            word_group: wordGroups[0],
+            setCorrect,
+            setSelected,
+            currentProgress,
+            setCurrentProgress,
+          }}
+        />
+      </div>
+      <div className="mx-auto my-4 grow">
         <div className="flex flex-col m-4 gap-4 justify-center items-center my-auto">
           <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
           {/* ARABIC */}
@@ -125,7 +129,9 @@ function MCQ({
         {(correct || selected) && showSimilarWords && (
           <>
             <div className="text-center text-3xl">{wordGroups[0].name}</div>
-            <div>{wordGroups[0].description}</div>
+            <div className={`${!wordGroups[0].name && "text-center text-3xl"}`}>
+              {wordGroups[0].description}
+            </div>
             <SimilarWordsTable
               {...{
                 wordGroup: {

@@ -5,8 +5,9 @@ import CheckAuth from "@/components/CheckAuth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { cn } from "@/utils/cn";
+import NavigationBar from "./NavigationBar";
 
-const inter = Comfortaa({ subsets: ["latin"] });
+const comfortaa = Comfortaa({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Learn Quran/Arabic",
@@ -29,7 +30,7 @@ export default function RootLayout({
           content="Using Cloze Testing And Spaced Repetition To Make Learning Arabic Faster And More Effective"
         />
       </head>
-      <body className={cn(inter.className)}>
+      <body className={comfortaa.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -37,6 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CheckAuth />
+          <NavigationBar />
           {children}
           <ModeToggle className="float-right m-2" />
         </ThemeProvider>
