@@ -11,7 +11,7 @@ export default function NavigationBar() {
 
   return (
     <>
-      <div className="flex mx-auto items-center justify-center">
+      <div className="flex mx-auto items-center justify-center flex-wrap">
         <div className="">
           <Link href="/" disabled={pathname == "/"}>
             <Button disabled={pathname == "/"} variant={"outline"}>
@@ -26,9 +26,8 @@ export default function NavigationBar() {
             </Button>
           </Link>
         </div>
-        <div>
-          <Preference />
-        </div>
+        <Preference />
+
         <ReadQuranBtn />
       </div>
     </>

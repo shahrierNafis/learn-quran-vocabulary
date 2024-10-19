@@ -52,9 +52,11 @@ export default function Preference() {
     <>
       <Dialog>
         <DialogTrigger className="flex">
-          <Button variant={"outline"}>
-            <Settings />
-            Preference
+          <Button asChild variant={"outline"}>
+            <div>
+              <Settings />
+              Preference
+            </div>
           </Button>
         </DialogTrigger>
         <DialogContent>

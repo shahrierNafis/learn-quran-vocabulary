@@ -2,17 +2,13 @@ import React from "react";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Link from "@/components/ui/Link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -24,23 +20,18 @@ export default function ReadQuranBtn() {
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <Button variant={"outline"} className="p-0 shadow-sm">
-              <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+            <Button asChild variant={"outline"} className="p-0 shadow-sm">
+              <NavigationMenuTrigger className="px-6">
                 <div>
-                  <Link
-                    href="/quran/surah/1"
-                    disabled={pathname.startsWith("/quran")}
-                  >
-                    {pathname.startsWith("/quran/surah") ? (
-                      <>
-                        <div>{surahArr[+num - 1]}</div>
-                      </>
-                    ) : pathname.startsWith("/quran/juz") ? (
-                      <>juz {num}</>
-                    ) : (
-                      "Read Quran"
-                    )}
-                  </Link>
+                  {pathname.startsWith("/quran/surah") ? (
+                    <>
+                      <div>{surahArr[+num - 1]}</div>
+                    </>
+                  ) : pathname.startsWith("/quran/juz") ? (
+                    <>juz {num}</>
+                  ) : (
+                    "Read Quran"
+                  )}
                 </div>
               </NavigationMenuTrigger>
             </Button>
@@ -88,7 +79,7 @@ export default function ReadQuranBtn() {
                         <>
                           <NavigationMenuLink asChild>
                             <Link
-                              disabled={pathname == "/quran/surah/" + (num + 1)}
+                              disabled={pathname == "/quran/juz/" + (num + 1)}
                               href={"/quran/juz/" + (num + 1)}
                             >
                               <Button
