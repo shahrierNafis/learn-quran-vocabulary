@@ -21,7 +21,7 @@ export default memo(
     verse_key,
     translation_ids,
   }: {
-    verse_key: `${string}:${string}${string}`;
+    verse_key: string;
     translation_ids: string[];
   }) {
     const [sentence, setSentence] = useState<WORD[]>();
@@ -37,7 +37,9 @@ export default memo(
 
     // set sentence
     useEffect(() => {
-      getVerseWords(verse_key).then(setSentence);
+      getVerseWords(verse_key as `${string}:${string}${string}`).then(
+        setSentence
+      );
 
       return () => {};
     }, [verse_key]);

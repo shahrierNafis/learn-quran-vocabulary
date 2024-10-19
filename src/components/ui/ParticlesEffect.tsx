@@ -9,7 +9,6 @@ import {
 // import { loadAll } from "@tsparticles/all"; // if you are going to use `loadAll`, install the "@tsparticles/all" package too.
 // import { loadFull } from "tsparticles"; // if you are going to use `loadFull`, install the "tsparticles" package too.
 import { loadSlim } from "@tsparticles/slim"; // if you are going to use `loadSlim`, install the "@tsparticles/slim" package too.
-import LoadingScreen from "./LoadingScreen";
 // import { loadBasic } from "@tsparticles/basic"; // if you are going to use `loadBasic`, install the "@tsparticles/basic" package too.
 
 export default function ParticlesEffect() {
@@ -30,9 +29,7 @@ export default function ParticlesEffect() {
     });
   }, []);
 
-  const particlesLoaded = async (container?: Container): Promise<void> => {
-    console.log(container);
-  };
+  const particlesLoaded = async (container?: Container): Promise<void> => {};
 
   const options: ISourceOptions = useMemo(
     () => ({
@@ -116,9 +113,5 @@ export default function ParticlesEffect() {
     );
   }
 
-  return (
-    <>
-      <LoadingScreen />
-    </>
-  );
+  return <>{/* <LoadingScreen /> */}</>;
 }

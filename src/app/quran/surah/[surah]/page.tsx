@@ -23,7 +23,7 @@ import getSurahData from "./getSurahData";
 import CellComponent from "@/components/CellComponent";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
-import Header from "./Header";
+import Header from "../../Header";
 
 export default function Page({
   params: { surah },
