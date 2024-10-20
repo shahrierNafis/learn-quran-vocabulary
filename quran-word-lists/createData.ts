@@ -89,14 +89,7 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
           }
         }
       }
-      if (PGN?.length === 3) {
-        person = +PGN[0] as 1 | 2 | 3;
-        gender = PGN[1] as "M" | "F";
-        number = PGN[2] as "S" | "D" | "P";
-      } else if (PGN) {
-        person = +PGN[0] as 1 | 2 | 3;
-        number = PGN[1] as "S" | "D" | "P";
-      }
+
       //
     }
     // is STEM
@@ -107,6 +100,19 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
         arPartOfSpeech = "ism";
       } else {
         arPartOfSpeech = "ḥarf";
+      }
+    }
+    if (partOfSpeech == "V") {
+      PGN = line.split("|")[line.split("|").length - 1];
+    }
+    if (["V", "SUBJ", "OBJ", "OBJ2"].includes(partOfSpeech)) {
+      if (PGN?.length === 3) {
+        person = +PGN[0] as 1 | 2 | 3;
+        gender = PGN[1] as "M" | "F";
+        number = PGN[2] as "S" | "D" | "P";
+      } else if (PGN) {
+        person = +PGN[0] as 1 | 2 | 3;
+        number = PGN[1] as "S" | "D" | "P";
       }
     }
     word.push({
@@ -290,11 +296,11 @@ function getDerivation(
 }
 function getState(line: string): "DEF" | "INDEF" | undefined {
   for (const segment of line.split(/[	 |]/)) {
-    if (segment.includes("DEF")) {
-      return "DEF";
-    }
     if (segment.includes("INDEF")) {
       return "INDEF";
+    }
+    if (isIsm(line)) {
+      return "DEF";
     }
   }
 }

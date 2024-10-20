@@ -1,11 +1,11 @@
 import { Tables } from "@/database.types";
-import { Word } from "@/types/types";
+import { WORD } from "@/types/types";
 import getVerseWords from "@/utils/getVerseWords";
 import { useState, useEffect } from "react";
 
 export default function useSentence(wordGroups: Tables<"word_groups">[]) {
-  const [sentence, setSentence] = useState<Word[]>();
-  const [preloadedSentence, setPreloadedSentence] = useState<Promise<Word[]>>();
+  const [sentence, setSentence] = useState<WORD[]>();
+  const [preloadedSentence, setPreloadedSentence] = useState<Promise<WORD[]>>();
   // set sentence (once)
   useEffect(() => {
     !sentence &&

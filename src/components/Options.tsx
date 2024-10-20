@@ -45,7 +45,7 @@ function Options({
                 key={currentWord + option.index}
                 onClick={() => onClick(option.isCorrect, option.index)}
               >
-                <Word {...{ wordSegments: option.wordSegments }} />
+                <Word {...{ wordSegments: option.wordSegments }} noWordInfo />
               </Button>
             );
           })
