@@ -3,8 +3,7 @@ import { Comfortaa } from "next/font/google";
 import "./globals.css";
 import CheckAuth from "@/components/CheckAuth";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ModeToggle } from "@/components/ui/ModeToggle";
-import { cn } from "@/utils/cn";
+
 import NavigationBar from "./NavigationBar";
 
 const comfortaa = Comfortaa({ subsets: ["latin"] });
@@ -40,7 +39,6 @@ export default function RootLayout({
           <CheckAuth />
           <NavigationBar />
           {children}
-          <ModeToggle className="float-right m-2" />
         </ThemeProvider>
       </body>
     </html>
