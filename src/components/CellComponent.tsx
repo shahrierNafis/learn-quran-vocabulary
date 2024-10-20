@@ -78,7 +78,9 @@ export default memo(
                               "border-2 p-2 rounded border-green-500"
                           )}
                         >
-                          <Word wordSegments={word.wordSegments} />
+                          <Word
+                            {...{ wordSegments: word.wordSegments, word }}
+                          />
                         </div>
                         <div className="">
                           {showTransliteration && (
