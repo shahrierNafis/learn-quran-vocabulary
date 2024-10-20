@@ -1,13 +1,23 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Preference from "./Preference";
 import { usePathname } from "next/navigation";
 import ReadQuranBtn from "./ReadQuranBtn";
+import { createClient } from "@/utils/supabase/clients";
 
 export default function NavigationBar() {
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const supabase = createClient();
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+      if (user) setIsLoggedIn(true);
+    });
+
+    return () => {};
+  }, [supabase.auth]);
 
   return (
     <>
@@ -19,15 +29,16 @@ export default function NavigationBar() {
             </Button>
           </Link>
         </div>
-        <div>
-          <Link href="/dashboard" disabled={pathname == "/dashboard"}>
-            <Button disabled={pathname == "/dashboard"} variant={"outline"}>
-              Dashboard
-            </Button>
-          </Link>
-        </div>
+        {isLoggedIn && (
+          <div>
+            <Link href="/dashboard" disabled={pathname == "/dashboard"}>
+              <Button disabled={pathname == "/dashboard"} variant={"outline"}>
+                Dashboard
+              </Button>
+            </Link>
+          </div>
+        )}
         <Preference />
-
         <ReadQuranBtn />
       </div>
     </>
