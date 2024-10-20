@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";
+import { ModeToggle } from "@/components/ui/ModeToggle";
 export default function Preference() {
   const supabase = createClient();
   const [
@@ -82,6 +83,7 @@ export default function Preference() {
               <Switch checked={showTranslation} />
               Show Translation
             </Button>
+            <ModeToggle />
 
             {isLoggedIn && <SetIntervals />}
             <UpdatePassword />
