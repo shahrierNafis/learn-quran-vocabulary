@@ -21,7 +21,7 @@ export default function McqProgress({
   setSelected,
 }: {
   word_group: Tables<"word_groups">;
-  setCorrect: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setCorrect: React.Dispatch<React.SetStateAction<boolean>>;
   currentProgress: number | undefined;
   setCurrentProgress: React.Dispatch<React.SetStateAction<number | undefined>>;
   setSelected: React.Dispatch<React.SetStateAction<1 | 2 | 3 | 4 | undefined>>;
@@ -46,7 +46,7 @@ export default function McqProgress({
       alert(error);
     } else {
       setCorrect(true);
-      setSelected(1);
+      // setSelected(1);
       setCurrentProgress(range[0]);
     }
   }
