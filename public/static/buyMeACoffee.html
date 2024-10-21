@@ -1,0 +1,28 @@
+<script async src="https://atlos.io/packages/app/atlos.js"></script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  window.orderAmount = urlParams.get("orderAmount") ?? 5;
+  window.recurMonthly = urlParams.get("recurMonthly") == "";
+</script>
+<script>
+  function whenAvailable(name, callback) {
+    var interval = 10; // ms
+    window.setTimeout(function () {
+      if (window[name]) {
+        callback(window[name]);
+      } else {
+        whenAvailable(name, callback);
+      }
+    }, interval);
+  }
+  whenAvailable("atlos", function (t) {
+    atlos.Pay({
+      merchantId: `3RCAH06HUL`,
+      orderAmount: window.orderAmount,
+      recurrence: window.recurMonthly
+        ? atlos.RECURRENCE_MONTH
+        : atlos.RECURRENCE_NONE,
+      theme: `light`,
+    });
+  });
+</script>

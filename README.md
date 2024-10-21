@@ -1,4 +1,7 @@
-Learn Quranic Arabic Faster And More Effectively Using Cloze Testing And Spaced Repetition
+<div>
+<a href="https://learn-quranic-arabic.vercel.app/buyMeACoffee" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+</div>
+Learn Quranic Arabic Faster And More Effectively Using Cloze Testing And Spaced Repetition with Morphological Features
 
 clone of Cloze master with Quran verses
 
@@ -38,3 +41,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## supabase
+
+```bash
+npx supabase start
+# or
+bunx supabase start
+```
+
+## createQuranic-corpus-apiData
+
+quran-word-lists/createQuranic-corpus-apiData.ts relies on [quranic-corpus-api server](https://github.com/kaisdukes/quranic-corpus-api)
