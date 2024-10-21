@@ -10,10 +10,12 @@ export default function Sentence({
   sentence,
   correctIndex,
   selected,
+  correct,
 }: {
   sentence: WORD[] | undefined;
   correctIndex: number;
   selected: 1 | 2 | 3 | 4 | undefined;
+  correct: boolean;
 }) {
   const [showTranslation, showTransliteration] = usePreferenceStore(
     useShallow((a) => [a.showTranslation, a.showTransliteration])
@@ -29,7 +31,7 @@ export default function Sentence({
           const [s, v, w] = word.index.split(":");
 
           if (word.char_type_name !== "word") return "";
-          if (index == correctIndex && !selected)
+          if (index == correctIndex && !selected && !correct)
             return (
               <div className={""} key={word.index}>
                 {"_?_?_?_"}
