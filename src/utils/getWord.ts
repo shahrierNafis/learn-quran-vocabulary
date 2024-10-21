@@ -1,5 +1,5 @@
 import { WORD } from "@/types/types";
-import getWordData from "./getWordData";
+import { cache } from "react";
 
 async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
   const [surahI, ayahI, wordI] = index.split(":");
@@ -11,7 +11,11 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
         )
       ).json()
     ).verse;
-    const wordSegments = await getWordData(+surahI, +ayahI, +wordI);
+    const wordSegments = await (
+      await fetch(`/api/get/data/${surahI}/${ayahI}/${wordI}`, {
+        cache: "force-cache",
+      })
+    ).json();
 
     const {
       text_imlaei,
@@ -36,4 +40,4 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
     return getWord(index);
   }
 }
-export default getWord;
+export default cache(getWord);

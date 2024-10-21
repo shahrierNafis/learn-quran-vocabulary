@@ -11,10 +11,6 @@ type SegmentData = {
 };
 const data: SegmentData = require("./../data.json");
 
-export default cache(async function getWordData(
-  surah: number,
-  verse: number,
-  word: number
-) {
-  return data[surah][verse][word];
+export default cache(async function getWordData(surah: number, verse: number) {
+  return data[surah][verse];
 });
