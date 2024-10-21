@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function LoadingScreen() {
   return (
-    <div className="w-full h-full flex items-center justify-center fixed top-0 left-0 backdrop-blur-3xl">
+    <div className="w-full h-full flex items-center justify-center fixed top-0 left-0 backdrop-blur-3xl z-50">
       <LoadingText />
     </div>
   );
