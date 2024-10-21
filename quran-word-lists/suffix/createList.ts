@@ -83,15 +83,15 @@ console.log(Object.keys(list), sortedList.length);
 
 for (const i in sortedList) {
   const [s, v, w] = sortedList[i].words[0]?.position.split(":");
-  const word = await getWordData(+s, +v, +w);
+  const word = data[+s][+v][+w];
   const extraSegments: WordSegment[] = Array.from(
     sortedList[i].spellings ?? []
   ).map((ara) => {
     return {
       arabic: ara,
-      arPartOfSpeech: word.arPartOfSpeech,
-      partOfSpeech: word.partOfSpeech,
-      position: word.position,
+      arPartOfSpeech: word[+sortedList[i].words[0]?.segIndex].arPartOfSpeech,
+      partOfSpeech: word[+sortedList[i].words[0]?.segIndex].partOfSpeech,
+      position: word[+sortedList[i].words[0]?.segIndex].position,
     };
   });
 

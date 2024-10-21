@@ -93,16 +93,14 @@ for (const s in data) {
             });
             prefixGroup.name = prefix;
             prefixGroup.description = description;
-            prefixGroup.getOptions = async (
+            prefixGroup.getOptions = async function (
               position: string,
               segIndex: string,
               extraSegments?: WordSegment[]
-            ) => {
-              return await getFillPgnOptions(prefix, word, +segIndex);
+            ) {
+              return await getFillPgnOptions(prefix, position, +segIndex);
             };
-            prefixGroup.options =
-              prefixGroup.options ??
-              (await getFillPgnOptions(prefix, word, +segIndex));
+
             list[prefix] = prefixGroup;
           }
         }
@@ -120,9 +118,18 @@ async function propGetHarfOptions(
 const sortedList = sortList(list);
 
 for (const i in sortedList) {
+  const [s, v, w] = sortedList[i].words[0].position.split(":");
+  const word = data[s][v][w];
+  const extraSegments: WordSegment[] = word.filter((seg) => {
+    if (seg.arPartOfSpeech == "prefix") return seg;
+  });
+  if (sortedList[i].name == "3rd person") {
+    console.log();
+  }
   sortedList[i].options = await sortedList[i].getOptions(
     sortedList[i].words[0]?.position,
-    sortedList[i].words[0]?.segIndex + ""
+    sortedList[i].words[0]?.segIndex + "",
+    extraSegments
   );
   console.log(i + "/" + sortedList.length);
 }
