@@ -56,6 +56,7 @@ export type OPTION = {
   wordSegments: WordData;
   isCorrect: boolean;
   index: 1 | 2 | 3 | 4;
+  wordGroupId: number;
 };
 export type PrefixPOS =
   | "DET"

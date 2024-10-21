@@ -10,5 +10,6 @@ export default async function getOptions(
     wordSegments,
     index: (index + 1) as 1 | 2 | 3 | 4,
     isCorrect: false,
+    wordGroupId: wordGroup.id,
   }));
 }
