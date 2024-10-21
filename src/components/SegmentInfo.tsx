@@ -19,7 +19,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
         <div className="text-xl shadow">
           <div
             dir="rtl"
-            className="text-2xl"
+            className={cn("text-2xl", font?.className)}
             style={{
               color: (colours[segment.partOfSpeech] ?? colours.others)[
                 theme == "dark" ? 1 : 0
@@ -53,7 +53,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
                       <>
                         <div className="grid grid-cols-2 items-center   align-middle">
                           <div> number:</div>
-                          <div className={cn(font?.className, "inline")}>
+                          <div className={cn("inline")}>
                             {segment.number == "D"
                               ? "Dual"
                               : segment.number == "P"
@@ -81,7 +81,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
                       <>
                         <div className="grid grid-cols-2 items-center   align-middle">
                           <div> mood:</div>
-                          <div className={cn(font?.className, "inline")}>
+                          <div className={cn("inline")}>
                             {segment.mood == "IND"
                               ? "Indicative"
                               : segment.mood == "JUS"
@@ -102,7 +102,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
                       <>
                         <div className="grid grid-cols-2 items-center   align-middle">
                           <div> {property}:</div>
-                          <div className={cn(font?.className, "inline")}>
+                          <div className={cn("inline")}>
                             {names[segment[property]] ?? segment[property]}
                           </div>
                         </div>
