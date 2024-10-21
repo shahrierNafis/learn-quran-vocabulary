@@ -1,16 +1,22 @@
-import { COLOR, WordData } from "../../src/types/types";
-import getWordData from "../../src/utils/getWordData";
+import { WordData } from "../../src/types/types";
 const b2a = require("buckwalter-transliteration")("qac2utf");
 const a2b = require("buckwalter-transliteration")("utf2qac");
-
+type Data = {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: WordData;
+    };
+  };
+};
+const data: Data = require("./../data.json");
 export type FillPgn = "1S" | "1P" | "2nd person" | "3FS" | "3rd person";
 export default async function getFillPgnOptions(
   prefix: FillPgn,
-  wordData: WordData,
+  position: string,
   segIndex: number
 ) {
-  const [s, v, w] = wordData[0].position.split(":");
-  const segments: WordData = await getWordData(+s, +v, +w);
+  const [s, v, w] = position.split(":");
+  const segments: WordData = data[+s][+v][+w];
   const options: WordData[] = [];
   let prefixes: string[] = [];
   switch (prefix) {
@@ -39,6 +45,9 @@ export default async function getFillPgnOptions(
     newSegments[segIndex].arabic = b2a(
       p + a2b(newSegments[segIndex].arabic.slice(1))
     );
+    if (newSegments.length != segments.length) {
+      throw new Error();
+    }
     options.push(newSegments);
   });
   return options;

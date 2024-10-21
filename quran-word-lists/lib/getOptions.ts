@@ -1,5 +1,4 @@
 import { Requirements, WordData, WordSegment } from "../../src/types/types";
-import getWordData from "../../src/utils/getWordData";
 type Data = {
   [key: string]: {
     [key: string]: {
@@ -16,8 +15,8 @@ export default async function getOptions(
   extraSegments?: WordSegment[]
 ): Promise<WordData[]> {
   const Segments: WordSegment[] = [];
-  const [s, w, v] = position.split(":");
-  const wordData = await getWordData(+s, +w, +v);
+  const [s, v, w] = position.split(":");
+  const wordData = data[+s][+v][+w];
   const shuffledWordData = Object.values(
     shuffleObjectProperties(flattenDataObject(data))
   ) as WordData[];
@@ -57,6 +56,9 @@ export default async function getOptions(
   return Segments.map((seg) => {
     const newWordData = JSON.parse(JSON.stringify(wordData));
     newWordData[+segIndex] = seg;
+    if (wordData.length != newWordData.length) {
+      throw new Error();
+    }
     return newWordData;
   });
 }
