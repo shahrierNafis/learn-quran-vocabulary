@@ -11,9 +11,13 @@ const bt = require("buckwalter-transliteration")("qac2utf");
 let index = 0;
 let prevPosition: string;
 const data: { [key: string]: WordData } = {};
-const corpusAPIdata: {
-  [key: string]: { [key: string]: { [key: string]: CorpusApiWord } };
-} = require("./corpusAPIdata.json");
+const pronounData: {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: { [key: string]: "subj" | "obj" | "obj2" };
+    };
+  };
+} = require("./pronounData.json");
 // const translation = fs
 //   .readFileSync("./word-by-word.txt")
 //   .toString()
@@ -73,16 +77,10 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
         } else if (segment.startsWith("PRON:")) {
           PGN = segment.substring(5);
           const [s, v, w] = position.split(":");
-          if (
-            corpusAPIdata[s][v][w].token.segments[+segmentIndex - 1]
-              .pronounType === "obj2"
-          ) {
+          if (pronounData[s][v][w][+segmentIndex - 1] === "obj2") {
             partOfSpeech = "OBJ2";
           }
-          if (
-            corpusAPIdata[s][v][w].token.segments[+segmentIndex - 1]
-              .pronounType === "obj"
-          ) {
+          if (pronounData[s][v][w][+segmentIndex - 1] === "obj") {
             partOfSpeech = "OBJ";
           } else {
             partOfSpeech = "SUBJ";
