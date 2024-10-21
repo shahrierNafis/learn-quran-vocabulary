@@ -101,7 +101,11 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
       }
     }
     if (partOfSpeech == "V") {
-      PGN = line.split("|")[line.split("|").length - 1];
+      line.split("|").forEach((lineSeg) => {
+        if (["1", "2", "3"].includes(lineSeg[0])) {
+          PGN = lineSeg;
+        }
+      });
     }
     if (["V", "SUBJ", "OBJ", "OBJ2"].includes(partOfSpeech)) {
       if (PGN?.length === 3) {
