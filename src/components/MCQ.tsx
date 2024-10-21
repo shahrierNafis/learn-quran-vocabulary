@@ -4,7 +4,6 @@ import { Database, Tables } from "@/database.types";
 import _ from "lodash";
 import LoadingScreen from "./ui/LoadingScreen";
 import SimilarWordsTable from "./SimilarWordsTable";
-import McqNav from "./McqNav";
 import Sentence from "./Sentence";
 import McqProgress from "./McqProgress";
 import { createClient } from "@/utils/supabase/clients";
@@ -34,7 +33,7 @@ function MCQ({
     useTranslations(wordGroups);
 
   const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
-  const [correct, setCorrect] = useState<boolean>();
+  const [correct, setCorrect] = useState<boolean>(false);
   const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
   const [intervals, setIntervals] = useState<Intervals>();
 
@@ -89,6 +88,7 @@ function MCQ({
               {...{
                 selected,
                 sentence,
+                correct,
                 correctIndex: +wordGroups[0].words[0].split(":")[2] - 1,
               }}
             />
@@ -168,7 +168,7 @@ function MCQ({
   }
   async function nextClick() {
     callback(correct ?? false);
-    setCorrect(undefined);
+    setCorrect(false);
     setSelected(undefined);
     setShowSimilarWords(false);
     setSentence(await preloadedSentence);
