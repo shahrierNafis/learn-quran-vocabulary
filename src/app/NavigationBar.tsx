@@ -6,6 +6,7 @@ import Preference from "./Preference";
 import { usePathname } from "next/navigation";
 import ReadQuranBtn from "./ReadQuranBtn";
 import { createClient } from "@/utils/supabase/clients";
+import BuyMeACoffeeDialog from "./BuyMeACoffeeDialog";
 
 export default function NavigationBar() {
   const pathname = usePathname();
@@ -40,6 +41,7 @@ export default function NavigationBar() {
         )}
         <Preference />
         <ReadQuranBtn />
+        <BuyMeACoffeeDialog />
       </div>
     </>
   );
