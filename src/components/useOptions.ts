@@ -17,11 +17,12 @@ export default function useOptions(
   // set allOptions
   useEffect(() => {
     (async () => {
-      if (sentence && options?.every((el) => el)) {
+      if (sentence && options && options[0].wordGroupId == wordGroups[0].id) {
         const option: OPTION = {
           index: 4,
           isCorrect: true,
           wordSegments: await cache(getWordData)(+s, +v, +w),
+          wordGroupId: wordGroups[0].id,
         };
         const shuffled = _.shuffle([...options, option]);
         setAllOptions(shuffled);
@@ -42,10 +43,9 @@ export default function useOptions(
   //set PreLoaded Options
   useEffect(() => {
     if (wordGroups.length > 1) {
-      const op = getOptions(wordGroups[1]);
-      setPreLoadedOp(op);
+      setPreLoadedOp(getOptions(wordGroups[1]));
     }
     return () => {};
-  }, [options, wordGroups]);
+  }, [wordGroups]);
   return { allOptions, preLoadedOp, setOptions };
 }
