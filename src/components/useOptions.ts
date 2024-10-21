@@ -3,7 +3,7 @@ import { OPTION, WORD } from "@/types/types";
 import getOptions from "@/utils/getOptions";
 import getWordData from "@/utils/getWordData";
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { cache, useEffect, useState } from "react";
 
 export default function useOptions(
   wordGroups: Tables<"word_groups">[],
@@ -21,7 +21,7 @@ export default function useOptions(
         const option: OPTION = {
           index: 4,
           isCorrect: true,
-          wordSegments: await getWordData(+s, +v, +w),
+          wordSegments: await cache(getWordData)(+s, +v, +w),
         };
         const shuffled = _.shuffle([...options, option]);
         setAllOptions(shuffled);
