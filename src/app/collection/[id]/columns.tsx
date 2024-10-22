@@ -98,9 +98,9 @@ export const columns: ColumnDef<TableData>[] = [
                       <div className="text-center p-2 m-2 dark:text-red-100 text-red-950 text-sm">
                         {row.original.name}
                       </div>
-
-                      <Word wordSegments={word.wordSegments} />
-
+                      <div dir="rtl" className="text-3xl text-center">
+                        <Word wordSegments={word.wordSegments} noWordInfo />
+                      </div>
                       <div className="dark:text-green-100 text-green-950 text-center text-sm">
                         {word.transliteration.text}
                       </div>
