@@ -11,6 +11,7 @@ export default function Collections() {
     supabase
       .from("collections")
       .select("*")
+      .order("id", { ascending: true })
       .eq("is_default", true)
       .then(({ data, error }) => {
         if (error) {
