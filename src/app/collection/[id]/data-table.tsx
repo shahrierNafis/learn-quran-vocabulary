@@ -60,7 +60,7 @@ export function DataTable<TValue>({
           description: originalRow.description,
           id: originalRow.id,
           words: [word],
-          objective: originalRow.objective,
+          options: originalRow.options,
         };
       });
     },
