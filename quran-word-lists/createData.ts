@@ -10,7 +10,13 @@ import { PrefixPOS, prefixPOS } from "./preffixPOS";
 const bt = require("buckwalter-transliteration")("qac2utf");
 let index = 0;
 let prevPosition: string;
-const data: { [key: string]: WordData } = {};
+const data: {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: WordData;
+    };
+  };
+} = {};
 const pronounData: {
   [key: string]: {
     [key: string]: {
@@ -77,11 +83,18 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
         } else if (segment.startsWith("PRON:")) {
           PGN = segment.substring(5);
           const [s, v, w] = position.split(":");
-          if (pronounData[s][v][w][+segmentIndex - 1] === "obj2") {
-            partOfSpeech = "OBJ2";
-          }
-          if (pronounData[s][v][w][+segmentIndex - 1] === "obj") {
-            partOfSpeech = "OBJ";
+          if (
+            ["obj2", "obj"].includes(pronounData[s][v][w][+segmentIndex - 1])
+          ) {
+            if (
+              Object.values(data[s][v]).some((wd) =>
+                wd.some((s) => s.arPartOfSpeech == "fiʿil")
+              )
+            ) {
+              partOfSpeech = "OBJ";
+            } else {
+              partOfSpeech = "OBJ2";
+            }
           } else {
             partOfSpeech = "SUBJ";
           }

@@ -15,7 +15,7 @@ const defaultColours: { [key: string]: [string, string] } = {
   LOC: ["#e37010", "#E47821"],
   PREV: ["#e37010", "#E47821"],
   T: ["#e37010", "#E47821"],
-  OBJ2: ["#e37010", "#E47821"],
+  OBJ2: ["#5c7085", "#8798AB"],
   DEM: ["#bf9f3e", "#bf9f3e"],
   DET: ["#575757", "#969696"],
   INTG: ["#fd5162", "#FD5E6E"],
