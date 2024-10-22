@@ -2,7 +2,6 @@ import fs from "fs";
 import {
   List,
   WordData,
-  WordCount,
   Requirements,
   WordSegment,
 } from "../../src/types/types";
@@ -11,8 +10,6 @@ import { descriptions } from "./descriptions";
 import getOptions from "../lib/getOptions";
 import { HarfRequirement } from "../lib/requirements";
 import sortList from "../lib/sortList";
-import getWordData from "../../src/utils/getWordData";
-const wordCount: WordCount = require("../wordCount.json");
 
 type Data = {
   [key: string]: {
@@ -35,6 +32,7 @@ for (const s in data) {
           const suffixGroup = list[SuffixGroupName] ?? {
             positions: [] as string[],
             words: [],
+            spellings: new Set(),
           };
           const position = `${s}:${v}:${w}`;
           suffixGroup.positions.push(position);
@@ -42,10 +40,14 @@ for (const s in data) {
             position,
             segIndex: segIndex,
           });
+          suffixGroup.spellings?.add(word[segIndex].arabic);
           suffixGroup.name = SuffixGroupName;
           suffixGroup.description =
-            getDescription(word, +segIndex) ?? word[segIndex].affix;
-          suffixGroup.spellings?.add(word[segIndex].arabic);
+            getDescription(
+              word,
+              +segIndex,
+              Array.from(suffixGroup?.spellings ?? [])
+            ) ?? word[segIndex].affix;
           if (["OBJ", "SUBJ", "OBJ2"].includes(word[segIndex].partOfSpeech)) {
             suffixGroup.getOptions = propGetOptions;
           } else {
@@ -126,7 +128,7 @@ fs.writeFile(
     console.log("complete");
   }
 );
-function getDescription(word: WordData, segIndex: number) {
+function getDescription(word: WordData, segIndex: number, spellings: string[]) {
   let description =
     (word[segIndex].affix && descriptions[word[segIndex].affix]) ?? "";
   if (!word[segIndex].affix) {
@@ -166,8 +168,7 @@ function getDescription(word: WordData, segIndex: number) {
     if (
       (word[segIndex].partOfSpeech == "OBJ" ||
         word[segIndex].partOfSpeech == "OBJ2") &&
-      word[segIndex].person != 1 &&
-      word[segIndex].number != "S"
+      !(word[segIndex].person == 1 && word[segIndex].number == "S")
     ) {
       description += " object/possessive";
     } else {
@@ -185,16 +186,18 @@ function getDescription(word: WordData, segIndex: number) {
     }
     description += ` pronoun`;
 
-    if (word[segIndex].aspect && word[segIndex].partOfSpeech == "SUBJ") {
+    if (word[segIndex].partOfSpeech == "SUBJ") {
       description +=
         " attached to a " +
-        (word[segIndex].aspect === "PERF"
+        (word.some((seg) => seg.aspect === "PERF")
           ? "perfect"
-          : word[segIndex].aspect === "IMPF"
+          : word.some((seg) => seg.aspect === "IMPF")
             ? "imperfect"
             : "imperative") +
         " verb";
     }
+
+    description += " " + JSON.stringify(spellings);
   }
   return description;
 }
