@@ -33,9 +33,19 @@ export default function Sentence({
           if (word.char_type_name !== "word") return "";
           if (index == correctIndex && !selected && !correct)
             return (
-              <div className={""} key={word.index}>
-                {"_?_?_?_"}
-              </div>
+              <>
+                {" "}
+                <div className="flex flex-col justify-center items-center">
+                  <div className={""} key={word.index}>
+                    {"_?_?_?_"}
+                  </div>{" "}
+                  {showTranslation && (
+                    <div className="dark:text-red-100 text-red-950 text-xs">
+                      {word.translation.text}{" "}
+                    </div>
+                  )}{" "}
+                </div>
+              </>
             );
           return (
             <>
