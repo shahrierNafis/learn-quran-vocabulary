@@ -82,7 +82,7 @@ function MCQ({
           {/* ARABIC */}
           <div
             dir="rtl"
-            className="text-3xl flex justify-between items-center gap-2 flex-wrap "
+            className="text-3xl flex  items-center gap-2 flex-wrap "
           >
             <Sentence
               {...{
