@@ -71,7 +71,7 @@ export default function Page({
                 <div>
                   <div>
                     Round Complete.
-                    <PlayBtn {...{ id }} /> again?
+                    <PlayBtn {...{ collection_id: +id }} /> again?
                   </div>
                   <div>
                     Or go to{" "}

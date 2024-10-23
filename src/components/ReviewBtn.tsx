@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,17 +11,37 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "@/components/ui/Link";
-import { ChevronRight } from "lucide-react";
+import getToReview from "@/utils/getToReview";
+import { Tables } from "@/database.types";
 
-export default function ReviewBtn({ className }: { className?: string }) {
+export default function ReviewBtn({
+  className,
+  collection_id,
+}: {
+  className?: string;
+  collection_id?: number;
+}) {
   const [number, setNumber] = useState<number>(10);
+  const [toReviewCount, setToReviewCount] = useState<number>(0);
+
+  //set wordGroups
+  useEffect(() => {
+    getToReview(collection_id ? +collection_id : undefined).then(
+      (wordGroups) => {
+        setToReviewCount(wordGroups.length);
+        if (wordGroups.length < 10) {
+          setNumber(wordGroups.length);
+        }
+      }
+    );
+    return () => {};
+  }, [collection_id, number]);
   return (
     <>
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
-          <Button size={"sm"}>
-            Review
-            <ChevronRight className="m-[-.5rem]" strokeWidth={".15rem"} />
+          <Button disabled={!toReviewCount} size={"sm"}>
+            Review {toReviewCount > 0 && toReviewCount}
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -35,12 +55,15 @@ export default function ReviewBtn({ className }: { className?: string }) {
             <Input
               className="w-20"
               min={1}
+              max={toReviewCount}
               type="number"
               value={number}
               onChange={(e) => setNumber(Number(e.target.value))}
             />
           </div>
-          <Link href={`/review/${number}`}>
+          <Link
+            href={`/review/${number}${collection_id ? "?collection_id=" + collection_id : ""}`}
+          >
             <Button className="w-fit ml-auto">Start</Button>
           </Link>
         </DialogContent>

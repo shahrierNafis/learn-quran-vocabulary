@@ -11,6 +11,7 @@ import PlayBtn from "../../../components/PlayBtn";
 import GotoDashboard from "@/components/GotoDashboard";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
+import CollectionProgress from "@/components/CollectionProgress";
 export default function Page({ params: { id } }: { params: { id: string } }) {
   const [name, setName] = useState<string | null>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
@@ -44,8 +45,15 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
             <div className="text-3xl flex items-center justify-center">
               {name}
             </div>
-            <div className="rounded-md border">
-              <PlayBtn className="float-right" {...{ id }} />
+            <div className="md:w-[25%]">
+              <CollectionProgress {...{ collection_id: +id }} />
+            </div>
+            <div className="rounded-md border ">
+              <PlayBtn
+                size={"default"}
+                {...{ collection_id: +id }}
+                className="float-right my-auto"
+              />
               <DataTable
                 {...{
                   columns,

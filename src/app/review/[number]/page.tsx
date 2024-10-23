@@ -7,23 +7,28 @@ import getToReview from "@/utils/getToReview";
 import ReviewBtn from "@/components/ReviewBtn";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
+import { useSearchParams } from "next/navigation";
 
 export default function Page({
   params: { number },
 }: {
   params: { number: string };
 }) {
-  const [name, setName] = useState<string>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [toReviewCount, setToReviewCount] = useState<number>(0);
+  const searchParams = useSearchParams();
+  const collection_id = searchParams.get("collection_id");
+
   //set wordGroups
   useEffect(() => {
-    getToReview().then((wordGroups) => {
-      setWordGroups(wordGroups.slice(0, +number));
-      setToReviewCount(wordGroups.length);
-    });
+    getToReview(collection_id ? +collection_id : undefined).then(
+      (wordGroups) => {
+        setWordGroups(wordGroups.slice(0, +number));
+        setToReviewCount(wordGroups.length);
+      }
+    );
     return () => {};
-  }, [number]);
+  }, [collection_id, number]);
 
   async function callback(correct: boolean) {
     if (!wordGroups) {
