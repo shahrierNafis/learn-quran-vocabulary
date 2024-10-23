@@ -1,21 +1,42 @@
 import { Database, Tables } from "@/database.types";
 import getIntervals from "@/utils/getIntervals";
 import { createClient } from "./supabase/clients";
-export default async function getToReview(): Promise<Tables<"word_groups">[]> {
+export default async function getToReview(
+  collection_id?: number
+): Promise<Tables<"word_groups">[]> {
   const intervals = await getIntervals();
   const toReview: number[] = [];
   const supabase = createClient<Database>();
-  const progresses = await supabase
-    .from("user_progress")
-    .select("*")
-    .then(({ data, error }) => {
-      if (error) {
-        console.log(error);
-      } else {
-        return data;
-      }
-      return [];
-    });
+  const progresses = collection_id
+    ? await supabase
+        .from("user_progress")
+        .select("*,word_groups(collection_id)")
+
+        // get only the wordGroups in collection if specified
+
+        //get all the wordGroups in collection
+
+        .then(({ data, error }) => {
+          if (error) {
+            console.log(error);
+          } else {
+            return data.filter(
+              (d) => d.word_groups?.collection_id == collection_id
+            );
+          }
+          return [];
+        })
+    : await supabase // else get all
+        .from("user_progress")
+        .select("*")
+        .then(({ data, error }) => {
+          if (error) {
+            console.log(error);
+          } else {
+            return data;
+          }
+          return [];
+        });
 
   for (const { progress, word_group_id, updated_at } of progresses) {
     const interval = getInterval(intervals, progress);
