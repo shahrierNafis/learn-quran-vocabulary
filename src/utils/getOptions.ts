@@ -1,10 +1,7 @@
-"use server";
 import { OPTION, WordData } from "@/types/types";
 import { Tables } from "@/database.types";
 
-export default async function getOptions(
-  wordGroup: Tables<"word_groups">
-): Promise<OPTION[]> {
+export default function getOptions(wordGroup: Tables<"word_groups">): OPTION[] {
   const wordSegmentsArr = wordGroup.options as [WordData, WordData, WordData];
   return wordSegmentsArr.map((wordSegments, index) => ({
     wordSegments,

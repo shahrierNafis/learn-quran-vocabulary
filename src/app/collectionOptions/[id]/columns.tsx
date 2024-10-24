@@ -40,7 +40,7 @@ export const columns: ColumnDef<TableData>[] = [
       }, [index]);
       useEffect(() => {
         return () => {
-          getOptions(getValue() as Tables<"word_groups">).then(setOptions);
+          setOptions(getOptions(getValue() as Tables<"word_groups">));
         };
       }, [getValue]);
 

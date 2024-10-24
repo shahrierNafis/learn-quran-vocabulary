@@ -1,5 +1,5 @@
 import { Tables } from "@/database.types";
-import { OPTION, WORD } from "@/types/types";
+import { OPTION, WORD, WordData } from "@/types/types";
 import getOptions from "@/utils/getOptions";
 import getWordData from "@/utils/getWordData";
 import _ from "lodash";
@@ -10,42 +10,43 @@ export default function useOptions(
   sentence: WORD[] | undefined
 ) {
   const [allOptions, setAllOptions] = useState<OPTION[]>([]);
-  const [options, setOptions] = useState<OPTION[]>();
-  const [preLoadedOp, setPreLoadedOp] = useState<Promise<OPTION[]>>();
+  const [preLoadedOpData, setPreLoadedOpData] = useState<Promise<WordData>>();
+  const [opData, setOpData] = useState<WordData>();
+
   const wordIndex = +wordGroups[0].words[0].split(":")[2] - 1;
-  const [s, v, w] = wordGroups[0].words[0].split(":");
+
   // set allOptions
   useEffect(() => {
     (async () => {
-      if (sentence && options && options[0].wordGroupId == wordGroups[0].id) {
+      if (opData && opData[0].position == wordGroups[0].words[0] && sentence) {
         const option: OPTION = {
           index: 4,
           isCorrect: true,
-          wordSegments: await cache(getWordData)(+s, +v, +w),
+          wordSegments: opData,
           wordGroupId: wordGroups[0].id,
         };
-        const shuffled = _.shuffle([...options, option]);
+        const shuffled = _.shuffle([...getOptions(wordGroups[0]), option]);
         setAllOptions(shuffled);
       }
     })();
 
     return () => {};
-  }, [options, s, sentence, v, w, wordGroups, wordIndex]);
-  //set Options (once)
+  }, [opData, sentence, wordGroups, wordIndex]);
+  //set Option data (once)
   useEffect(() => {
+    const [s, v, w] = wordGroups[0].words[0].split(":");
     if (sentence)
-      !options &&
-        wordGroups &&
-        getOptions(wordGroups[0]).then((op) => setOptions(op));
+      wordGroups && !opData && cache(getWordData)(+s, +v, +w).then(setOpData);
     return () => {};
-  }, [options, sentence, wordGroups, wordIndex]);
+  }, [opData, sentence, wordGroups, wordIndex]);
 
-  //set PreLoaded Options
+  //set PreLoaded Option data
   useEffect(() => {
     if (wordGroups.length > 1) {
-      setPreLoadedOp(getOptions(wordGroups[1]));
+      const [s, v, w] = wordGroups[1].words[0].split(":");
+      setPreLoadedOpData(cache(getWordData)(+s, +v, +w));
     }
     return () => {};
   }, [wordGroups]);
-  return { allOptions, preLoadedOp, setOptions };
+  return { allOptions, setOpData, preLoadedOpData };
 }
