@@ -28,7 +28,10 @@ for (const s in data) {
       for (const segIndex in word) {
         if (word[segIndex].arPartOfSpeech == "suffix") {
           // group by word[segIndex].affix prefix
-          const SuffixGroupName = getSuffixGroupName(word, +segIndex);
+          const [SuffixGroupName, isCompoundGroup] = getSuffixGroupName(
+            word,
+            +segIndex
+          );
           const suffixGroup = list[SuffixGroupName] ?? {
             positions: [] as string[],
             words: [],
@@ -42,12 +45,13 @@ for (const s in data) {
           });
           suffixGroup.spellings?.add(word[segIndex].arabic);
           suffixGroup.name = SuffixGroupName;
-          suffixGroup.description =
-            getDescription(
-              word,
-              +segIndex,
-              Array.from(suffixGroup?.spellings ?? [])
-            ) ?? word[segIndex].affix;
+          suffixGroup.description = isCompoundGroup
+            ? descriptions[SuffixGroupName]
+            : getDescription(
+                word,
+                +segIndex,
+                Array.from(suffixGroup?.spellings ?? [])
+              ) ?? word[segIndex].affix;
           if (["OBJ", "SUBJ", "OBJ2"].includes(word[segIndex].partOfSpeech)) {
             suffixGroup.getOptions = propGetOptions;
           } else {
@@ -81,7 +85,16 @@ async function propGetHarfOptions(
   return await getOptions(position, segIndex, HarfRequirement, extraSegments);
 }
 const sortedList = sortList(list);
-console.log(Object.keys(list), sortedList.length);
+
+console.log(
+  JSON.stringify(
+    sortedList
+      .map((sli) => {
+        return { name: sli.name, spellings: Array.from(sli.spellings ?? []) };
+      })
+      .filter((sli) => sli.name.startsWith("SUBJ"))
+  )
+);
 
 for (const i in sortedList) {
   const [s, v, w] = sortedList[i].words[0]?.position.split(":");
@@ -196,17 +209,21 @@ function getDescription(word: WordData, segIndex: number, spellings: string[]) {
             : "imperative") +
         " verb";
     }
-
-    description += " " + JSON.stringify(spellings);
   }
   return description;
 }
-function getSuffixGroupName(word: WordData, segIndex: number) {
-  let aspect;
+function getSuffixGroupName(
+  word: WordData,
+  segIndex: number
+): [string, boolean] {
+  let aspect, mood;
+
   for (const segment of word) {
     aspect = segment.aspect ?? aspect;
+    mood = segment.mood ?? mood;
   }
-  const value =
+
+  let value =
     word[segIndex].affix ??
     word[segIndex].person +
       "" +
@@ -217,13 +234,113 @@ function getSuffixGroupName(word: WordData, segIndex: number) {
     word[segIndex].partOfSpeech === "OBJ2"
   ) {
     if (!(word[segIndex].person == 1 && word[segIndex].number == "S")) {
-      return "OBJ_POS-" + value;
+      return ["OBJ_POS-" + value, false];
     } else {
-      return word[segIndex].partOfSpeech + "-" + value;
+      return [word[segIndex].partOfSpeech + "-" + value, false];
     }
   }
   if (word[segIndex].partOfSpeech === "SUBJ") {
-    return word[segIndex].partOfSpeech + "-" + value + "-" + aspect;
+    value = word[segIndex].partOfSpeech + "-" + value + "-" + aspect;
+    if (
+      mood != "IND" &&
+      ((word[segIndex].person == 2 &&
+        word[segIndex].number == "P" &&
+        word[segIndex].gender == "M" &&
+        aspect != "PERF") ||
+        (word[segIndex].person == 3 &&
+          word[segIndex].gender == "M" &&
+          word[segIndex].number == "P"))
+    ) {
+      return [`SUBJ-!IND((2MP-!PERF)-3MP)`, true];
+    }
+    if (
+      mood == "IND" &&
+      word[segIndex].gender == "M" &&
+      word[segIndex].number == "P"
+    ) {
+      return [`MP-IND`, true];
+    }
+    if (
+      (word[segIndex].person == 2 &&
+        word[segIndex].number == "P" &&
+        word[segIndex].gender == "F" &&
+        aspect != "PERF") ||
+      (word[segIndex].person == 3 &&
+        word[segIndex].gender == "F" &&
+        word[segIndex].number == "P")
+    ) {
+      return [
+        `SUBJ((2${word[segIndex].gender}P-!PERF)-3${word[segIndex].gender}P)`,
+        true,
+      ];
+    }
+    if (word[segIndex].number == "D") {
+      if (aspect == "IMPF" && mood == "IND") {
+        return ["SUBJ-D-IMPF-IND", true];
+      }
+      if (
+        (aspect == "IMPF" && mood != "IND") ||
+        aspect == "IMPV" ||
+        (word[segIndex].person == 3 &&
+          word[segIndex].gender == "M" &&
+          aspect == "PERF")
+      ) {
+        return ["SUBJ-D((IMPF-!IND)-(IMPV)-(3M-PERF))", true];
+      }
+    }
   }
-  return value;
+
+  return [value, true];
 }
+const a = [
+  {
+    name: "SUBJ-!IND((2MP-!PERF)-3MP)",
+    spellings: [
+      "وا۟",
+      "وٓا۟",
+      "وْا۟",
+      "وُا۟",
+      "و",
+      "وْ",
+      "ونَ",
+      "ۥٓا۟",
+      "وٓ",
+      "ۥا۟",
+      "ءُو",
+    ],
+  },
+  {
+    name: "SUBJ-1P-PERF",
+    spellings: ["نَء", "نَّا", "نَا", "نَآ", "نَّء", "نَّآ"],
+  },
+  {
+    name: "SUBJ-2MP-PERF",
+    spellings: [
+      "تُمْ",
+      "تُمُ",
+      "تُم",
+      "تُمُو",
+      "تُّمْ",
+      "تُّمُ",
+      "تُّمُو",
+      "تُّم",
+    ],
+  },
+  { name: "SUBJ-2MS-PERF", spellings: ["تَ", "تَّ"] },
+  { name: "SUBJ-1S-PERF", spellings: ["تُ", "تُّ"] },
+  {
+    name: "SUBJ((2FP-!PERF)-3FP)",
+    spellings: ["نَّ", "نَ", "تُنَّ", "تُّنَّ"],
+  },
+  {
+    name: "SUBJ-D((IMPF-!IND)-(IMPV)-(3M-PERF))",
+    spellings: ["ا", "آ", "ا۟"],
+  },
+  { name: "SUBJ-D-IMPF-IND", spellings: ["انِ", "ءنِ"] },
+  { name: "SUBJ-2FS-IMPV", spellings: ["ى", "ىٓ", "ي"] },
+  { name: "SUBJ-3FD-PERF", spellings: ["تَا", "تَآ"] },
+  { name: "SUBJ-2FP-IMPV", spellings: ["نَ"] },
+  { name: "SUBJ-2FS-PERF", spellings: ["تِ"] },
+  { name: "SUBJ-2FP-IMPF", spellings: ["نَ"] },
+  { name: "SUBJ-2D-PERF", spellings: ["تُمَا"] },
+];
