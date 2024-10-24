@@ -43,7 +43,7 @@ function MCQ({
   useEffect(() => {
     usePreferenceStore.persist.rehydrate();
   }, []);
-  const { allOptions, preLoadedOp, setOptions } = useOptions(
+  const { allOptions, setOpData, preLoadedOpData } = useOptions(
     wordGroups,
     sentence
   );
@@ -171,8 +171,8 @@ function MCQ({
     setCorrect(false);
     setSelected(undefined);
     setShowSimilarWords(false);
+    setOpData(await preLoadedOpData);
     setSentence(await preloadedSentence);
-    setOptions(await preLoadedOp);
     setTranslations(await preLoadedT);
   }
 }
