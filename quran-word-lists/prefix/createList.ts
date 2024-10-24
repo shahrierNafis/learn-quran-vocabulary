@@ -5,6 +5,7 @@ import {
   WordCount,
   Requirements,
   WordSegment,
+  PartOfSpeech,
 } from "../../src/types/types";
 import path from "path";
 import { descriptions } from "./descriptions";
@@ -21,7 +22,20 @@ type Data = {
     };
   };
 };
-
+const spellingsArr: { [key in PartOfSpeech]?: string[] } = {
+  P: ["بِ", "لِ", "لِّ", "لَ", "كَ", "لَّ", "سَ", "بِّ", "لْ", "وَ", "تَ"],
+  DET: ["ٱل", "ٱلْ", "لْ", "ل", "ٱلَّ", "آل", "آلْ", "ٱلِ"],
+  CONJ: ["وَ", "فَ", "وَّ"],
+  REM: ["وَ", "فَ"],
+  EQ: ["ءَ", "أَ"],
+  CIRC: ["وَ", "وَّ"],
+  SUP: ["وَ", "فَ"],
+  INTG: ["أَ", "ءَ"],
+  VOC: ["يَءٓ", "يَء", "هَءٓ", "هَء", "هَ", "يَ"],
+  RSLT: ["فَ"],
+  CAUS: ["فَ"],
+  COM: ["وَ"],
+} as const;
 const data: Data = require("./../data.json");
 const list: List = {};
 for (const s in data) {
@@ -115,14 +129,43 @@ async function propGetHarfOptions(
 ) {
   return await getOptions(position, segIndex, HarfRequirement, extraSegments);
 }
+
+console.dir(
+  Object.fromEntries(
+    Object.entries(spellingsArr).map(([name, spellings]) => [
+      name,
+      Array.from(spellings),
+    ])
+  ),
+  {
+    depth: Infinity,
+  }
+);
 const sortedList = sortList(list);
 
 for (const i in sortedList) {
   const [s, v, w] = sortedList[i].words[0].position.split(":");
-  const word = data[s][v][w];
-  const extraSegments: WordSegment[] = word.filter((seg) => {
-    if (seg.arPartOfSpeech == "prefix") return seg;
-  });
+  const wordData = data[s][v][w];
+  const { arabic, partOfSpeech, arPartOfSpeech, position } =
+    wordData[+sortedList[i].words[0]?.segIndex];
+
+  const extraSegments: WordSegment[] = wordData
+    .filter((seg) => {
+      // all its sibling prefixes
+      if (seg.arPartOfSpeech == "prefix") return seg;
+    })
+    .concat(
+      // all the spellings of the its partOfSpeech
+      Object.values(spellingsArr)
+        .filter((spellings) => spellings.includes(arabic))
+        .flat(1)
+        ?.map((spelling) => ({
+          arabic: spelling,
+          arPartOfSpeech,
+          partOfSpeech,
+          position,
+        })) ?? []
+    );
   if (sortedList[i].name == "3rd person") {
     console.log();
   }
