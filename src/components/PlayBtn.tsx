@@ -25,7 +25,7 @@ export default function Learn({
 }) {
   const [number, setNumber] = useState<number>(10);
   const supabase = createClient<Database>();
-  const [wordGroupsCount, setWordGroupsCount] = useState<number>();
+  const [wordGroupsCount, setWordGroupsCount] = useState<number | null>();
 
   useEffect(() => {
     supabase
@@ -35,11 +35,11 @@ export default function Learn({
         if (error || !count) {
           console.log(error);
         } else {
-          setWordGroupsCount(count);
           if (count < 10) {
             setNumber(count);
           }
         }
+        setWordGroupsCount(count);
       });
     return () => {};
   }, [collection_id, number, supabase]);
@@ -49,7 +49,7 @@ export default function Learn({
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
           <Button disabled={!wordGroupsCount} size={size ?? "sm"}>
-            Play
+            {wordGroupsCount != undefined ? "Play" : "loading"}
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -63,7 +63,7 @@ export default function Learn({
             <Input
               className="w-20"
               min={1}
-              max={wordGroupsCount}
+              max={wordGroupsCount ?? 0}
               type="number"
               value={number}
               onChange={(e) => setNumber(Number(e.target.value))}

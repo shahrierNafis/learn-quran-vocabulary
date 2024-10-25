@@ -15,16 +15,18 @@ export default function Page({
 }) {
   const [name, setName] = useState<string>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
+  const [count, setCount] = useState(0);
   const supabase = createClient<Database>();
   //set wordGroups
   useEffect(() => {
     supabase
-      .rpc("get_0_word_groups", { collection_id: +id })
+      .rpc("get_0_word_groups", { collection_id: +id }, { count: "exact" })
       .limit(+number)
-      .then(({ data, error }) => {
+      .then(({ data, error, count }) => {
         if (error) {
           console.log(error);
         } else {
+          setCount(count ?? 0);
           setWordGroups(data);
         }
       });
@@ -71,10 +73,15 @@ export default function Page({
                 <div>
                   <div>
                     Round Complete.
-                    <PlayBtn {...{ collection_id: +id }} /> again?
+                    {!!(count - +number) && (
+                      <div className="inline">
+                        <PlayBtn {...{ collection_id: +id }} /> again?
+                      </div>
+                    )}
                   </div>
                   <div>
-                    Or go to{" "}
+                    {!!(count - +number) && <div className="inline"> Or</div>}{" "}
+                    go to{" "}
                     <Link href={"/dashboard"}>
                       <Button size={"sm"} variant={"secondary"}>
                         dashboard

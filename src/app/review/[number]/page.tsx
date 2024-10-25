@@ -75,7 +75,7 @@ export default function Page({
                       ? toReviewCount - +number
                       : 0}{" "}
                     left to review.
-                    {toReviewCount - +number && (
+                    {!!(toReviewCount - +number) && (
                       <>
                         {" "}
                         <ReviewBtn /> them?
@@ -83,7 +83,7 @@ export default function Page({
                     )}
                   </div>
                   <div>
-                    {toReviewCount - +number ? "Or go to " : "Go to "}
+                    {!!(toReviewCount - +number) ? "Or go to " : "Go to "}
                     <Link href={"/dashboard"}>
                       <Button size={"sm"} variant={"secondary"}>
                         dashboard{" "}
