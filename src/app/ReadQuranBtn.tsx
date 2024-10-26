@@ -1,106 +1,101 @@
 import React from "react";
+
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ChevronDown } from "lucide-react";
 
 export default function ReadQuranBtn() {
   const pathname = usePathname();
   const num = pathname.split("/")[pathname.split("/").length - 1];
   return (
     <>
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <Button asChild variant={"outline"} className="p-0 shadow-sm">
-              <NavigationMenuTrigger className="px-6">
-                <div>
-                  {pathname.startsWith("/quran/surah") ? (
+      <DropdownMenu>
+        <Button asChild variant={"outline"} className="p-0 shadow-sm">
+          <DropdownMenuTrigger className="px-6">
+            <div className="flex items-center">
+              {pathname.startsWith("/quran/surah") ? (
+                <>
+                  <div>{surahArr[+num - 1]}</div>
+                </>
+              ) : pathname.startsWith("/quran/juz") ? (
+                <>juz {num}</>
+              ) : (
+                "Read Quran"
+              )}
+
+              <ChevronDown
+                className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
+                aria-hidden="true"
+              />
+            </div>
+          </DropdownMenuTrigger>
+        </Button>
+        <DropdownMenuContent>
+          <Tabs
+            defaultValue={pathname.split("/")[2] == "juz" ? "juz" : "surah"}
+            className="flex justify-center flex-col w-48"
+          >
+            <TabsList>
+              <TabsTrigger value="surah">Surah</TabsTrigger>
+              <TabsTrigger value="juz">Juz</TabsTrigger>
+            </TabsList>
+            <TabsContent value="surah">
+              <div className="max-h-[75vh] overflow-x-hidden overflow-y-auto flex flex-col">
+                {Array.from(Array(114).keys()).map((num) => {
+                  return (
                     <>
-                      <div>{surahArr[+num - 1]}</div>
+                      <Link
+                        disabled={pathname == "/quran/surah/" + (num + 1)}
+                        href={"/quran/surah/" + (num + 1)}
+                        className={"justify-center"}
+                      >
+                        <Button
+                          disabled={pathname == "/quran/surah/" + (num + 1)}
+                          className="grow flex gap-4 justify-start"
+                          variant={"outline"}
+                        >
+                          <div>{num + 1}</div>
+                          <div>{surahArr[num]}</div>
+                        </Button>
+                      </Link>
                     </>
-                  ) : pathname.startsWith("/quran/juz") ? (
-                    <>juz {num}</>
-                  ) : (
-                    "Read Quran"
-                  )}
-                </div>
-              </NavigationMenuTrigger>
-            </Button>
-            <NavigationMenuContent>
-              <Tabs
-                defaultValue={pathname.split("/")[2] == "juz" ? "juz" : "surah"}
-                className="flex justify-center flex-col w-48"
-              >
-                <TabsList>
-                  <TabsTrigger value="surah">Surah</TabsTrigger>
-                  <TabsTrigger value="juz">Juz</TabsTrigger>
-                </TabsList>
-                <TabsContent value="surah">
-                  <div className="max-h-[75vh] overflow-y-auto flex flex-col">
-                    {Array.from(Array(114).keys()).map((num) => {
-                      return (
-                        <>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              disabled={pathname == "/quran/surah/" + (num + 1)}
-                              href={"/quran/surah/" + (num + 1)}
-                              className={"justify-center"}
-                            >
-                              <Button
-                                disabled={
-                                  pathname == "/quran/surah/" + (num + 1)
-                                }
-                                className="grow flex gap-4 justify-start"
-                                variant={"outline"}
-                              >
-                                <div>{num + 1}</div>
-                                <div>{surahArr[num]}</div>
-                              </Button>
-                            </Link>
-                          </NavigationMenuLink>
-                        </>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-                <TabsContent value="juz">
-                  <div className="max-h-[75vh] overflow-y-auto flex flex-col">
-                    {Array.from(Array(30).keys()).map((num) => {
-                      return (
-                        <>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              disabled={pathname == "/quran/juz/" + (num + 1)}
-                              href={"/quran/juz/" + (num + 1)}
-                            >
-                              <Button
-                                disabled={pathname == "/quran/juz/" + (num + 1)}
-                                className="grow flex gap-4 justify-center"
-                                variant={"outline"}
-                              >
-                                <div>Juz</div> <div>{num + 1}</div>
-                              </Button>
-                            </Link>
-                          </NavigationMenuLink>
-                        </>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+                  );
+                })}
+              </div>
+            </TabsContent>
+            <TabsContent value="juz">
+              <div className="max-h-[75vh] overflow-y-auto flex flex-col">
+                {Array.from(Array(30).keys()).map((num) => {
+                  return (
+                    <>
+                      <Link
+                        disabled={pathname == "/quran/juz/" + (num + 1)}
+                        href={"/quran/juz/" + (num + 1)}
+                      >
+                        <Button
+                          disabled={pathname == "/quran/juz/" + (num + 1)}
+                          className="grow flex gap-4 justify-center"
+                          variant={"outline"}
+                        >
+                          <div>Juz</div> <div>{num + 1}</div>
+                        </Button>
+                      </Link>
+                    </>
+                  );
+                })}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 }
