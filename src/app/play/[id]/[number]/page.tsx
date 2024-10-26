@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import MCQ from "@/components/MCQ";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Database, Tables } from "@/database.types";
@@ -8,11 +8,18 @@ import PlayBtn from "@/components/PlayBtn";
 import Link from "@/components/ui/Link";
 import { Button } from "@/components/ui/button";
 
-export default function Page({
-  params: { id, number },
-}: {
-  params: { id: string; number: string };
-}) {
+export default function Page(
+  props: {
+    params: Promise<{ id: string; number: string }>;
+  }
+) {
+  const params = use(props.params);
+
+  const {
+    id,
+    number
+  } = params;
+
   const [name, setName] = useState<string>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [count, setCount] = useState(0);

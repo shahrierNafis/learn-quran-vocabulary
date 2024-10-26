@@ -1,7 +1,7 @@
 "use client";
 import { TableData, columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import React from "react";
 import { Database, Tables } from "@/database.types";
@@ -11,7 +11,13 @@ import PlayBtn from "../../../components/PlayBtn";
 import GotoDashboard from "@/components/GotoDashboard";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
-export default function Page({ params: { id } }: { params: { id: string } }) {
+export default function Page(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
+
+  const {
+    id
+  } = params;
+
   const [name, setName] = useState<string | null>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
 

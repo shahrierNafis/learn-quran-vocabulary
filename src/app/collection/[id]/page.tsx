@@ -1,7 +1,7 @@
 "use client";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import React from "react";
 import { Database, Tables } from "@/database.types";
@@ -11,7 +11,11 @@ import PlayBtn from "../../../components/PlayBtn";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
 import CollectionProgress from "@/components/CollectionProgress";
-export default function Page({ params: { id } }: { params: { id: string } }) {
+export default function Page(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
+
+  const { id } = params;
+
   const [name, setName] = useState<string | null>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
 
@@ -59,10 +63,12 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
         if (error || !data) {
           console.log(error);
         } else {
-          setProgressArr(data);
+          setProgressArr(
+            data.filter((p) => p.word_groups?.collection_id == +id)
+          );
         }
       });
-  }, [supabase, wordGroups]);
+  }, [id, supabase, wordGroups]);
   return (
     <>
       {wordGroups && name ? (

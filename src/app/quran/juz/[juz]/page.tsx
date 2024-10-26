@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -25,7 +25,13 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import Header from "../../Header";
 
-export default function Page({ params: { juz } }: { params: { juz: number } }) {
+export default function Page(props: { params: Promise<{ juz: number }> }) {
+  const params = use(props.params);
+
+  const {
+    juz
+  } = params;
+
   const router = useRouter();
   const translation_ids = usePreferenceStore(
     useShallow((state) => state.translation_ids)

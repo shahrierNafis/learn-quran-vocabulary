@@ -6,9 +6,15 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 
 import { createClient } from "@/utils/supabase/clients";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 
-export default function Page({ params: { id } }: { params: { id: string } }) {
+export default function Page(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params);
+
+  const {
+    id
+  } = params;
+
   const [translation_ids] = usePreferenceStore(
     useShallow((a) => [a.translation_ids])
   );

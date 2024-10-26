@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import MCQ from "@/components/MCQ";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Tables } from "@/database.types";
@@ -9,11 +9,17 @@ import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
 import { useSearchParams } from "next/navigation";
 
-export default function Page({
-  params: { number },
-}: {
-  params: { number: string };
-}) {
+export default function Page(
+  props: {
+    params: Promise<{ number: string }>;
+  }
+) {
+  const params = use(props.params);
+
+  const {
+    number
+  } = params;
+
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [toReviewCount, setToReviewCount] = useState<number>(0);
   const searchParams = useSearchParams();

@@ -19,7 +19,9 @@ export default function Logout() {
     <>
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button variant={"destructive"}>Logout</Button>
+          <Button asChild variant={"destructive"}>
+            Logout
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -30,13 +32,12 @@ export default function Logout() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>
-              <Button
-                onClick={() =>
-                  supabase.auth.signOut().then(() => window.location.reload())
-                }
-                variant={"destructive"}
-              >
+            <AlertDialogAction
+              onClick={() =>
+                supabase.auth.signOut().then(() => window.location.reload())
+              }
+            >
+              <Button asChild variant={"destructive"}>
                 Yes
               </Button>
             </AlertDialogAction>

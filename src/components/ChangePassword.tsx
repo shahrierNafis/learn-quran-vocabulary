@@ -18,7 +18,9 @@ export default function ChangePassword() {
   return (
     <Dialog>
       <DialogTrigger>
-        <Button variant={"outline"}>Change Password</Button>
+        <Button asChild variant={"outline"}>
+          Change Password
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
