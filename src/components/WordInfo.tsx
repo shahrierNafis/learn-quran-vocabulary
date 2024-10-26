@@ -30,7 +30,9 @@ export default function WordInfo({
     <>
       <Dialog>
         <DialogTrigger>
-          <div>{children}</div>
+          <Button className="text-[length:inherit]" variant={"ghost"}>
+            {children}
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
