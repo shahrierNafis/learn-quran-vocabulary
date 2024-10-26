@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { WORD, WordData } from "@/types/types";
 import SegmentInfo from "./SegmentInfo";
+import { Volume2 } from "lucide-react";
+import { Button } from "./ui/button";
+
 export default function WordInfo({
   children,
   disabled,
@@ -35,8 +38,26 @@ export default function WordInfo({
             <DialogDescription>
               <div className="overflow-y-auto  max-h-[85vh] ">
                 <div className="flex justify-around items-center">
-                  <div dir="rtl" className="text-3xl text-wrap m-4">
-                    {children}
+                  <div
+                    dir="rtl"
+                    className="text-3xl text-wrap m-4 justify-center items-center flex flex-col"
+                  >
+                    <div>{children}</div>{" "}
+                    {word && (
+                      <Button
+                        className=""
+                        onClick={() => {
+                          const [s, v, w] = word.index.split(":");
+                          new Audio(
+                            "https://audio.qurancdn.com/" + word.audio_url
+                          ).play();
+                        }}
+                        size={"icon"}
+                        variant={"ghost"}
+                      >
+                        <Volume2 />
+                      </Button>
+                    )}
                   </div>
                   <div className="flex items-center flex-col">
                     <div className="dark:text-green-100 text-green-950  text-sm">

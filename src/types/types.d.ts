@@ -9,6 +9,7 @@ export type WORD = {
   transliteration: { text: string };
   char_type_name: string;
   position: number;
+  audio_url: string;
   index: `${string}:${string}:${string}`;
   wordSegments: WordData;
 };

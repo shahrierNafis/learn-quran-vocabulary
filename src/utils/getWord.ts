@@ -22,6 +22,7 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
       translation,
       transliteration,
       position,
+      audio_url,
       char_type_name,
     } = verse.words[+wordI - 1];
     return {
@@ -29,6 +30,7 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
       translation,
       transliteration,
       position,
+      audio_url,
       char_type_name,
       index,
       wordSegments,

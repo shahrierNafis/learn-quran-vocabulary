@@ -24,6 +24,7 @@ export default cache(async function getVerseWords(
         transliteration: word.transliteration,
         position: word.position,
         char_type_name: word.char_type_name,
+        audio_url: word.audio_url,
         index: (verse.verse_key +
           ":" +
           word.position) as `${string}:${string}:${string}`,
