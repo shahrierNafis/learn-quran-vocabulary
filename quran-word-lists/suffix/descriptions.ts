@@ -7,9 +7,9 @@ export const descriptions: { [key: string]: string } = {
   "SUBJ((2FP-!PERF)-3FP)":
     "plural(present/command) female subject Pronoun attached to 2nd person Imperfect/Imperative or 3rd person(they) verbs",
   "MP-IND":
-    "Plural male subject pronouns attached to an imperfect(present) Indicative(statement of a fact) verbs 'ونَ' ",
+    "Plural male subject pronouns attached to imperfect(present) Indicative(statement of a fact) verbs 'ونَ' ",
   "SUBJ-D-IMPF-IND":
-    "Dual subject pronouns attached to an imperfect(present) Indicative(statement of a fact) verbs",
+    "Dual subject pronouns attached to imperfect(present) Indicative(statement of a fact) verbs",
   "SUBJ-D((IMPF-!IND)-(IMPV)-(3M-PERF))":
     "Dual subject pronouns attached to subjunctive/jussive(wish/order) or imperative or 3rd person male(they) verbs ",
 };
