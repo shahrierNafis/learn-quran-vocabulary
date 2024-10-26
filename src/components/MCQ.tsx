@@ -16,6 +16,7 @@ import Translations from "./Translations";
 import useTranslations from "./useTranslations";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
+import Link from "next/link";
 type Intervals = {
   [key: number]: number;
 };
@@ -118,6 +119,7 @@ function MCQ({
           {/* show similar words */}
           {(correct || selected) && (
             <Button
+              variant={"outline"}
               className="mx-auto block my-4"
               onClick={() => setShowSimilarWords(!showSimilarWords)}
             >
@@ -141,6 +143,9 @@ function MCQ({
                 translation_ids,
               }}
             />
+            <Link target="_blank" href={"/wordGroup" + wordGroups[0].id}>
+              <Button variant={"outline"}>Go To WordGroup</Button>
+            </Link>
           </>
         )}
       </div>
