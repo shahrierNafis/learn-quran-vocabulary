@@ -9,18 +9,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-export default function Review() {
-  const [toReview, setToReview] = useState<Tables<"word_groups">[]>();
-  useEffect(() => {
-    getToReview().then(setToReview);
-  }, []);
+export default function Review({
+  toReviewCount,
+}: {
+  toReviewCount: number | null | undefined;
+}) {
   return (
     <div className="flex flex-col p-2 basis-0 flex-grow justify-center items-center">
-      <div className="text-nowrap">
-        Ready for Review {toReview && toReview.length}
-      </div>
-      <ReviewBtn />
+      {toReviewCount != undefined ? (
+        <>
+          <div className="text-nowrap">Ready for Review {toReviewCount}</div>
+          <ReviewBtn {...{ toReviewCount }} />
+        </>
+      ) : (
+        "loading"
+      )}
       <Popover>
         <PopoverTrigger>
           <div className="text-blue-500 text-sm hover:underline">

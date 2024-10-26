@@ -18,38 +18,21 @@ export default function Learn({
   className,
   collection_id,
   size,
+  wordGroupsCount,
 }: {
   className?: string;
   collection_id: number;
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+  wordGroupsCount?: number | null | undefined;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const supabase = createClient<Database>();
-  const [wordGroupsCount, setWordGroupsCount] = useState<number | null>();
-
-  useEffect(() => {
-    supabase
-      .rpc("get_0_word_groups", { collection_id }, { count: "exact" })
-      .select("")
-      .then(({ error, count }) => {
-        if (error || !count) {
-          console.log(error);
-        } else {
-          if (count < 10) {
-            setNumber(count);
-          }
-        }
-        setWordGroupsCount(count);
-      });
-    return () => {};
-  }, [collection_id, number, supabase]);
 
   return (
     <>
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
-          <Button disabled={!wordGroupsCount} size={size ?? "sm"}>
-            {wordGroupsCount != undefined ? "Play" : "loading"}
+          <Button disabled={wordGroupsCount === 0} size={size ?? "sm"}>
+            Play
           </Button>
         </DialogTrigger>
         <DialogContent>

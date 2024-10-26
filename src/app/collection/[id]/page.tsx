@@ -1,5 +1,5 @@
 "use client";
-import { TableData, columns } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { useEffect, useState } from "react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
@@ -8,7 +8,6 @@ import { Database, Tables } from "@/database.types";
 import SetProgress from "./SetProgress";
 import { RowSelectionState } from "@tanstack/react-table";
 import PlayBtn from "../../../components/PlayBtn";
-import GotoDashboard from "@/components/GotoDashboard";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
 import CollectionProgress from "@/components/CollectionProgress";
@@ -37,6 +36,33 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
         });
   }, [id, supabase, wordGroups]);
 
+  const [progressArr, setProgressArr] = useState<
+    | {
+        progress: number;
+        word_group_id: number;
+        updated_at: string;
+        word_groups: {
+          collection_id: number;
+          id: number;
+        } | null;
+      }[]
+    | null
+  >([]);
+
+  useEffect(() => {
+    supabase
+      .from("user_progress")
+      .select(
+        "progress,word_group_id,updated_at,word_groups(collection_id, id)"
+      )
+      .then(({ error, data }) => {
+        if (error || !data) {
+          console.log(error);
+        } else {
+          setProgressArr(data);
+        }
+      });
+  }, [supabase, wordGroups]);
   return (
     <>
       {wordGroups && name ? (
@@ -46,7 +72,9 @@ export default function Page({ params: { id } }: { params: { id: string } }) {
               {name}
             </div>
             <div className="md:w-[25%]">
-              <CollectionProgress {...{ collection_id: +id }} />
+              <CollectionProgress
+                {...{ collection_id: +id, progressArr, wordGroups }}
+              />
             </div>
             <div className="rounded-md border ">
               <PlayBtn

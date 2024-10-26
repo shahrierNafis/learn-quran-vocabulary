@@ -3,16 +3,10 @@ import { createClient } from "@/utils/supabase/clients";
 import React, { useEffect, useState } from "react";
 
 export default function CollectionProgress({
-  collection_id,
+  progressArr,
+  wordGroups,
 }: {
-  collection_id: number;
-}) {
-  const supabase = createClient<Database>();
-
-  const [wordGroups, setWordGroups] = useState<
-    { id: number; words: string[] }[]
-  >([]);
-  const [progressArr, setProgressArr] = useState<
+  progressArr:
     | {
         progress: number;
         word_groups: {
@@ -20,38 +14,12 @@ export default function CollectionProgress({
           id: number;
         } | null;
       }[]
-    | null
-  >([]);
-
-  useEffect(() => {
-    supabase
-      .from("word_groups")
-      .select("id,words")
-      .eq("collection_id", collection_id)
-      .limit(10000)
-      .then(({ error, data }) => {
-        if (error || !data) {
-          console.log(error);
-        } else {
-          setWordGroups(data);
-        }
-      });
-  }, [collection_id, supabase]);
-  useEffect(() => {
-    supabase
-      .from("user_progress")
-      .select("progress,word_groups(collection_id, id)")
-      .then(({ error, data }) => {
-        if (error || !data) {
-          console.log(error);
-        } else {
-          setProgressArr(
-            data.filter((d) => d.word_groups?.collection_id == collection_id)
-          );
-        }
-      });
-  }, [collection_id, supabase, wordGroups]);
-
+    | null;
+  wordGroups: {
+    id: number;
+    words: string[];
+  }[];
+}) {
   return (
     <>
       <div

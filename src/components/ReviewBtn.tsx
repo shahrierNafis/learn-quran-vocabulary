@@ -17,31 +17,20 @@ import { Tables } from "@/database.types";
 export default function ReviewBtn({
   className,
   collection_id,
+  toReviewCount,
 }: {
   className?: string;
   collection_id?: number;
+  toReviewCount?: number;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const [toReviewCount, setToReviewCount] = useState<number>(0);
 
-  //set wordGroups
-  useEffect(() => {
-    getToReview(collection_id ? +collection_id : undefined).then(
-      (wordGroups) => {
-        setToReviewCount(wordGroups.length);
-        if (wordGroups.length < 10) {
-          setNumber(wordGroups.length);
-        }
-      }
-    );
-    return () => {};
-  }, [collection_id, number]);
   return (
     <>
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
-          <Button disabled={!toReviewCount} size={"sm"}>
-            Review {toReviewCount > 0 && toReviewCount}
+          <Button disabled={toReviewCount === 0} size={"sm"}>
+            Review {toReviewCount && toReviewCount > 0 && toReviewCount}
           </Button>
         </DialogTrigger>
         <DialogContent>

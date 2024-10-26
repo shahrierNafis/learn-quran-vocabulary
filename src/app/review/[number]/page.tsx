@@ -78,7 +78,7 @@ export default function Page({
                     {!!(toReviewCount - +number) && (
                       <>
                         {" "}
-                        <ReviewBtn /> them?
+                        <ReviewBtn {...{ toReviewCount }} /> them?
                       </>
                     )}
                   </div>

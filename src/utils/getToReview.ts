@@ -1,11 +1,10 @@
 import { Database, Tables } from "@/database.types";
 import getIntervals from "@/utils/getIntervals";
 import { createClient } from "./supabase/clients";
+import getToReviewIds from "./getToReviewIds";
 export default async function getToReview(
   collection_id?: number
 ): Promise<Tables<"word_groups">[]> {
-  const intervals = await getIntervals();
-  const toReview: number[] = [];
   const supabase = createClient<Database>();
   const progresses = collection_id
     ? await supabase
@@ -37,15 +36,7 @@ export default async function getToReview(
           }
           return [];
         });
-
-  for (const { progress, word_group_id, updated_at } of progresses) {
-    const interval = getInterval(intervals, progress);
-    const updatedOn = new Date(updated_at).getTime();
-    const current = new Date().getTime();
-    if (updatedOn + interval < current) {
-      toReview.push(+word_group_id);
-    }
-  }
+  const toReview: number[] = await getToReviewIds(progresses);
   return await supabase
     .from("word_groups")
     .select("*")
@@ -58,13 +49,4 @@ export default async function getToReview(
       }
       return [];
     });
-}
-function getInterval(intervals: { [key: number]: number }, percentage: number) {
-  Object.keys(intervals).sort((a, b) => +b - +a);
-  for (const step of Object.keys(intervals)) {
-    if (+step >= percentage) {
-      return intervals[+step];
-    }
-  }
-  return 0;
 }
