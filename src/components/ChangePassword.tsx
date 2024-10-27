@@ -11,16 +11,16 @@ import {
 import { Auth } from "@supabase/auth-ui-react";
 import { createClient } from "@/utils/supabase/clients";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 
 export default function ChangePassword() {
   const supabase = createClient();
   return (
     <Dialog>
       <DialogTrigger>
-        <Button asChild variant={"outline"}>
+        <div className={buttonVariants({ variant: "outline" })}>
           Change Password
-        </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -33,46 +33,45 @@ export default function Sentence({
           if (word.char_type_name !== "word") return "";
           if (index == correctIndex && !selected && !correct)
             return (
-              <>
-                {" "}
-                <div className="flex flex-col justify-center items-center">
-                  <div className={""} key={word.index}>
-                    {"_?_?_?_"}
-                  </div>{" "}
-                  {showTranslation && (
-                    <div className="dark:text-red-100 text-red-950 text-xs">
-                      {word.translation.text}{" "}
-                    </div>
-                  )}{" "}
-                </div>
-              </>
+              <div
+                key={word.index}
+                className="flex flex-col justify-center items-center"
+              >
+                <div className={""}>{"_?_?_?_"}</div>{" "}
+                {showTranslation && (
+                  <div className="dark:text-red-100 text-red-950 text-xs">
+                    {word.translation.text}{" "}
+                  </div>
+                )}{" "}
+              </div>
             );
           return (
-            <>
-              <div className="flex flex-col justify-center items-center">
-                <div
-                  className={cn(
-                    "p-2",
-                    index == correctIndex &&
-                      "border-2 p-2 rounded border-green-500"
-                  )}
-                >
-                  <Word {...{ wordSegments: word.wordSegments, word }} />
-                </div>
-                <div className="">
-                  {showTransliteration && (
-                    <div className="dark:text-green-100 text-green-950  text-sm">
-                      {word.transliteration.text}
-                    </div>
-                  )}
-                  {showTranslation && (
-                    <div className="dark:text-red-100 text-red-950 text-xs">
-                      {word.translation.text}{" "}
-                    </div>
-                  )}
-                </div>
+            <div
+              key={word.index}
+              className="flex flex-col justify-center items-center"
+            >
+              <div
+                className={cn(
+                  "p-2",
+                  index == correctIndex &&
+                    "border-2 p-2 rounded border-green-500"
+                )}
+              >
+                <Word {...{ wordSegments: word.wordSegments, word }} />
               </div>
-            </>
+              <div className="">
+                {showTransliteration && (
+                  <div className="dark:text-green-100 text-green-950  text-sm">
+                    {word.transliteration.text}
+                  </div>
+                )}
+                {showTranslation && (
+                  <div className="dark:text-red-100 text-red-950 text-xs">
+                    {word.translation.text}{" "}
+                  </div>
+                )}
+              </div>
+            </div>
           );
         })
       ) : (

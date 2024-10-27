@@ -10,7 +10,8 @@ import {
 import { WORD, WordData } from "@/types/types";
 import SegmentInfo from "./SegmentInfo";
 import { Volume2 } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 export default function WordInfo({
   children,
@@ -30,9 +31,14 @@ export default function WordInfo({
     <>
       <Dialog>
         <DialogTrigger>
-          <Button className="text-[length:inherit]" variant={"ghost"}>
+          <div
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "text-[length:inherit]"
+            )}
+          >
             {children}
-          </Button>
+          </div>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -49,7 +55,6 @@ export default function WordInfo({
                       <Button
                         className=""
                         onClick={() => {
-                          const [s, v, w] = word.index.split(":");
                           new Audio(
                             "https://audio.qurancdn.com/" + word.audio_url
                           ).play();

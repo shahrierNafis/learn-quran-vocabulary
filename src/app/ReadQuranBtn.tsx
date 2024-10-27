@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -48,50 +49,49 @@ export default function ReadQuranBtn() {
               <TabsTrigger value="juz">Juz</TabsTrigger>
             </TabsList>
             <TabsContent value="surah">
-              <div className="max-h-[75vh] overflow-x-hidden overflow-y-auto flex flex-col">
+              <ScrollArea className="h-[75vh]">
                 {Array.from(Array(114).keys()).map((num) => {
                   return (
-                    <>
-                      <Link
+                    <Link
+                      key={num + 1}
+                      disabled={pathname == "/quran/surah/" + (num + 1)}
+                      href={"/quran/surah/" + (num + 1)}
+                      className={"w-full"}
+                    >
+                      <Button
                         disabled={pathname == "/quran/surah/" + (num + 1)}
-                        href={"/quran/surah/" + (num + 1)}
-                        className={"justify-center"}
+                        className="grow flex gap-4 justify-start"
+                        variant={"outline"}
                       >
-                        <Button
-                          disabled={pathname == "/quran/surah/" + (num + 1)}
-                          className="grow flex gap-4 justify-start"
-                          variant={"outline"}
-                        >
-                          <div>{num + 1}</div>
-                          <div>{surahArr[num]}</div>
-                        </Button>
-                      </Link>
-                    </>
+                        <div>{num + 1}</div>
+                        <div>{surahArr[num]}</div>
+                      </Button>
+                    </Link>
                   );
                 })}
-              </div>
+              </ScrollArea>
             </TabsContent>
             <TabsContent value="juz">
-              <div className="max-h-[75vh] overflow-y-auto flex flex-col">
+              <ScrollArea className="h-[75vh]  grid grid-cols-1">
                 {Array.from(Array(30).keys()).map((num) => {
                   return (
-                    <>
-                      <Link
+                    <Link
+                      className={"w-full"}
+                      key={num + 1}
+                      disabled={pathname == "/quran/juz/" + (num + 1)}
+                      href={"/quran/juz/" + (num + 1)}
+                    >
+                      <Button
                         disabled={pathname == "/quran/juz/" + (num + 1)}
-                        href={"/quran/juz/" + (num + 1)}
+                        className="grow flex gap-4 justify-center"
+                        variant={"outline"}
                       >
-                        <Button
-                          disabled={pathname == "/quran/juz/" + (num + 1)}
-                          className="grow flex gap-4 justify-center"
-                          variant={"outline"}
-                        >
-                          <div>Juz</div> <div>{num + 1}</div>
-                        </Button>
-                      </Link>
-                    </>
+                        <div>Juz</div> <div>{num + 1}</div>
+                      </Button>
+                    </Link>
                   );
                 })}
-              </div>
+              </ScrollArea>
             </TabsContent>
           </Tabs>
         </DropdownMenuContent>

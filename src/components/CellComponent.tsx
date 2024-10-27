@@ -53,64 +53,55 @@ export default memo(
       return () => {};
     }, [translation_ids, verse_key]);
 
-    const [s, v, w] = verse_key.split(":");
-
     return (
-      <>
-        <>
-          <div className="flex flex-col gap-2 justify-center items-center">
-            <div
-              dir="rtl"
-              className="flex gap-2 flex-wrap  text-center text-2xl"
-            >
-              {/* ARABIC */}
-              {sentence ? (
-                sentence.map((word, index) => {
-                  if (word.char_type_name !== "word") return "";
-                  return (
-                    <>
-                      <div key={word.index} className="flex flex-col">
-                        <div
-                          className={cn(
-                            "p-2",
-                            +verse_key.split(":")[2] &&
-                              index == +verse_key.split(":")[2] - 1 &&
-                              "border-2 p-2 rounded border-green-500"
-                          )}
-                        >
-                          <Word
-                            {...{ wordSegments: word.wordSegments, word }}
-                          />
-                        </div>
-                        <div className="">
-                          {showTransliteration && (
-                            <div className="dark:text-green-100 text-green-950 text-sm">
-                              {word.transliteration.text}
-                            </div>
-                          )}
-                          {showTranslation && (
-                            <div className="dark:text-red-100 text-red-950 text-xs">
-                              {word.translation.text}{" "}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  );
-                })
-              ) : (
+      <div className="flex flex-col gap-2 justify-center items-center">
+        <div
+          key={verse_key}
+          dir="rtl"
+          className="flex gap-2 flex-wrap  text-center text-2xl"
+        >
+          {/* ARABIC */}
+          {sentence ? (
+            sentence.map((word, index) => {
+              if (word.char_type_name !== "word") return "";
+              return (
                 <>
-                  <Skeleton className="w-[75vw] h-[45px] rounded-full" />
+                  <div key={word.index} className="flex flex-col">
+                    <div
+                      className={cn(
+                        "p-2",
+                        +verse_key.split(":")[2] &&
+                          index == +verse_key.split(":")[2] - 1 &&
+                          "border-2 p-2 rounded border-green-500"
+                      )}
+                    >
+                      <Word {...{ wordSegments: word.wordSegments, word }} />
+                    </div>
+                    <div className="">
+                      {showTransliteration && (
+                        <div className="dark:text-green-100 text-green-950 text-sm">
+                          {word.transliteration.text}
+                        </div>
+                      )}
+                      {showTranslation && (
+                        <div className="dark:text-red-100 text-red-950 text-xs">
+                          {word.translation.text}{" "}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </>
-              )}
-            </div>
-            {/* TRANSLATION */}
-            <Translations
-              {...{ translations, index: verse_key }}
-            ></Translations>
-          </div>
-        </>
-      </>
+              );
+            })
+          ) : (
+            <>
+              <Skeleton className="w-[75vw] h-[45px] rounded-full" />
+            </>
+          )}
+        </div>
+        {/* TRANSLATION */}
+        <Translations {...{ translations, index: verse_key }}></Translations>
+      </div>
     );
   },
   (prev, next) => {

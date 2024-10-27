@@ -118,13 +118,20 @@ function MCQ({
           </div>
           {/* show similar words */}
           {(correct || selected) && (
-            <Button
-              variant={"outline"}
-              className="mx-auto block my-4"
-              onClick={() => setShowSimilarWords(!showSimilarWords)}
-            >
-              {showSimilarWords ? "Hide" : "Show"} similar words
-            </Button>
+            <>
+              <div className="flex items-center justify-center">
+                <Button
+                  variant={"outline"}
+                  className="mx-auto block my-4"
+                  onClick={() => setShowSimilarWords(!showSimilarWords)}
+                >
+                  {showSimilarWords ? "Hide" : "Show"} similar words
+                </Button>{" "}
+                <Link target="_blank" href={"/wordGroup/" + wordGroups[0].id}>
+                  <Button variant={"outline"}>Go To WordGroup</Button>
+                </Link>
+              </div>
+            </>
           )}
         </div>
         {/* similar words table */}
@@ -143,9 +150,6 @@ function MCQ({
                 translation_ids,
               }}
             />
-            <Link target="_blank" href={"/wordGroup" + wordGroups[0].id}>
-              <Button variant={"outline"}>Go To WordGroup</Button>
-            </Link>
           </>
         )}
       </div>

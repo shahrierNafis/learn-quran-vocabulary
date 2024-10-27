@@ -9,6 +9,7 @@ export default function NavLink({
   children,
   disabled,
   className,
+  ...props
 }: {
   href: string;
   children: React.ReactNode;
@@ -24,6 +25,7 @@ export default function NavLink({
         <> {children}</>
       ) : (
         <a
+          {...props}
           href={href}
           className={cn("inline-flex items-center", className)}
           onClick={() => startTransition(() => router.push(href))}

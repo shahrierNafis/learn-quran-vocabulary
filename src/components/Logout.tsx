@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { createClient } from "@/utils/supabase/clients";
 
 export default function Logout() {
@@ -19,9 +19,9 @@ export default function Logout() {
     <>
       <AlertDialog>
         <AlertDialogTrigger>
-          <Button asChild variant={"destructive"}>
+          <div className={buttonVariants({ variant: "destructive" })}>
             Logout
-          </Button>
+          </div>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -36,10 +36,9 @@ export default function Logout() {
               onClick={() =>
                 supabase.auth.signOut().then(() => window.location.reload())
               }
+              className={buttonVariants({ variant: "destructive" })}
             >
-              <Button asChild variant={"destructive"}>
-                Yes
-              </Button>
+              Yes
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

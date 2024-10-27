@@ -13,21 +13,23 @@ function Translations({
   const [translation_ids] = usePreferenceStore(
     useShallow((a) => [a.translation_ids])
   );
-  return (<>
+  return (
     <div className="text-xl">
       {translations?.length ? (
         translation_ids
           .map((id) => translations.filter((t) => t.id == +id)[0])
           .map((translation) => {
-            return (<>
-              <div key={index + translation?.id}>
-                {translation?.text.replaceAll(/<sup.*>.*<\/sup>/g, "")}
-              </div>
-              <div className="text-gray-500 text-xs">
-                {"— "}
-                {translation?.name}
-              </div>
-            </>);
+            return (
+              <>
+                <div key={index + translation?.id}>
+                  {translation?.text.replaceAll(/<sup.*>.*<\/sup>/g, "")}
+                </div>
+                <div className="text-gray-500 text-xs">
+                  {"— "}
+                  {translation?.name}
+                </div>
+              </>
+            );
           })
       ) : (
         <>
@@ -35,7 +37,7 @@ function Translations({
         </>
       )}
     </div>
-  </>);
+  );
 }
 
 export default Translations;
