@@ -19,7 +19,9 @@ export default function Review({
       {toReviewCount != undefined ? (
         <>
           <div className="text-nowrap">Ready for Review {toReviewCount}</div>
-          <ReviewBtn {...{ toReviewCount }} />
+          <ReviewBtn
+            toReviewCount={toReviewCount == 0 ? toReviewCount : undefined}
+          />
         </>
       ) : (
         "loading"

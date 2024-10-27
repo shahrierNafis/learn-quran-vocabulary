@@ -30,7 +30,8 @@ export default function ReviewBtn({
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
           <Button disabled={toReviewCount === 0} size={"sm"}>
-            Review {toReviewCount && toReviewCount > 0 && toReviewCount}
+            Review{" "}
+            {toReviewCount != undefined && toReviewCount > 0 && toReviewCount}
           </Button>
         </DialogTrigger>
         <DialogContent>

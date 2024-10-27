@@ -25,7 +25,7 @@ export default function PrivatePage() {
     | null
   >([]);
   const supabase = createClient<Database>();
-  const [toReviewCount, setToReviewCount] = useState(0);
+  const [toReviewCount, setToReviewCount] = useState<number>();
 
   useEffect(() => {
     supabase

@@ -9,16 +9,10 @@ import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
 import { useSearchParams } from "next/navigation";
 
-export default function Page(
-  props: {
-    params: Promise<{ number: string }>;
-  }
-) {
+export default function Page(props: { params: Promise<{ number: string }> }) {
   const params = use(props.params);
 
-  const {
-    number
-  } = params;
+  const { number } = params;
 
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [toReviewCount, setToReviewCount] = useState<number>(0);
@@ -84,7 +78,7 @@ export default function Page(
                     {!!(toReviewCount - +number) && (
                       <>
                         {" "}
-                        <ReviewBtn {...{ toReviewCount }} /> them?
+                        <ReviewBtn /> them?
                       </>
                     )}
                   </div>
