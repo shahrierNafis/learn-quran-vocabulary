@@ -87,10 +87,19 @@ function MCQ({
           >
             <Sentence
               {...{
-                selected,
+                hideIndex:
+                  !selected && !correct
+                    ? +wordGroups[0].words[0].split(":")[2] - 1
+                    : undefined,
+                switchIndex:
+                  selected || correct
+                    ? +wordGroups[0].words[0].split(":")[2] - 1
+                    : undefined,
+                highlightIndex:
+                  selected || correct
+                    ? +wordGroups[0].words[0].split(":")[2] - 1
+                    : undefined,
                 sentence,
-                correct,
-                correctIndex: +wordGroups[0].words[0].split(":")[2] - 1,
               }}
             />
           </div>

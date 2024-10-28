@@ -15,6 +15,7 @@ import Translations from "./Translations";
 import Word from "./Word";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
+import Sentence from "./Sentence";
 
 export default memo(
   function CellComponent({
@@ -62,37 +63,17 @@ export default memo(
         >
           {/* ARABIC */}
           {sentence ? (
-            sentence.map((word, index) => {
-              if (word.char_type_name !== "word") return "";
-              return (
-                <>
-                  <div key={word.index} className="flex flex-col">
-                    <div
-                      className={cn(
-                        "p-2",
-                        +verse_key.split(":")[2] &&
-                          index == +verse_key.split(":")[2] - 1 &&
-                          "border-2 p-2 rounded border-green-500"
-                      )}
-                    >
-                      <Word {...{ wordSegments: word.wordSegments, word }} />
-                    </div>
-                    <div className="">
-                      {showTransliteration && (
-                        <div className="dark:text-green-100 text-green-950 text-sm">
-                          {word.transliteration.text}
-                        </div>
-                      )}
-                      {showTranslation && (
-                        <div className="dark:text-red-100 text-red-950 text-xs">
-                          {word.translation.text}{" "}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              );
-            })
+            <Sentence
+              {...{
+                switchIndex: verse_key.split(":")[2]
+                  ? +verse_key.split(":")[2] - 1
+                  : undefined,
+                highlightIndex: verse_key.split(":")[2]
+                  ? +verse_key.split(":")[2] - 1
+                  : undefined,
+                sentence,
+              }}
+            />
           ) : (
             <>
               <Skeleton className="w-[75vw] h-[45px] rounded-full" />

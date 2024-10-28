@@ -18,11 +18,13 @@ export default function WordInfo({
   disabled,
   wordSegments,
   word,
+  size,
 }: {
   children: ReactNode;
   disabled?: boolean;
   wordSegments: WordData;
   word?: WORD;
+  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 }) {
   if (disabled) {
     return <>{children}</>;
@@ -33,7 +35,7 @@ export default function WordInfo({
         <DialogTrigger>
           <div
             className={cn(
-              buttonVariants({ variant: "ghost" }),
+              buttonVariants({ variant: "ghost", size: size }),
               "text-[length:inherit]"
             )}
           >

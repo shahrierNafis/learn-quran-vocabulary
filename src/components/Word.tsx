@@ -10,10 +10,12 @@ function Word({
   wordSegments,
   noWordInfo,
   word,
+  size,
 }: {
   wordSegments: WordData;
   noWordInfo?: boolean;
   word?: WORD;
+  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 }) {
   const [colours] = usePreferenceStore(useShallow((a) => [a.colours]));
   const { theme } = useTheme();
@@ -26,6 +28,7 @@ function Word({
           wordSegments,
           disabled: noWordInfo,
           word,
+          size,
         }}
       >
         <div className={font?.className}>
