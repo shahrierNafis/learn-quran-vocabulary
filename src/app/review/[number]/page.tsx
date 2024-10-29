@@ -63,6 +63,7 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
                 wordGroups,
                 callback,
               }}
+              noNewWord
             />
           ) : (
             <>
@@ -78,7 +79,14 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
                     {!!(toReviewCount - +number) && (
                       <>
                         {" "}
-                        <ReviewBtn /> them?
+                        <ReviewBtn
+                          {...{
+                            collection_id: collection_id
+                              ? +collection_id
+                              : undefined,
+                          }}
+                        />{" "}
+                        them?
                       </>
                     )}
                   </div>

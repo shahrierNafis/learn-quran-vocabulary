@@ -1,4 +1,9 @@
-import React, { ReactNode } from "react";
+import React, {
+  DetailedHTMLProps,
+  HTMLAttributes,
+  ReactNode,
+  useState,
+} from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +17,7 @@ import SegmentInfo from "./SegmentInfo";
 import { Volume2 } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
+import Word from "./Word";
 
 export default function WordInfo({
   children,
@@ -19,23 +25,40 @@ export default function WordInfo({
   wordSegments,
   word,
   size,
+  variant = "ghost",
 }: {
   children: ReactNode;
   disabled?: boolean;
   wordSegments: WordData;
   word?: WORD;
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | null
+    | undefined;
 }) {
+  const [open, setOpen] = useState(false);
   if (disabled) {
     return <>{children}</>;
   }
   return (
     <>
-      <Dialog>
+      <Dialog
+        {...{ open }}
+        onOpenChange={(open) => {
+          setOpen(open);
+        }}
+      >
         <DialogTrigger>
           <div
             className={cn(
-              buttonVariants({ variant: "ghost", size: size }),
+              buttonVariants({ variant: variant, size: size }),
               "text-[length:inherit]"
             )}
           >
@@ -52,7 +75,9 @@ export default function WordInfo({
                     dir="rtl"
                     className="text-3xl text-wrap m-4 justify-center items-center flex flex-col"
                   >
-                    <div>{children}</div>{" "}
+                    <div>
+                      <Word {...{ wordSegments }} noWordInfo />
+                    </div>{" "}
                     {word && (
                       <Button
                         className=""

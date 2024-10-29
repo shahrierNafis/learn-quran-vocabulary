@@ -17,15 +17,18 @@ import useTranslations from "./useTranslations";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
+import WordInfo from "./WordInfo";
 type Intervals = {
   [key: number]: number;
 };
 function MCQ({
   wordGroups,
   callback,
+  noNewWord,
 }: {
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
+  noNewWord?: boolean;
 }) {
   const supabase = createClient<Database>();
   const { sentence, setSentence, preloadedSentence } = useSentence(wordGroups);
@@ -113,7 +116,34 @@ function MCQ({
               <Button className="mx-auto block my-4" onClick={nextClick}>
                 Next
               </Button>
-            )}
+            )}{" "}
+            {/* New Word? */}
+            {!noNewWord &&
+              !(correct || selected) &&
+              sentence &&
+              currentProgress == 0 && (
+                <>
+                  <div className="flex justify-end -mt-5">
+                    <WordInfo
+                      {...{
+                        // variant: "outline",
+                        size: "sm",
+                        wordSegments:
+                          sentence[+wordGroups[0].words[0].split(":")[2] - 1]
+                            .wordSegments,
+                        word: sentence[
+                          +wordGroups[0].words[0].split(":")[2] - 1
+                        ],
+                      }}
+                    >
+                      <div className="flex my-auto text-xs">
+                        <div className="text-red-500 animate-pulse">*</div>
+                        <div className=""> new word?</div>
+                      </div>
+                    </WordInfo>
+                  </div>{" "}
+                </>
+              )}
             {/* OPTIONS */}
             <Options
               {...{
