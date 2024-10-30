@@ -18,9 +18,8 @@ function Word({
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 }) {
   const [colours] = usePreferenceStore(useShallow((a) => [a.colours]));
-  const { theme } = useTheme();
+  const { systemTheme, theme } = useTheme();
   const [font] = useFont();
-
   return (
     <>
       <WordInfo
@@ -37,7 +36,7 @@ function Word({
               key={segment.position + ":" + index}
               style={{
                 color: (colours[segment.partOfSpeech] ?? colours.others)[
-                  theme == "dark" ? 1 : 0
+                  (theme == "system" ? systemTheme : theme) == "dark" ? 1 : 0
                 ],
               }}
               className="inline"
