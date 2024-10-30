@@ -121,6 +121,7 @@ function MCQ({
             {!noNewWord &&
               !(correct || selected) &&
               sentence &&
+              sentence[+wordGroups[0].words[0].split(":")[2] - 1] &&
               currentProgress == 0 && (
                 <>
                   <div className="flex justify-end -mt-5">

@@ -102,7 +102,7 @@ export default function WordInfo({
                     </div>
                   </div>
                 </div>
-                {wordSegments.map((segment, index) => (
+                {wordSegments?.map((segment, index) => (
                   <SegmentInfo
                     {...{ segment }}
                     key={segment.position + ":" + index}
