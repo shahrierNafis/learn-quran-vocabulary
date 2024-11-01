@@ -4,7 +4,7 @@ let index = 0;
 let prevPosition: string;
 const wordCount = {};
 
-fs.readFileSync("./morphology.txt")
+fs.readFileSync("./quran-word-lists/morphology.txt")
   .toString()
   .split("\n")
   .forEach((line, lineIndex, lineArray) => {
@@ -22,7 +22,11 @@ fs.readFileSync("./morphology.txt")
       Object
     );
   });
-fs.writeFile("wordCount.json", JSON.stringify(wordCount), function (err) {
-  if (err) throw err;
-  console.log("complete");
-});
+fs.writeFile(
+  "./quran-word-lists/wordCount.json",
+  JSON.stringify(wordCount),
+  function (err) {
+    if (err) throw err;
+    console.log("complete");
+  }
+);

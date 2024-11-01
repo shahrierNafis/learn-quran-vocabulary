@@ -65,7 +65,7 @@ export function buckwalter_to_arabic(buckwalter: string) {
   return buckwalter
     .split("")
     .map((char) => b2a[char])
-    .join();
+    .join("");
 }
 
 export function arabic_to_buckwalter(arabic: string) {
@@ -74,6 +74,6 @@ export function arabic_to_buckwalter(arabic: string) {
     .map((char) =>
       Object.fromEntries(Object.entries(b2a).map((a) => a.reverse()))[
         char.charCodeAt(0)
-      ].join()
+      ].join("")
     );
 }

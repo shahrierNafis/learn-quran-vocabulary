@@ -7,7 +7,8 @@ import { buckwalter_to_arabic } from "@/utils/arabic-buckwalter-transliteration"
 import useFont from "@/utils/useFont";
 import { cn } from "@/lib/utils";
 import relations from "@/utils/relations";
-import Link from "./ui/Link";
+import Link from "next/link";
+import { buttonVariants } from "./ui/button";
 export default function SegmentInfo({ segment }: { segment: WordSegment }) {
   const [colours] = usePreferenceStore(useShallow((a) => [a.colours]));
   const { theme } = useTheme();
@@ -37,9 +38,17 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
                       <>
                         <div className="grid grid-cols-2 items-center   align-middle">
                           <div> root:</div>
-                          <div className={cn(font?.className, "inline")}>
-                            {buckwalter_to_arabic(segment.root)}
-                          </div>
+                          <Link
+                            className="border rounded px-2 max-w-fit focus:ring hover:ring"
+                            target="_blank"
+                            href={"/root/" + segment.root}
+                          >
+                            <div className={cn(font?.className, "")}>
+                              {buckwalter_to_arabic(segment.root)
+                                .split("")
+                                .join(",")}
+                            </div>
+                          </Link>
                         </div>
                       </>
                     )}

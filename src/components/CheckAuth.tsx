@@ -12,9 +12,10 @@ export default function CheckAuth() {
       if (
         error &&
         !user &&
-        !(pathname == "/") &&
-        !pathname.startsWith("/quran") &&
-        !pathname.startsWith("/buyMeACoffee")
+        (pathname.startsWith("/dashboard") ||
+          pathname.startsWith("/collection") ||
+          pathname.startsWith("/play") ||
+          pathname.startsWith("/review"))
       ) {
         alert(error.message);
         window.location.href = "/";
