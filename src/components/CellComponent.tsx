@@ -55,7 +55,7 @@ export default memo(
     }, [translation_ids, verse_key]);
 
     return (
-      <div className="flex flex-col gap-2 justify-center items-center">
+      <div className="flex flex-col gap-2 justify-center items-center min-w-[768px]">
         <div
           key={verse_key}
           dir="rtl"
