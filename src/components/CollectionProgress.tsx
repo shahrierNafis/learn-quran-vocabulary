@@ -1,6 +1,12 @@
-import { Database, Tables } from "@/database.types";
-import { createClient } from "@/utils/supabase/clients";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function CollectionProgress({
   progressArr,
@@ -22,23 +28,109 @@ export default function CollectionProgress({
 }) {
   return (
     <>
+      <Dialog>
+        <DialogTrigger className="grow w-full">
+          <Component {...{ progressArr, wordGroups }} />
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Progress</DialogTitle>
+            <DialogDescription>
+              <div className="md:w-[75%] mx-auto">
+                <Component {...{ progressArr, wordGroups }} />
+
+                <div
+                  style={{ gridTemplateColumns: "auto 1fr" }}
+                  className="grow grid-cols-2 w-full text-nowrap text-xs text-gray-500 grid"
+                >
+                  {progressArr &&
+                    Object.entries(flattenedProgressObj(progressArr)).map(
+                      ([progress, word_groups]) => (
+                        <>
+                          {" "}
+                          <div className="text-nowrap text-end">
+                            {progress}% mastered:
+                          </div>
+                          <div className="text-end">
+                            {word_groups.length}/{wordGroups.length}{" "}
+                            {roundNumber(
+                              (word_groups.length / wordGroups.length) * 100
+                            )}
+                            %
+                          </div>
+                        </>
+                      )
+                    )}{" "}
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+function roundNumber(num: number) {
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}
+function flattenedProgressObj(
+  progressArr: {
+    progress: number;
+    word_groups: {
+      collection_id: number;
+      id: number;
+    } | null;
+  }[]
+) {
+  const obj: {
+    [key: number]: {
+      collection_id: number;
+      id: number;
+    }[];
+  } = {};
+  progressArr.forEach((p) => {
+    obj[p.progress] = obj[p.progress] ?? [];
+    p.word_groups && obj[p.progress].push(p.word_groups);
+  });
+  return obj;
+}
+
+function Component({
+  progressArr,
+  wordGroups,
+}: {
+  progressArr:
+    | {
+        progress: number;
+        word_groups: {
+          collection_id: number;
+          id: number;
+        } | null;
+      }[]
+    | null;
+  wordGroups: {
+    id: number;
+    words: string[];
+  }[];
+}) {
+  return (
+    <>
       <div
-        style={{
-          gridTemplateColumns: "auto auto",
-        }}
-        className="grow w-full text-nowrap text-xs text-gray-500 grid grid-rows-3"
+        style={{ gridTemplateColumns: "auto 1fr" }}
+        className="grow grid-cols-2 w-full text-nowrap text-xs text-gray-500 grid"
       >
-        <div>Introduced:</div>
+        <div className="text-end">Introduced:</div>
         {progressArr ? (
-          <div className="text-center">
-            {progressArr.length}/{wordGroups.length}
+          <div className="text-end">
+            {progressArr.length}/{wordGroups.length}{" "}
+            {roundNumber((progressArr.length / wordGroups.length) * 100)}%
           </div>
         ) : (
           "loading"
         )}
-        <div>Mastered: </div>
+        <div className="text-nowrap text-end">Mastered: </div>
         {progressArr ? (
-          <div className="text-center">
+          <div className="text-end">
             {roundNumber(
               (progressArr
                 .map((pA) => pA.progress)
@@ -51,9 +143,9 @@ export default function CollectionProgress({
         ) : (
           "loading"
         )}
-        <div className="text-nowrap">Word coverage: </div>
+        <div className="text-nowrap text-end">Word coverage: </div>
         {progressArr ? (
-          <div className="text-center">
+          <div className="text-end">
             {roundNumber(
               (progressArr
                 .map((pA) =>
@@ -78,7 +170,4 @@ export default function CollectionProgress({
       </div>
     </>
   );
-}
-function roundNumber(num: number) {
-  return Math.round((num + Number.EPSILON) * 100) / 100;
 }
