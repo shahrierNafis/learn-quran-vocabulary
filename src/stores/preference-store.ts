@@ -1,8 +1,9 @@
 // src/stores/counter-store.ts
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist, PersistStorage } from "zustand/middleware";
 import { create } from "zustand";
-import { PartOfSpeech } from "@/types/types";
 import { fontNames } from "@/utils/fontNames";
+import { createClient } from "@/utils/supabase/clients";
+import { Database, Json } from "@/database.types";
 const defaultColours: { [key: string]: [string, string] } = {
   ADJ: ["#832CC2", "#B87EE2"],
   CIRC: ["#1604B9", "#9388FC"],
@@ -33,6 +34,37 @@ const defaultColours: { [key: string]: [string, string] } = {
   OBJ: ["#5c7085", "#8798AB"],
   others: ["#a8017b", "#FE48CE"],
 };
+import superJson from "superjson";
+
+// jsonString === '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{date:"Date"}}}'
+const supabase = createClient<Database>();
+// Custom storage object
+const storage: PersistStorage<PreferenceStore> = {
+  getItem: (name: string) => {
+    const str = localStorage.getItem(name);
+    if (!str) return null;
+
+    return superJson.parse(str);
+  },
+  setItem: async (name, value) => {
+    value.state.isDefault = false;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+      supabase
+        .from("user_preference")
+        .upsert({ preference: superJson.stringify(value), user_id: user.id })
+        .then();
+    }
+    localStorage.setItem(name, superJson.stringify(value) as string);
+  },
+  removeItem: (name: string) => {
+    console.log(name, "has been deleted");
+  },
+};
+
 type PreferenceStore = {
   translation_ids: string[];
   setTranslation_ids: (translation_ids: string[]) => void;
@@ -44,32 +76,85 @@ type PreferenceStore = {
   setColours: (pos: string, value: string, value2: string) => void;
   font: (typeof fontNames)[number];
   setFont: (font: (typeof fontNames)[number]) => void;
+  isDefault?: boolean;
+  intervals: {
+    [key: number]: number;
+  };
+  setInterval: (percentage: number, interval: number) => void;
+  removeInterval: (percentage: number) => void;
 };
 export const usePreferenceStore = create<PreferenceStore>()(
   persist(
-    (set) => ({
-      translation_ids: ["20", "131"],
-      setTranslation_ids: (translation_ids: string[]) =>
-        set({ translation_ids }),
-      showTranslation: true,
-      setShowTranslation: (showTranslation: boolean) =>
-        set({ showTranslation }),
-      showTransliteration: true,
-      setShowTransliteration: (showTransliteration: boolean) =>
-        set({ showTransliteration }),
-      colours: defaultColours,
-      setColours: (pos, value, value2) => {
-        set((state) => {
-          return { colours: { ...state.colours, [pos]: [value, value2] } };
-        });
-      },
-      font: "Noto_Sans_Arabic",
-      setFont: (font: (typeof fontNames)[number]) => set({ font }),
-    }),
+    (set) => {
+      return {
+        translation_ids: ["20", "131"],
+        setTranslation_ids: (translation_ids: string[]) =>
+          set({ translation_ids }),
+        showTranslation: true,
+        setShowTranslation: (showTranslation: boolean) =>
+          set({ showTranslation }),
+        showTransliteration: true,
+        setShowTransliteration: (showTransliteration: boolean) =>
+          set({ showTransliteration }),
+        colours: defaultColours,
+        setColours: (pos, value, value2) => {
+          set((state) => {
+            return { colours: { ...state.colours, [pos]: [value, value2] } };
+          });
+        },
+        font: "Noto_Sans_Arabic",
+        setFont: (font: (typeof fontNames)[number]) => set({ font }),
+        isDefault: true,
+        intervals: {
+          25: 86400000,
+          50: 864000000,
+          75: 2592000000,
+          100: 15552000000,
+        },
+        setInterval: (percentage, interval) =>
+          set((state) => ({
+            intervals: {
+              ...state.intervals,
+              [percentage]: interval,
+            },
+          })),
+        removeInterval: (percentage) => {
+          set((prev) => {
+            const newIntervals = { ...prev.intervals };
+            delete newIntervals[percentage];
+            return { intervals: newIntervals };
+          });
+        },
+      };
+    },
 
     {
+      version: 2,
       name: "preference-storage",
       skipHydration: true,
+      storage: storage,
     }
   )
 );
+
+if (!usePreferenceStore.getState().isDefault) {
+  console.log();
+}
+usePreferenceStore.persist.onHydrate(async () => {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user && usePreferenceStore.getState().isDefault) {
+    const { data, error } = await supabase
+      .from("user_preference")
+      .select("*")
+      .single();
+    if (data?.preference && !error) {
+      usePreferenceStore.setState((state) =>
+        state.isDefault
+          ? (superJson.parse(data.preference as string) as any).state
+          : state
+      );
+    }
+  }
+});

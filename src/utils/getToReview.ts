@@ -1,5 +1,4 @@
 import { Database, Tables } from "@/database.types";
-import getIntervals from "@/utils/getIntervals";
 import { createClient } from "./supabase/clients";
 import getToReviewIds from "./getToReviewIds";
 export default async function getToReview(

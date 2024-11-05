@@ -73,6 +73,21 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preference: {
+        Row: {
+          preference: Json | null
+          user_id: string
+        }
+        Insert: {
+          preference?: Json | null
+          user_id?: string
+        }
+        Update: {
+          preference?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_progress: {
         Row: {
           progress: number

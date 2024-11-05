@@ -1,27 +1,26 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Database } from "@/database.types";
-import getIntervals from "@/utils/getIntervals";
 import { createClient } from "@/utils/supabase/clients";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AddInterval from "./AddInterval";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function SetIntervals() {
-  const [intervals, setIntervals] = useState<{ [key: number]: number }>();
-  useEffect(() => {
-    getIntervals().then(setIntervals);
-
-    return () => {};
-  }, []);
+  const [intervals, setInterval, removeInterval] = usePreferenceStore(
+    useShallow((state) => [
+      state.intervals,
+      state.setInterval,
+      state.removeInterval,
+    ])
+  );
   const supabase = createClient<Database>();
   function handleInpuTChange(
     e: React.ChangeEvent<HTMLInputElement>,
     progress: number
   ) {
-    setIntervals((prev) => ({
-      ...prev,
-      [progress]: +e.target.value * 8.64e7,
-    }));
+    setInterval(progress, +e.target.value * 8.64e7);
 
     supabase
       .from("user_intervals")
@@ -30,47 +29,54 @@ export default function SetIntervals() {
       .then();
   }
   function handleDelete(progress: number) {
-    setIntervals((prev) => {
-      const newIntervals = { ...prev };
-      delete newIntervals[progress];
-      return newIntervals;
-    });
-    supabase.from("user_intervals").delete().eq("progress", progress).then();
+    removeInterval(progress);
   }
   return (
     <>
-      <div>Intervals</div>
-      <div className="border p-2">
-        {intervals &&
-          Object.keys(intervals).map((progress) => {
-            return (
-              <div
-                key={progress}
-                className="flex justify-start border p-2 items-center gap-2"
-              >
-                {progress} :{" "}
-                <Input
-                  type="number"
-                  className="max-w-20"
-                  value={intervals[+progress] / 8.64e7}
-                  onChange={(e) => handleInpuTChange(e, +progress)}
-                />
-                <div>days</div>
-                {+progress != 100 && (
+      <div>
+        <div className="text-center border p-2 bg-secondary">
+          Review Intervals
+        </div>
+        <div className="text-center border p-2 flex flex-col justify-center items-center gap-2">
+          <div className="grid grid-cols-2 ">
+            <div className="text-center"> A sentence that is</div>
+            <div className="text-center">will be seen again in</div>
+            {intervals &&
+              Object.keys(intervals).map((progress) => {
+                return (
                   <>
-                    <Button
-                      onClick={() => handleDelete(+progress)}
-                      size={"sm"}
-                      variant={"destructive"}
+                    <div
+                      key={progress}
+                      className="flex gap-1 justify-center items-center border"
                     >
-                      Delete
-                    </Button>
+                      {progress}% Mastered{" "}
+                    </div>
+                    <div className="flex gap-1 justify-start items-center">
+                      <Input
+                        type="number"
+                        className="max-w-20"
+                        value={intervals[+progress] / 8.64e7}
+                        onChange={(e) => handleInpuTChange(e, +progress)}
+                      />
+                      <div>days</div>
+                      {+progress != 100 && (
+                        <>
+                          <Button
+                            onClick={() => handleDelete(+progress)}
+                            size={"sm"}
+                            variant={"destructive"}
+                          >
+                            remove
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </>
-                )}
-              </div>
-            );
-          })}
-        <AddInterval {...{ setIntervals }} />
+                );
+              })}
+          </div>{" "}
+          <AddInterval {...{ setInterval }} />
+        </div>
       </div>
     </>
   );

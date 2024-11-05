@@ -17,24 +17,19 @@ import { createClient } from "@/utils/supabase/clients";
 import { Database } from "@/database.types";
 
 export default function AddInterval({
-  setIntervals,
+  setInterval,
 }: {
-  setIntervals: React.Dispatch<
-    React.SetStateAction<{ [key: number]: number } | undefined>
-  >;
+  setInterval: (percentage: number, newInterval: number) => void;
 }) {
   const [progress, setProgress] = useState<number>();
-  const [interval, setInterval] = useState<number>();
+  const [newInterval, setNewInterval] = useState<number>();
   const supabase = createClient<Database>();
   function handleAdd() {
-    if (progress === undefined || interval === undefined) return;
-    setIntervals((prev) => ({
-      ...prev,
-      [progress]: interval,
-    }));
+    if (progress === undefined || newInterval === undefined) return;
+    setInterval(progress, newInterval);
     supabase
       .from("user_intervals")
-      .upsert({ progress, interval_ms: interval })
+      .upsert({ progress, interval_ms: newInterval })
       .then();
   }
 
@@ -42,11 +37,11 @@ export default function AddInterval({
     <>
       <AlertDialog>
         <AlertDialogTrigger className="flex">
-          <Button>Add Interval</Button>
+          <Button>Add newInterval</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add Interval</AlertDialogTitle>
+            <AlertDialogTitle>Add newInterval</AlertDialogTitle>
             <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex items-center gap-2">
@@ -60,10 +55,10 @@ export default function AddInterval({
             />
             :
             <Input
-              value={interval && interval / 8.64e7}
-              placeholder="interval in days"
+              value={newInterval && newInterval / 8.64e7}
+              placeholder="newInterval in days"
               type="number"
-              onChange={(e) => setInterval(+e.target.value * 8.64e7)}
+              onChange={(e) => setNewInterval(+e.target.value * 8.64e7)}
             />
           </div>
           <AlertDialogFooter>

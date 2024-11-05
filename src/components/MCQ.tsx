@@ -10,7 +10,6 @@ import { createClient } from "@/utils/supabase/clients";
 import useSentence from "./useSentence";
 import useOptions from "./useOptions";
 import useProgress from "./useProgress";
-import getIntervals from "@/utils/getIntervals";
 import Options from "./Options";
 import Translations from "./Translations";
 import useTranslations from "./useTranslations";
@@ -39,7 +38,7 @@ function MCQ({
   const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
   const [correct, setCorrect] = useState<boolean>(false);
   const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
-  const [intervals, setIntervals] = useState<Intervals>();
+  const intervals = usePreferenceStore(useShallow((state) => state.intervals));
 
   const [translation_ids] = usePreferenceStore(
     useShallow((a) => [a.translation_ids])
@@ -53,10 +52,6 @@ function MCQ({
   );
   const { currentProgress, setCurrentProgress } = useProgress(wordGroups[0].id);
   // set Intervals
-  useEffect(() => {
-    getIntervals().then(setIntervals);
-    return () => {};
-  }, []);
   const [surah, verse] = wordGroups[0].words[0].split(":");
 
   if (!intervals) {

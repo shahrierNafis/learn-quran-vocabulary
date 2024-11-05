@@ -1,10 +1,9 @@
 import { Tables } from "@/database.types";
-import getIntervals from "@/utils/getIntervals";
-
+import { usePreferenceStore } from "@/stores/preference-store";
 export default async function getToReviewIds(
   progresses: { progress: number; word_group_id: number; updated_at: string }[]
 ) {
-  const intervals = await getIntervals();
+  const intervals = usePreferenceStore.getState().intervals;
   type a = Tables<"user_progress">;
   const toReview: number[] = [];
 
