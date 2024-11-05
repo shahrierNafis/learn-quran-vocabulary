@@ -19,6 +19,7 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";
 import { ModeToggle } from "@/components/ui/ModeToggle";
+import { SetReviewOrder } from "@/components/SetReviewOrder";
 export default function Preference() {
   const [
     setShowTransliteration,
@@ -72,6 +73,7 @@ export default function Preference() {
               Show Translation
             </Button>
             <ModeToggle />
+            <SetReviewOrder />
             <SetIntervals />
             <UpdatePassword />
           </div>

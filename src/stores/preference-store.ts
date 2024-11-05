@@ -64,7 +64,12 @@ const storage: PersistStorage<PreferenceStore> = {
     console.log(name, "has been deleted");
   },
 };
-
+type reviewOrderType =
+  | "next_review ASC"
+  | "next_review DESC"
+  | "level ASC"
+  | "level DESC"
+  | "random";
 type PreferenceStore = {
   translation_ids: string[];
   setTranslation_ids: (translation_ids: string[]) => void;
@@ -82,6 +87,8 @@ type PreferenceStore = {
   };
   setInterval: (percentage: number, interval: number) => void;
   removeInterval: (percentage: number) => void;
+  reviewOrder: reviewOrderType;
+  setReviewOrder: (reviewOrder: reviewOrderType) => void;
 };
 export const usePreferenceStore = create<PreferenceStore>()(
   persist(
@@ -125,11 +132,13 @@ export const usePreferenceStore = create<PreferenceStore>()(
             return { intervals: newIntervals };
           });
         },
+        reviewOrder: "next_review ASC",
+        setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
       };
     },
 
     {
-      version: 2,
+      version: 3,
       name: "preference-storage",
       skipHydration: true,
       storage: storage,

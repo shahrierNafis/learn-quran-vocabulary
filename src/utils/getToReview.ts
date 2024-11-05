@@ -1,6 +1,8 @@
 import { Database, Tables } from "@/database.types";
 import { createClient } from "./supabase/clients";
 import getToReviewIds from "./getToReviewIds";
+import sortProgresses from "./sortProgresses";
+
 export default async function getToReview(
   collection_id?: number
 ): Promise<Tables<"word_groups">[]> {
@@ -35,8 +37,8 @@ export default async function getToReview(
           }
           return [];
         });
-  const toReview: number[] = await getToReviewIds(progresses);
-  return await supabase
+  const toReview: number[] = await getToReviewIds(sortProgresses(progresses));
+  const wordGroups = await supabase
     .from("word_groups")
     .select("*")
     .in("id", toReview)
@@ -48,4 +50,14 @@ export default async function getToReview(
       }
       return [];
     });
+
+  return toReview
+    .map((id) => {
+      for (const wordGroup of wordGroups) {
+        if (wordGroup.id == id) {
+          return wordGroup;
+        }
+      }
+    })
+    .filter((a) => !!a);
 }
