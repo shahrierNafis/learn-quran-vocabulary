@@ -59,7 +59,7 @@ export default function WordInfo({
           <div
             className={cn(
               buttonVariants({ variant: variant, size: size }),
-              "text-[length:inherit]"
+              "text-[length:inherit] px-1"
             )}
           >
             {children}

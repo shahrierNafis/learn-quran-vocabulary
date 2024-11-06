@@ -6,9 +6,11 @@ export default async function getToReviewIds(
   const toReview: number[] = [];
   for (const { progress, word_group_id, updated_at } of progresses) {
     const interval = getInterval(progress);
-    const updatedOn = new Date(updated_at).getTime();
-    const current = new Date().getTime();
-    if (updatedOn + interval < current) {
+    const dueDate = new Date(new Date(updated_at).getTime() + interval);
+    dueDate.setHours(0, 0, 0, 0);
+    const current = new Date();
+    current.setHours(0, 0, 0, 0);
+    if (dueDate.getTime() <= current.getTime()) {
       toReview.push(+word_group_id);
     }
   }

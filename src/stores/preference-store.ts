@@ -94,13 +94,13 @@ export const usePreferenceStore = create<PreferenceStore>()(
   persist(
     (set) => {
       return {
-        translation_ids: ["20", "131"],
+        translation_ids: ["131"],
         setTranslation_ids: (translation_ids: string[]) =>
           set({ translation_ids }),
-        showTranslation: true,
+        showTranslation: false,
         setShowTranslation: (showTranslation: boolean) =>
           set({ showTranslation }),
-        showTransliteration: true,
+        showTransliteration: false,
         setShowTransliteration: (showTransliteration: boolean) =>
           set({ showTransliteration }),
         colours: defaultColours,

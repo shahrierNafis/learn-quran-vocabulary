@@ -40,7 +40,7 @@ export default function Sentence({
           //   gridTemplateColumns: "repeat(auto-fill, min-content)",
           //   gridTemplateRows: "repeat(3, min-content)",
           // }}
-          className={cn("flex gap-2 flex-wrap items-center justify-center")}
+          className={cn("flex flex-wrap items-center justify-center")}
         >
           {sentence ? (
             sentence.map((word, index) => {
@@ -99,7 +99,7 @@ export default function Sentence({
                     <div
                       className={cn(
                         index == highlightIndex &&
-                          "border-2 p-2 rounded border-green-500"
+                          "border-2 rounded border-green-500"
                       )}
                       dir="rtl"
                     >
