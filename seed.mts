@@ -31,15 +31,16 @@ const collections = [
   },
   {
     id: 4,
-    name: "suffix",
+    name: "prefix",
     is_default: true,
-    description: `Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete sentence in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English sentence 'and We made them'. In Arabic, most suffixes are attached pronouns Object pronouns and subject pronouns attached to perfect(past tense) verbs are vary distinctive but subject pronouns attached to imperfect verbs are a bit vague`,
+    description: `Arabic utilizes prefixes to add meaning and function to words. prefixes are less numerous and often serve specific grammatical purposes.  One prominent example is the definite article "al-" (الـ), which transforms indefinite nouns and adjectives into definite ones. For instance, "kitab" (كتاب) means "book," but "al-kitab" (الكتاب) translates to "the book."`,
   },
   {
     id: 5,
-    name: "prefix",
+    name: "suffix",
     is_default: true,
-    description: `Arabic also utilizes prefixes to add meaning and function to words. Unlike suffixes, however, these prefixes are less numerous and often serve specific grammatical purposes.  One prominent example is the definite article "al-" (الـ), which transforms indefinite nouns and adjectives into definite ones. For instance, "kitab" (كتاب) means "book," but "al-kitab" (الكتاب) translates to "the book. Most prefixes are attached particles so they are also a bit vague like particle"`,
+    description:
+      "Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete sentence in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English sentence 'and We made them'. In Arabic, suffixes could be attached to words to indicate the subjects and objects.",
   },
 ];
 const wordGroups = [
@@ -71,7 +72,7 @@ const wordGroups = [
       options: wordGroup.options,
     };
   }),
-  ...suffix.map((wordGroup) => {
+  ...prefix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collection_id: 4,
@@ -80,7 +81,7 @@ const wordGroups = [
       options: wordGroup.options,
     };
   }),
-  ...prefix.map((wordGroup) => {
+  ...suffix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collection_id: 5,
