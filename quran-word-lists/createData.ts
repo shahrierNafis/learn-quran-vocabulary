@@ -7,7 +7,8 @@ import {
   WordData,
 } from "../src/types/types";
 import { PrefixPOS, prefixPOS } from "./preffixPOS";
-const bt = require("buckwalter-transliteration")("qac2utf");
+
+import { buckwalter_to_arabic } from "../src/utils/arabic-buckwalter-transliteration";
 let index = 0;
 let prevPosition: string;
 const data: {
@@ -50,7 +51,7 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
     // word.translation = translation[index];
     let arPartOfSpeech: "fiʿil" | "ism" | "ḥarf" | "prefix" | "suffix" =
       "fiʿil";
-    const arabic = bt(getBuckWalter(line));
+    const arabic = buckwalter_to_arabic(getBuckWalter(line));
     const aspect = getAspect(line);
     const mood = getMood(line) as "IND" | "SUBJ" | "JUS" | undefined;
     const voice = getVoice(line);
