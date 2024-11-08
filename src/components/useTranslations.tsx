@@ -16,12 +16,17 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
   //set translations (once)
   useEffect(() => {
     const [surah, verse] = wordGroups[0].words[0].split(":");
-
-    !translations &&
-      wordGroups &&
+    if (
+      translations
+        ?.map((t) => t.id)
+        .sort()
+        .join(",") !== translation_ids.sort().join(",") &&
+      wordGroups
+    ) {
       getVerseTranslations(translation_ids, `${surah}:${verse}`).then(
         setTranslations
       );
+    }
     return () => {};
   }, [translation_ids, translations, wordGroups]);
 
