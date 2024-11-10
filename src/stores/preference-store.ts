@@ -47,7 +47,6 @@ const storage: PersistStorage<PreferenceStore> = {
     return superJson.parse(str);
   },
   setItem: async (name, value) => {
-    value.state.isDefault = false;
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -81,7 +80,6 @@ type PreferenceStore = {
   setColours: (pos: string, value: string, value2: string) => void;
   font: (typeof fontNames)[number];
   setFont: (font: (typeof fontNames)[number]) => void;
-  isDefault?: boolean;
   intervals: {
     [key: number]: number;
   };
@@ -111,7 +109,6 @@ export const usePreferenceStore = create<PreferenceStore>()(
         },
         font: "Noto_Sans_Arabic",
         setFont: (font: (typeof fontNames)[number]) => set({ font }),
-        isDefault: true,
         intervals: {
           25: 86400000,
           50: 864000000,
@@ -146,23 +143,18 @@ export const usePreferenceStore = create<PreferenceStore>()(
   )
 );
 
-if (!usePreferenceStore.getState().isDefault) {
-  console.log();
-}
 usePreferenceStore.persist.onHydrate(async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user && usePreferenceStore.getState().isDefault) {
+  if (user) {
     const { data, error } = await supabase
       .from("user_preference")
       .select("*")
       .single();
     if (data?.preference && !error) {
-      usePreferenceStore.setState((state) =>
-        state.isDefault
-          ? (superJson.parse(data.preference as string) as any).state
-          : state
+      usePreferenceStore.setState(
+        (state) => (superJson.parse(data.preference as string) as any).state
       );
     }
   }
