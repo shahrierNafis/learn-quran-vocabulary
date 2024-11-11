@@ -33,9 +33,7 @@ function Options({
                 disabled={(correct || selected) && true}
                 className={cn(
                   "text-3xl h-full px-8 py-6", //
-                  (correct || selected) && option.isCorrect
-                    ? "bg-green-100"
-                    : "bg-gray-100 dark:bg-stone-300",
+                  (correct || selected) && option.isCorrect && "bg-green-100",
                   selected === option.index &&
                     (option.isCorrect
                       ? "ring-4 ring-green-500"
