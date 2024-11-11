@@ -24,7 +24,7 @@ const defaultColours: { [key: string]: [string, string] } = {
   SUBJ: ["#548dd4", "#6498D8"],
   NEG: ["#F66B41", "#FF6161"],
   PRO: ["#f4400b", "#F66B41"],
-  PN: ["#257e9c", "2FA1C3"],
+  PN: ["#257e9c", "#2FA1C3"],
   P: ["#ad2323", "#E37878"],
   PRP: ["#817418", "#A8981F"],
   REL: ["#817418", "#A8981F"],
@@ -79,6 +79,7 @@ type PreferenceStore = {
   colours: { [key: string]: [string, string] };
   setColours: (pos: string, value: string, value2: string) => void;
   font: (typeof fontNames)[number];
+  resetColours: () => void;
   setFont: (font: (typeof fontNames)[number]) => void;
   intervals: {
     [key: number]: number;
@@ -107,6 +108,7 @@ export const usePreferenceStore = create<PreferenceStore>()(
             return { colours: { ...state.colours, [pos]: [value, value2] } };
           });
         },
+        resetColours: () => set(() => ({ ...{ colours: defaultColours } })),
         font: "Noto_Sans_Arabic",
         setFont: (font: (typeof fontNames)[number]) => set({ font }),
         intervals: {

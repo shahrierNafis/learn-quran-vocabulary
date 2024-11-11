@@ -14,8 +14,8 @@ import { PartOfSpeech } from "@/types/types";
 import { ColourPicker } from "./ColourPicker";
 import { Button } from "./button";
 export default function ChangeColours() {
-  const [colours, setColours] = usePreferenceStore(
-    useShallow((a) => [a.colours, a.setColours])
+  const [colours, setColours, resetColours] = usePreferenceStore(
+    useShallow((a) => [a.colours, a.setColours, a.resetColours])
   );
 
   return (
@@ -59,7 +59,10 @@ export default function ChangeColours() {
                     </>
                   );
                 })}{" "}
-              </div>
+                <div className="flex justify-center items-center">
+                  <Button onClick={resetColours}>reset</Button>
+                </div>
+              </div>{" "}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
