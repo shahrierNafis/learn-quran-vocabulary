@@ -1,6 +1,6 @@
 // import { createSeedClient } from "@snaplet/seed";
 import herf from "./.seed-data/harfList.json";
-import ism from "./.seed-data/ismList.json";
+import ism_n_fill from "./.seed-data/ism&fi'lList.json";
 import fill from "./.seed-data/fi'lList.json";
 import suffix from "./.seed-data/suffixList.json";
 import prefix from "./.seed-data/prefixList.json";
@@ -13,30 +13,24 @@ import prefix from "./.seed-data/prefixList.json";
 const collections = [
   {
     id: 1,
-    name: "ism",
+    name: "ism & fi'l",
     is_default: true,
-    description: `Ism (اسم) translates to "name" and encompasses nouns, adjectives, pronouns, and proper names. Ism words have grammatical features like gender (masculine or feminine) and number (singular, dual, or plural).`,
+    description: `Ism (اسم) translates to "name" and encompasses nouns, adjectives, pronouns, and proper names. Ism words have grammatical features like gender (masculine or feminine) and number (singular, dual, or plural). Fiʻl means "verb" and refers to words expressing actions or states of being. Arabic verbs can conjugate based on tense, person, and number.`,
   },
   {
     id: 2,
-    name: "Fiʻl",
-    is_default: true,
-    description: `Fiʻl means "verb" and refers to words expressing actions or states of being. Arabic verbs can conjugate based on tense, person, and number.`,
-  },
-  {
-    id: 3,
     name: "herf",
     is_default: true,
     description: `Harf (حرف) translates to "letter" but refers to particles. These are function words that connect other words in a sentence and indicate grammatical relationships. Prepositions and conjunctions fall under this category.`,
   },
   {
-    id: 4,
+    id: 3,
     name: "prefix",
     is_default: true,
     description: `Arabic utilizes prefixes to add meaning and function to words. prefixes are less numerous and often serve specific grammatical purposes.  One prominent example is the definite article "al-" (الـ), which transforms indefinite nouns and adjectives into definite ones. For instance, "kitab" (كتاب) means "book," but "al-kitab" (الكتاب) translates to "the book."`,
   },
   {
-    id: 5,
+    id: 4,
     name: "suffix",
     is_default: true,
     description:
@@ -44,7 +38,7 @@ const collections = [
   },
 ];
 const wordGroups = [
-  ...ism.map((wordGroup) => {
+  ...ism_n_fill.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collection_id: 1,
@@ -52,8 +46,8 @@ const wordGroups = [
       description: wordGroup.description,
       options: wordGroup.options,
     };
-  }),
-  ...fill.map((wordGroup) => {
+  })
+  ...herf.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collection_id: 2,
@@ -62,8 +56,7 @@ const wordGroups = [
       options: wordGroup.options,
     };
   }),
-
-  ...herf.map((wordGroup) => {
+  ...prefix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
       collection_id: 3,
@@ -72,19 +65,10 @@ const wordGroups = [
       options: wordGroup.options,
     };
   }),
-  ...prefix.map((wordGroup) => {
-    return {
-      words: wordGroup.positions,
-      collection_id: 4,
-      name: wordGroup.name,
-      description: wordGroup.description,
-      options: wordGroup.options,
-    };
-  }),
   ...suffix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
-      collection_id: 5,
+      collection_id: 4,
       name: wordGroup.name,
       description: wordGroup.description,
       options: wordGroup.options,

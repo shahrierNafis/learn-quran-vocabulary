@@ -1,10 +1,18 @@
 import fs from "fs";
 import path from "path";
-import { List, WordData, WordCount, WordSegment } from "../../src/types/types";
+import {
+  List,
+  WordData,
+  WordCount,
+  Requirements,
+  WordSegment,
+} from "../../src/types/types";
 import getOptions from "../lib/getOptions";
 import { lemmaRequirements } from "../lib/requirements";
 import sortList from "../lib/sortList";
+const wordCount: WordCount = require("../wordCount.json");
 const bt = require("buckwalter-transliteration")("qac2utf");
+
 type Data = {
   [key: string]: {
     [key: string]: {
@@ -15,16 +23,17 @@ type Data = {
 
 const data: Data = require("./../data.json");
 const list: List = {};
-
 for (const s in data) {
   for (const v in data[s]) {
     for (const w in data[s][v]) {
       const word = data[s][v][w];
       for (const segIndex in word) {
-        if (word[segIndex].arPartOfSpeech != "fiʿil" || !word[segIndex].lemma) {
+        if (
+          !["ism", "fiʿil"].includes(word[segIndex].arPartOfSpeech) ||
+          !word[segIndex].lemma
+        ) {
           continue;
         }
-
         const lemmaGroup = list[word[segIndex].lemma] ?? {
           words: [],
           positions: [],
@@ -55,20 +64,16 @@ async function propGetOptions(
 const sortedList = sortList(list);
 
 for (const i in sortedList) {
-  sortedList[i].options = (
-    await sortedList[i].getOptions(
-      sortedList[i].words[0]?.position,
-      sortedList[i].words[0]?.segIndex + ""
-    )
-  ).map((a) => {
-    a[0].position = sortedList[i].words[0]?.position;
-    return a;
-  });
+  sortedList[i].options = await sortedList[i].getOptions(
+    sortedList[i].words[0]?.position,
+    sortedList[i].words[0]?.segIndex + ""
+  );
   console.log(i + "/" + sortedList.length);
 }
+
 // write lists
 fs.writeFile(
-  "./.seed-data/fi'lList.json",
+  "./.seed-data/ism&fi'lList.json",
   JSON.stringify(sortedList),
   function (err) {
     if (err) throw err;
@@ -80,7 +85,7 @@ fs.writeFile(
   path.join(__dirname, "listCount.json"),
   JSON.stringify(
     sortedList.map((arr) => {
-      return arr.words.length;
+      return arr.positions.length;
     })
   ),
   function (err) {
