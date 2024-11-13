@@ -32,12 +32,12 @@ export default function McqProgress({
   useEffect(() => {
     setRange(currentProgress ? [currentProgress] : [0]);
   }, [currentProgress]);
-  async function handleSet() {
+  async function handleSet(word_group_id: number) {
     if (currentProgress === range[0]) return;
     const { data, error } = await supabase
       .from("user_progress")
       .upsert({
-        word_group_id: word_group.id,
+        word_group_id,
         progress: range[0],
         updated_at: date ? date.toISOString() : new Date().toISOString(),
       })
@@ -76,7 +76,9 @@ export default function McqProgress({
                 step={1}
               />
               <DatePicker {...{ date, setDate }} />
-              <Button onClick={handleSet}>Set {range}%</Button>
+              <Button onClick={() => handleSet(word_group.id)}>
+                Set {range}%
+              </Button>
             </div>
           </div>
         </DialogContent>

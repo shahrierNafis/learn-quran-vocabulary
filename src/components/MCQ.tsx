@@ -190,12 +190,15 @@ function MCQ({
       </div>
     </>
   );
-  async function onClick(isCorrect: boolean, index: 1 | 2 | 3 | 4) {
+  async function onClick(
+    isCorrect: boolean,
+    index: 1 | 2 | 3 | 4,
+    word_group_id: number
+  ) {
     setCorrect(isCorrect);
     setSelected(index);
 
     let newProgress: number;
-    const word_group_id = wordGroups[0].id;
     // if correct increase progress
     if (isCorrect) {
       newProgress = getNextProgress(intervals!, currentProgress);
