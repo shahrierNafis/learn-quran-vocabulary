@@ -17,10 +17,12 @@ function Options({
   correct: boolean | undefined;
   currentWord: string;
   selected: 1 | 2 | 3 | 4 | undefined;
-  onClick: (isCorrect: boolean, index: 1 | 2 | 3 | 4) => Promise<void>;
+  onClick: (
+    isCorrect: boolean,
+    index: 1 | 2 | 3 | 4,
+    word_group_id: number
+  ) => Promise<void>;
 }) {
-  const { theme, setTheme } = useTheme();
-
   return (
     <>
       <div className="grid grid-cols-2 gap-8">
@@ -40,7 +42,9 @@ function Options({
                       : "ring-4 ring-red-500")
                 )}
                 key={currentWord + option.index}
-                onClick={() => onClick(option.isCorrect, option.index)}
+                onClick={() =>
+                  onClick(option.isCorrect, option.index, option.index)
+                }
               >
                 <Word {...{ wordSegments: option.wordSegments }} noWordInfo />
               </Button>
