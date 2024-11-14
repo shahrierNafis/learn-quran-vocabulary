@@ -20,9 +20,14 @@ export default function Sentence({
   switchIndex?: number;
 }) {
   const [switchOn, setSwitchOn] = useState(false);
-  const [showTranslation, showTransliteration] = usePreferenceStore(
-    useShallow((a) => [a.showTranslation, a.showTransliteration])
-  );
+  const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
+    usePreferenceStore(
+      useShallow((a) => [
+        a.showTranslation,
+        a.showTransliteration,
+        a.showTranslationOnHiddenWords,
+      ])
+    );
   useEffect(() => {
     usePreferenceStore.persist.rehydrate();
   }, []);
@@ -52,15 +57,19 @@ export default function Sentence({
                       key={word.index}
                       className="flex flex-col justify-center items-center "
                     >
-                      <div className={"pb-1"}>{"_?_?_?_"}</div>{" "}
+                      <div className={""}>{"_?_?_?_"}</div>{" "}
                       {showTransliteration && (
                         <div className="dark:text-green-100 text-green-950  text-sm">
-                          _?_?_?_
+                          _ _ _ _
                         </div>
                       )}
                       {showTranslation && (
                         <div className="dark:text-red-100 text-red-950 text-xs justify-self-end">
-                          {word.translation.text}{" "}
+                          {showTranslationOnHiddenWords ? (
+                            word.translation.text
+                          ) : (
+                            <>_ _ _ _</>
+                          )}
                         </div>
                       )}{" "}
                     </div>
@@ -77,7 +86,7 @@ export default function Sentence({
                         {word.translation.text}
                       </div>
                       {showTransliteration && (
-                        <div className="dark:text-green-100 text-green-950 p-0 h-5 text-sm">
+                        <div className="dark:text-green-100 text-green-950 px-0 h-5 text-sm">
                           {" "}
                         </div>
                       )}
@@ -106,12 +115,12 @@ export default function Sentence({
                       <Word {...{ wordSegments: word.wordSegments, word }} />
                     </div>
                     {showTransliteration && (
-                      <div className="dark:text-green-100 text-green-950  text-sm">
+                      <div className="dark:text-green-100 text-green-950  text-sm px-1">
                         {word.transliteration.text}
                       </div>
                     )}
                     {showTranslation && (
-                      <div className="dark:text-red-100 text-red-950 text-xs">
+                      <div className="dark:text-red-100 text-red-950 text-xs px-1">
                         {word.translation.text}{" "}
                       </div>
                     )}
