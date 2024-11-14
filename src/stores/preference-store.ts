@@ -102,7 +102,7 @@ export const usePreferenceStore = create<PreferenceStore>()(
         translation_ids: ["20", "131"],
         setTranslation_ids: (translation_ids: string[]) =>
           set({ translation_ids }),
-        showTranslation: false,
+        showTranslation: true,
         setShowTranslation: (showTranslation: boolean) =>
           set({ showTranslation }),
         showTranslationOnHiddenWords: false,
