@@ -74,6 +74,12 @@ type PreferenceStore = {
   setTranslation_ids: (translation_ids: string[]) => void;
   showTranslation: boolean;
   setShowTranslation: (showTranslation: boolean) => void;
+
+  showTranslationOnHiddenWords: boolean;
+  setShowTranslationOnHiddenWords: (
+    showTranslationOnHiddenWords: boolean
+  ) => void;
+
   showTransliteration: boolean;
   setShowTransliteration: (showTranslation: boolean) => void;
   colours: { [key: string]: [string, string] };
@@ -99,7 +105,11 @@ export const usePreferenceStore = create<PreferenceStore>()(
         showTranslation: false,
         setShowTranslation: (showTranslation: boolean) =>
           set({ showTranslation }),
-        showTransliteration: false,
+        showTranslationOnHiddenWords: false,
+        setShowTranslationOnHiddenWords: (
+          showTranslationOnHiddenWords: boolean
+        ) => set({ showTranslationOnHiddenWords }),
+        showTransliteration: true,
         setShowTransliteration: (showTransliteration: boolean) =>
           set({ showTransliteration }),
         colours: defaultColours,
@@ -137,7 +147,7 @@ export const usePreferenceStore = create<PreferenceStore>()(
     },
 
     {
-      version: 3,
+      version: 4,
       name: "preference-storage",
       skipHydration: true,
       storage: storage,
