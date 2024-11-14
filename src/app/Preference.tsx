@@ -14,7 +14,7 @@ import UpdatePassword from "@/components/ChangePassword";
 import ChangeColours from "@/components/ui/ChangeColours";
 import ChangeFont from "@/components/ui/ChangeFont";
 import { useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";
@@ -26,12 +26,16 @@ export default function Preference() {
     showTransliteration,
     setShowTranslation,
     showTranslation,
+    setShowTranslationOnHiddenWords,
+    showTranslationOnHiddenWords,
   ] = usePreferenceStore(
     useShallow((a) => [
       a.setShowTransliteration,
       a.showTransliteration,
       a.setShowTranslation,
       a.showTranslation,
+      a.setShowTranslationOnHiddenWords,
+      a.showTranslationOnHiddenWords,
     ])
   );
 
@@ -42,7 +46,7 @@ export default function Preference() {
     <>
       <Dialog>
         <DialogTrigger className="flex">
-          <Button asChild variant={"outline"}>
+          <Button variant={"outline"} asChild>
             <div>
               <Settings />
               Preference
@@ -58,20 +62,58 @@ export default function Preference() {
             <SelectTranslation />
             <ChangeColours />
             <ChangeFont />
-            <Button
-              variant={"outline"}
-              onClick={() => setShowTransliteration(!showTransliteration)}
+            <div
+              style={{ gridTemplateColumns: "auto 1fr" }}
+              className="grid align-middle rounded-md text-sm font-medium ring-offset-background transition-colors"
             >
-              <Switch checked={showTransliteration} />
-              Show Transliteration
-            </Button>
-            <Button
-              variant={"outline"}
-              onClick={() => setShowTranslation(!showTranslation)}
-            >
-              <Switch checked={showTranslation} />
-              Show Translation
-            </Button>
+              <div
+                className={
+                  "flex h-10 px-4 py-2 rounded-md  justify-center items-center border"
+                }
+              >
+                Show Transliteration on words{" "}
+              </div>{" "}
+              <Button
+                className="h-full"
+                onClick={() => setShowTransliteration(!showTransliteration)}
+                variant={"outline"}
+              >
+                <Switch checked={showTransliteration} />
+              </Button>
+              <div
+                className={
+                  "flex h-10 px-4 py-2 rounded-md  justify-center items-center border"
+                }
+              >
+                Show Translation on words{" "}
+              </div>{" "}
+              <Button
+                className="h-full"
+                onClick={() => setShowTranslation(!showTranslation)}
+                variant={"outline"}
+              >
+                <Switch checked={showTranslation} />
+              </Button>
+              <div
+                className={
+                  "flex h-10 px-4 py-2 rounded-md  justify-center items-center border"
+                }
+              >
+                Show Translation on hidden words
+              </div>{" "}
+              <Button
+                className="h-full"
+                onClick={() =>
+                  setShowTranslationOnHiddenWords(!showTranslationOnHiddenWords)
+                }
+                variant={"outline"}
+              >
+                <Switch
+                  disabled={!showTranslation}
+                  checked={showTranslation && showTranslationOnHiddenWords}
+                />
+              </Button>
+            </div>
             <ModeToggle />
             <SetReviewOrder />
             <SetIntervals />
