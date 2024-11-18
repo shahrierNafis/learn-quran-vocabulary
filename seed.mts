@@ -1,7 +1,6 @@
 // import { createSeedClient } from "@snaplet/seed";
 import herf from "./.seed-data/harfList.json";
 import ism_n_fill from "./.seed-data/ism&fi'lList.json";
-import fill from "./.seed-data/fi'lList.json";
 import suffix from "./.seed-data/suffixList.json";
 import prefix from "./.seed-data/prefixList.json";
 
@@ -46,7 +45,7 @@ const wordGroups = [
       description: wordGroup.description,
       options: wordGroup.options,
     };
-  })
+  }),
   ...herf.map((wordGroup) => {
     return {
       words: wordGroup.positions,

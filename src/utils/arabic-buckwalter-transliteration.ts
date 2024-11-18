@@ -61,19 +61,23 @@ const b2a: { [key: string]: string } = {
   "%": "\u06Ec", // RounDedhIghsTopwitHfilledCentre
   "]": "\u06Ed", // sMallLowMeem
 };
-export function buckwalter_to_arabic(buckwalter: string) {
+export function buckwalter_to_arabic(buckwalter?: string) {
   return buckwalter
-    .split("")
-    .map((char) => b2a[char])
-    .join("");
+    ? buckwalter
+        .split("")
+        .map((char) => b2a[char])
+        ?.join("")
+    : "";
 }
 
-export function arabic_to_buckwalter(arabic: string) {
+export function arabic_to_buckwalter(arabic?: string) {
   return arabic
-    .split("")
-    .map((char) =>
-      Object.fromEntries(Object.entries(b2a).map((a) => a.reverse()))[
-        char.charCodeAt(0)
-      ].join("")
-    );
+    ? arabic
+        .split("")
+        .map((char) =>
+          Object.fromEntries(Object.entries(b2a).map((a) => a.reverse()))[
+            char.charCodeAt(0)
+          ]?.join("")
+        )
+    : "";
 }
