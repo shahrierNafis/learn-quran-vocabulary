@@ -12,8 +12,8 @@ import { descriptions } from "./descriptions";
 import getOptions from "../lib/getOptions";
 import { HarfRequirement } from "../lib/requirements";
 import sortList from "../lib/sortList";
+import { buckwalter_to_arabic as bt } from "@/utils/arabic-buckwalter-transliteration";
 const wordCount: WordCount = require("../wordCount.json");
-const bt = require("buckwalter-transliteration")("qac2utf");
 
 type Data = {
   [key: string]: {

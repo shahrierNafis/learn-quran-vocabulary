@@ -1,6 +1,9 @@
 import { WordData } from "../../src/types/types";
-const b2a = require("buckwalter-transliteration")("qac2utf");
-const a2b = require("buckwalter-transliteration")("utf2qac");
+import {
+  buckwalter_to_arabic as b2a,
+  arabic_to_buckwalter as a2b,
+} from "@/utils/arabic-buckwalter-transliteration";
+
 type Data = {
   [key: string]: {
     [key: string]: {

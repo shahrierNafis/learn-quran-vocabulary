@@ -8,8 +8,11 @@ import { WORD } from "@/types/types";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 import Link from "@/components/ui/Link";
+import { usePreferenceStore } from "@/stores/preference-store";
+import { useShallow } from "zustand/react/shallow";
 
 import Word from "@/components/Word";
+import getInterval from "@/utils/getInterval";
 export type TableData = Tables<"word_groups">;
 
 export const columns: ColumnDef<TableData>[] = [
@@ -64,11 +67,7 @@ export const columns: ColumnDef<TableData>[] = [
               ) : (
                 row.depth == 0 && <ChevronRight className="opacity-50" />
               )}
-              <div>
-                <Link href={"\\wordGroup\\" + row.original.id}>
-                  {getValue() as string}
-                </Link>
-              </div>
+              <div>{getValue() as string}</div>
             </>
           </div>
         </>
@@ -89,8 +88,9 @@ export const columns: ColumnDef<TableData>[] = [
       }, [index]);
       return (
         <>
-          <div className="flex justify-center items-center">
-            <Link href={"\\wordGroup\\" + row.original.id}>
+          {" "}
+          <Link href={"\\wordGroup\\" + row.original.id}>
+            <div className="flex justify-center items-center">
               <div className="flex justify-center h-fit w-40 border border-input bg-background hover:bg-accent hover:text-accent-foreground">
                 {word ? (
                   <>
@@ -115,8 +115,8 @@ export const columns: ColumnDef<TableData>[] = [
                   </div>
                 )}
               </div>
-            </Link>
-          </div>
+            </div>
+          </Link>
         </>
       );
     },
@@ -132,9 +132,8 @@ export const columns: ColumnDef<TableData>[] = [
       return (
         <>
           <div className="flex"></div>
-          <Link href={"\\wordGroup\\" + row.original.id}>
-            <div className="text-center">{getValue() as string}</div>
-          </Link>
+
+          <div className="text-center">{getValue() as string}</div>
         </>
       );
     },
@@ -189,18 +188,16 @@ export const columns: ColumnDef<TableData>[] = [
         return (
           <>
             <div className="flex"></div>
-            <Link href={"\\wordGroup\\" + row.original.id}>
-              <div className="text-center">{progress}%</div>
-            </Link>
+
+            <div className="text-center">{progress}%</div>
           </>
         );
       }
       return (
         <>
           <div className="flex"></div>
-          <Link href={"\\wordGroup\\" + row.original.id}>
-            <div className="text-center">0%</div>
-          </Link>
+
+          <div className="text-center">0%</div>
         </>
       );
     },
@@ -254,15 +251,105 @@ export const columns: ColumnDef<TableData>[] = [
       return (
         <>
           <div className="flex">
-            <Link href={"\\wordGroup\\" + row.original.id}>
-              {updatedAt ? (
-                <div className="text-center">
-                  {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
+            {updatedAt ? (
+              <div className="text-center">
+                {new Date(updatedAt).toLocaleString("en-GB").split(",")[0]}
+              </div>
+            ) : (
+              <>----</>
+            )}
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    accessorKey: "dueDate",
+    id: "dueDate",
+    header: () => <div className="text-center">due date</div>,
+    cell: function Cell({ row, getValue }) {
+      const [updatedAt, setUpdatedAt] = useState<string | null>();
+      const [progress, setProgress] = useState<number | null>();
+
+      const supabase = createClient<Database>();
+      const interval = progress ? getInterval(progress) : null;
+
+      usePreferenceStore(useShallow((state) => [state.intervals]));
+      useEffect(() => {
+        if (row.depth == 0) {
+          supabase
+            .from("user_progress")
+            .select("progress, updated_at")
+            .eq("word_group_id", row.original.id)
+            .single()
+            .then(({ data, error }) => {
+              if (error) {
+                // console.error(error);
+              } else {
+                setProgress(data.progress);
+                setUpdatedAt(data.updated_at);
+              }
+            });
+
+          const realtime = supabase
+            .channel("updatedOn" + row.original.id)
+            .on(
+              "postgres_changes",
+              {
+                event: "*",
+                schema: "public",
+                table: "user_progress",
+                filter: `word_group_id=eq.${row.original.id}`,
+              },
+              (payload) => {
+                setUpdatedAt(
+                  (payload.new as Tables<"user_progress">).updated_at
+                );
+              }
+            )
+            .subscribe();
+
+          return () => {
+            realtime.unsubscribe();
+          };
+        }
+      }, [getValue, row, supabase]);
+
+      let dueDate: Date | undefined;
+      let togo: number | undefined;
+      if (updatedAt && interval) {
+        dueDate = new Date(new Date(updatedAt).getTime() + interval);
+        dueDate.setHours(0, 0, 0, 0);
+        const current = new Date();
+        current.setHours(0, 0, 0, 0);
+        let Difference_In_Time = dueDate.getTime() - current.getTime();
+        // Calculating the no. of days between
+        // two dates
+        togo = Math.round(Difference_In_Time / (1000 * 3600 * 24));
+        current.getTime() - dueDate.getTime();
+      }
+      if (row.depth != 0) return "";
+      return (
+        <>
+          <div className="flex">
+            {dueDate ? (
+              <>
+                <div className="text-xs flex flex-col justify-center items-center">
+                  <div className="text-center">
+                    {dueDate.toLocaleString("en-GB").split(",")[0]}
+                  </div>
+                  <div className="text-center">
+                    {togo && togo < 0 ? (
+                      <>{togo * -1} days ago</>
+                    ) : (
+                      <>in {togo} days</>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <>----</>
-              )}
-            </Link>
+              </>
+            ) : (
+              <>----</>
+            )}
           </div>
         </>
       );

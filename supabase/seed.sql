@@ -89,32 +89,37 @@ CREATE POLICY "Users can only alter their own data" ON "public"."user_intervals"
 --
 --
 create
-or replace function get_word_groups(collection_id int) returns setof public.word_groups language sql as $ $
+or replace function get_word_groups(collection_id int) returns setof public.word_groups LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE BEGIN ATOMIC
 select
   public.word_groups.*
 from
   public.word_groups
 where
-  public.word_groups.collection_id = $ 1
+  public.word_groups.collection_id = collection_id
 order by
-  array_length(public.word_groups.words, 1) DESC $ $;
+  array_length(public.word_groups.words, 1) DESC;
+
+END;
 
 --
+--
 create
-or replace function get_0_word_groups(collection_id int) returns setof public.word_groups language sql as $ $
+or replace function get_0_word_groups(collection_id int) returns setof public.word_groups LANGUAGE sql IMMUTABLE STRICT PARALLEL SAFE BEGIN ATOMIC
 select
   public.word_groups.*
 from
   public.word_groups
   Left JOIN public.user_progress on public.word_groups.id = public.user_progress.word_group_id
 where
-  public.word_groups.collection_id = $ 1
+  public.word_groups.collection_id = collection_id
   AND (
     public.user_progress.progress Is null
     or public.user_progress.progress = 0
   )
 order by
-  array_length(public.word_groups.words, 1) DESC $ $;
+  array_length(public.word_groups.words, 1) DESC;
+
+END;
 
 --
 --user_preference
