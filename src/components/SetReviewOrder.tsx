@@ -26,7 +26,7 @@ export function SetReviewOrder({ className }: { className?: string }) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex flex-col items-center justify-center border p-2">
-            <div>Play review sentences ordered by</div>
+            <div>Play review verses ordered by</div>
             <Button
               className="flex grow justify-center gap-2 flex-col"
               variant="outline"

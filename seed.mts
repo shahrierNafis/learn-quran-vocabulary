@@ -20,7 +20,7 @@ const collections = [
     id: 2,
     name: "herf",
     is_default: true,
-    description: `Harf (حرف) translates to "letter" but refers to particles. These are function words that connect other words in a sentence and indicate grammatical relationships. Prepositions and conjunctions fall under this category.`,
+    description: `Harf (حرف) translates to "letter" but refers to particles. These are function words that connect other words in a verse and indicate grammatical relationships. Prepositions and conjunctions fall under this category.`,
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const collections = [
     name: "suffix",
     is_default: true,
     description:
-      "Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete sentence in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English sentence 'and We made them'. In Arabic, suffixes could be attached to words to indicate the subjects and objects.",
+      "Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete verse in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English verse 'and We made them'. In Arabic, suffixes could be attached to words to indicate the subjects and objects.",
   },
 ];
 const wordGroups = [

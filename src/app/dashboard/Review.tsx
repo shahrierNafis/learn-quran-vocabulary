@@ -44,8 +44,7 @@ export default function Review({
           is used to help you remember what you learn. Intervals are set to 1
           day (25% Mastered), 10 days (50% Mastered), 30 days (75% Mastered),
           and 180 days (100% Mastered) by default. You can customize the
-          intervals. You can also manually master or reset sentences at any
-          time.
+          intervals. You can also manually master or reset verses at any time.
         </PopoverContent>
       </Popover>
     </div>
