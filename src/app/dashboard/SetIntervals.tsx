@@ -39,7 +39,7 @@ export default function SetIntervals() {
         </div>
         <div className="text-center border p-2 flex flex-col justify-center items-center gap-2">
           <div className="grid grid-cols-2 ">
-            <div className="text-center"> A sentence that is</div>
+            <div className="text-center"> A verse that is</div>
             <div className="text-center">will be seen again in</div>
             {intervals &&
               Object.keys(intervals).map((progress) => {

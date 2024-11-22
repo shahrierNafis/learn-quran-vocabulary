@@ -3,20 +3,20 @@ import { WORD } from "@/types/types";
 import getVerseWords from "@/utils/getVerseWords";
 import { useState, useEffect } from "react";
 
-export default function useSentence(wordGroups: Tables<"word_groups">[]) {
-  const [sentence, setSentence] = useState<WORD[]>();
-  const [preloadedSentence, setPreloadedSentence] = useState<Promise<WORD[]>>();
-  // set sentence (once)
+export default function useVerse(wordGroups: Tables<"word_groups">[]) {
+  const [verse, setVerse] = useState<WORD[]>();
+  const [preloadedVerse, setPreloadedVerse] = useState<Promise<WORD[]>>();
+  // set verse (once)
   useEffect(() => {
-    !sentence &&
+    !verse &&
       getVerseWords(wordGroups[0].words[0] as `${string}:${string}`).then(
-        setSentence
+        setVerse
       );
     return () => {};
-  }, [sentence, wordGroups]);
-  // set Preloaded Sentence
+  }, [verse, wordGroups]);
+  // set Preloaded Verse
   useEffect(() => {
-    setPreloadedSentence(
+    setPreloadedVerse(
       getVerseWords(
         (wordGroups.length > 1
           ? wordGroups[1].words[0]
@@ -25,5 +25,5 @@ export default function useSentence(wordGroups: Tables<"word_groups">[]) {
     );
     return () => {};
   }, [wordGroups]);
-  return { sentence, setSentence, preloadedSentence };
+  return { verse, setVerse, preloadedVerse };
 }

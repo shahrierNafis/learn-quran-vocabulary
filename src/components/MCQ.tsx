@@ -4,10 +4,10 @@ import { Database, Tables } from "@/database.types";
 import _ from "lodash";
 import LoadingScreen from "./ui/LoadingScreen";
 import SimilarWordsTable from "./SimilarWordsTable";
-import Sentence from "./Sentence";
+import Verse from "./Verse";
 import McqProgress from "./McqProgress";
 import { createClient } from "@/utils/supabase/clients";
-import useSentence from "./useSentence";
+import useVerse from "./useVerse";
 import useOptions from "./useOptions";
 import useProgress from "./useProgress";
 import Options from "./Options";
@@ -30,7 +30,7 @@ function MCQ({
   noNewWord?: boolean;
 }) {
   const supabase = createClient<Database>();
-  const { sentence, setSentence, preloadedSentence } = useSentence(wordGroups);
+  const { verse, setVerse, preloadedVerse } = useVerse(wordGroups);
 
   const { translations, setTranslations, preLoadedT } =
     useTranslations(wordGroups);
@@ -48,11 +48,11 @@ function MCQ({
   }, []);
   const { allOptions, setOpData, preLoadedOpData } = useOptions(
     wordGroups,
-    sentence
+    verse
   );
   const { currentProgress, setCurrentProgress } = useProgress(wordGroups[0].id);
   // set Intervals
-  const [surah, verse] = wordGroups[0].words[0].split(":");
+  const [surahI, verseI] = wordGroups[0].words[0].split(":");
 
   if (!intervals) {
     return <LoadingScreen />;
@@ -77,13 +77,13 @@ function MCQ({
       </div>
       <div className="mx-auto my-4 grow">
         <div className="flex flex-col m-4 gap-4 justify-center items-center my-auto">
-          <div className="opacity-50 text-sm inline-block">{`${surah}:${verse}`}</div>
+          <div className="opacity-50 text-sm inline-block">{`${surahI}:${verseI}`}</div>
           {/* ARABIC */}
           <div
             dir="rtl"
             className="text-3xl flex  items-center gap-2 flex-wrap "
           >
-            <Sentence
+            <Verse
               {...{
                 hideIndex:
                   !selected && !correct
@@ -97,7 +97,8 @@ function MCQ({
                   selected || correct
                     ? +wordGroups[0].words[0].split(":")[2] - 1
                     : undefined,
-                sentence,
+                verse,
+                hideAudioPlayer: !(selected || correct),
               }}
             />
           </div>
@@ -115,8 +116,8 @@ function MCQ({
             {/* New Word? */}
             {!noNewWord &&
               !(correct || selected) &&
-              sentence &&
-              sentence[+wordGroups[0].words[0].split(":")[2] - 1] &&
+              verse &&
+              verse[+wordGroups[0].words[0].split(":")[2] - 1] &&
               currentProgress == 0 && (
                 <>
                   <div className="flex justify-end -mt-5">
@@ -125,11 +126,9 @@ function MCQ({
                         // variant: "outline",
                         size: "sm",
                         wordSegments:
-                          sentence[+wordGroups[0].words[0].split(":")[2] - 1]
+                          verse[+wordGroups[0].words[0].split(":")[2] - 1]
                             .wordSegments,
-                        word: sentence[
-                          +wordGroups[0].words[0].split(":")[2] - 1
-                        ],
+                        word: verse[+wordGroups[0].words[0].split(":")[2] - 1],
                       }}
                     >
                       <div className="flex my-auto text-xs">
@@ -219,7 +218,7 @@ function MCQ({
     setSelected(undefined);
     setShowSimilarWords(false);
     setOpData(await preLoadedOpData);
-    setSentence(await preloadedSentence);
+    setVerse(await preloadedVerse);
     setTranslations(await preLoadedT);
   }
 }

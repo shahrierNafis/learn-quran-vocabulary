@@ -7,7 +7,7 @@ import { cache, useEffect, useState } from "react";
 
 export default function useOptions(
   wordGroups: Tables<"word_groups">[],
-  sentence: WORD[] | undefined
+  verse: WORD[] | undefined
 ) {
   const [allOptions, setAllOptions] = useState<OPTION[]>([]);
   const [preLoadedOpData, setPreLoadedOpData] = useState<Promise<WordData>>();
@@ -18,7 +18,7 @@ export default function useOptions(
   // set allOptions
   useEffect(() => {
     (async () => {
-      if (opData && opData[0].position == wordGroups[0].words[0] && sentence) {
+      if (opData && opData[0].position == wordGroups[0].words[0] && verse) {
         const option: OPTION = {
           index: 4,
           isCorrect: true,
@@ -31,14 +31,14 @@ export default function useOptions(
     })();
 
     return () => {};
-  }, [opData, sentence, wordGroups, wordIndex]);
+  }, [opData, verse, wordGroups, wordIndex]);
   //set Option data (once)
   useEffect(() => {
     const [s, v, w] = wordGroups[0].words[0].split(":");
-    if (sentence)
+    if (verse)
       wordGroups && !opData && cache(getWordData)(+s, +v, +w).then(setOpData);
     return () => {};
-  }, [opData, sentence, wordGroups, wordIndex]);
+  }, [opData, verse, wordGroups, wordIndex]);
 
   //set PreLoaded Option data
   useEffect(() => {

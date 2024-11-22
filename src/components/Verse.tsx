@@ -5,19 +5,22 @@ import { Skeleton } from "./ui/skeleton";
 import Word from "./Word";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, Volume2 } from "lucide-react";
 import { Button } from "./ui/button";
+import VerseAudioBtn from "./verseAudioBtn";
 
-export default function Sentence({
-  sentence,
+export default function Verse({
+  verse,
   highlightIndex,
   hideIndex,
   switchIndex,
+  hideAudioPlayer,
 }: {
-  sentence: WORD[] | undefined;
+  verse: WORD[] | undefined;
   highlightIndex?: number;
   hideIndex?: number;
   switchIndex?: number;
+  hideAudioPlayer?: boolean;
 }) {
   const [switchOn, setSwitchOn] = useState(false);
   const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
@@ -33,7 +36,9 @@ export default function Sentence({
   }, []);
   useEffect(() => {
     setSwitchOn(false);
-  }, [sentence]);
+  }, [verse]);
+
+  const [surah, ayah] = verse ? verse[0].index.split(":") : ["1", "1"];
   return (
     <>
       <div className="flex justify-center items-center">
@@ -47,8 +52,8 @@ export default function Sentence({
           // }}
           className={cn("flex flex-wrap items-center justify-center")}
         >
-          {sentence ? (
-            sentence.map((word, index) => {
+          {verse ? (
+            verse.map((word, index) => {
               if (word.char_type_name !== "word") return "";
               if (index == hideIndex)
                 return (
@@ -143,7 +148,10 @@ export default function Sentence({
           >
             <ArrowLeftRight />
           </Button>
-        }
+        }{" "}
+        {verse && !hideAudioPlayer && (
+          <VerseAudioBtn verse_key={`${surah}:${ayah}`} />
+        )}
       </div>
     </>
   );

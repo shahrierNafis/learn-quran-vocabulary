@@ -20,6 +20,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { SetReviewOrder } from "@/components/SetReviewOrder";
+import ChangeReciter from "@/components/ChangeReciter";
 export default function Preference() {
   const [
     setShowTransliteration,
@@ -62,6 +63,7 @@ export default function Preference() {
             <SelectTranslation />
             <ChangeColours />
             <ChangeFont />
+            <ChangeReciter />
             <div
               style={{ gridTemplateColumns: "auto 1fr" }}
               className="grid align-middle rounded-md text-sm font-medium ring-offset-background transition-colors"

@@ -15,7 +15,7 @@ import Translations from "./Translations";
 import Word from "./Word";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
-import Sentence from "./Sentence";
+import Verse from "./Verse";
 
 export default memo(
   function CellComponent({
@@ -25,7 +25,7 @@ export default memo(
     verse_key: string;
     translation_ids: string[];
   }) {
-    const [sentence, setSentence] = useState<WORD[]>();
+    const [verse, setVerse] = useState<WORD[]>();
     const [translations, setTranslations] =
       useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
     const [showTranslation, showTransliteration] = usePreferenceStore(
@@ -36,11 +36,9 @@ export default memo(
       usePreferenceStore.persist.rehydrate();
     }, []);
 
-    // set sentence
+    // set verse
     useEffect(() => {
-      getVerseWords(verse_key as `${string}:${string}${string}`).then(
-        setSentence
-      );
+      getVerseWords(verse_key as `${string}:${string}${string}`).then(setVerse);
 
       return () => {};
     }, [verse_key]);
@@ -62,8 +60,8 @@ export default memo(
           className="flex gap-2 flex-wrap  text-center text-2xl"
         >
           {/* ARABIC */}
-          {sentence ? (
-            <Sentence
+          {verse ? (
+            <Verse
               {...{
                 switchIndex: verse_key.split(":")[2]
                   ? +verse_key.split(":")[2] - 1
@@ -71,7 +69,7 @@ export default memo(
                 highlightIndex: verse_key.split(":")[2]
                   ? +verse_key.split(":")[2] - 1
                   : undefined,
-                sentence,
+                verse,
               }}
             />
           ) : (

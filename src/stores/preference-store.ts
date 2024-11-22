@@ -94,6 +94,8 @@ type PreferenceStore = {
   removeInterval: (percentage: number) => void;
   reviewOrder: reviewOrderType;
   setReviewOrder: (reviewOrder: reviewOrderType) => void;
+  reciter_id: string;
+  setReciter_id: (reciter_id: string) => void;
 };
 export const usePreferenceStore = create<PreferenceStore>()(
   persist(
@@ -143,6 +145,8 @@ export const usePreferenceStore = create<PreferenceStore>()(
         },
         reviewOrder: "next_review ASC",
         setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
+        reciter_id: 7 + "",
+        setReciter_id: (reciter_id) => set({ reciter_id }),
       };
     },
 

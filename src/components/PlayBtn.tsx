@@ -42,7 +42,7 @@ export default function Learn({
           </DialogHeader>
 
           <div className="flex items-center gap-2">
-            <div className="">sentences per round:</div>
+            <div className="">verses per round:</div>
             <Input
               className="w-20"
               min={1}
