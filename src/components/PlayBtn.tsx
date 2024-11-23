@@ -11,9 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "@/components/ui/Link";
-import { createClient } from "@/utils/supabase/clients";
-import { Database, Tables } from "@/database.types";
-
+import { Checkbox } from "@/components/ui/checkbox";
 export default function Learn({
   className,
   collection_id,
@@ -26,7 +24,7 @@ export default function Learn({
   wordGroupsCount?: number | null | undefined;
 }) {
   const [number, setNumber] = useState<number>(10);
-
+  const [textInput, setTextInput] = useState(false);
   return (
     <>
       <Dialog>
@@ -40,7 +38,6 @@ export default function Learn({
             <DialogTitle>Play</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-
           <div className="flex items-center gap-2">
             <div className="">verses per round:</div>
             <Input
@@ -52,8 +49,15 @@ export default function Learn({
               onChange={(e) => setNumber(Number(e.target.value))}
             />
           </div>
-
-          <Link href={`/play/${collection_id}/${number}`}>
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setTextInput(!textInput)}
+          >
+            <Checkbox checked={textInput} /> text Input (hard)
+          </div>
+          <Link
+            href={`/play/${collection_id}/${number}${textInput ? "?mode=text_input" : ""}`}
+          >
             <Button className="w-fit ml-auto">Start </Button>
           </Link>
         </DialogContent>

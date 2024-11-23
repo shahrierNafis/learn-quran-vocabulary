@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { WORD } from "@/types/types";
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import Word from "./Word";
 import { usePreferenceStore } from "@/stores/preference-store";
@@ -15,12 +15,14 @@ export default function Verse({
   hideIndex,
   switchIndex,
   hideAudioPlayer,
+  children,
 }: {
   verse: WORD[] | undefined;
   highlightIndex?: number;
   hideIndex?: number;
   switchIndex?: number;
   hideAudioPlayer?: boolean;
+  children?: ReactNode;
 }) {
   const [switchOn, setSwitchOn] = useState(false);
   const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
@@ -56,7 +58,9 @@ export default function Verse({
             verse.map((word, index) => {
               if (word.char_type_name !== "word") return "";
               if (index == hideIndex)
-                return (
+                return children ? (
+                  <>{children}</>
+                ) : (
                   <>
                     <div
                       key={word.index}

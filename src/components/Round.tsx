@@ -5,7 +5,7 @@ import _ from "lodash";
 import LoadingScreen from "./ui/LoadingScreen";
 import SimilarWordsTable from "./SimilarWordsTable";
 import Verse from "./Verse";
-import McqProgress from "./McqProgress";
+import RoundProgress from "./RoundProgress";
 import { createClient } from "@/utils/supabase/clients";
 import useVerse from "./useVerse";
 import useOptions from "./useOptions";
@@ -17,17 +17,23 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
 import WordInfo from "./WordInfo";
-type Intervals = {
-  [key: number]: number;
-};
-function MCQ({
+import TextInput from "./TextInput";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+function Round({
   wordGroups,
   callback,
   noNewWord,
+  textInput,
 }: {
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
   noNewWord?: boolean;
+  textInput?: boolean;
 }) {
   const supabase = createClient<Database>();
   const { verse, setVerse, preloadedVerse } = useVerse(wordGroups);
@@ -53,7 +59,9 @@ function MCQ({
   const { currentProgress, setCurrentProgress } = useProgress(wordGroups[0].id);
   // set Intervals
   const [surahI, verseI] = wordGroups[0].words[0].split(":");
-
+  const [text, setText] = useState("");
+  const [switch2MC, setSwitch2MC] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
   if (!intervals) {
     return <LoadingScreen />;
   }
@@ -65,7 +73,7 @@ function MCQ({
           {correct ? wordGroups.length - 1 : wordGroups.length} more to go ⇒
         </Button>
         {/* Progress */}
-        <McqProgress
+        <RoundProgress
           {...{
             word_group: wordGroups[0],
             setCorrect,
@@ -100,7 +108,24 @@ function MCQ({
                 verse,
                 hideAudioPlayer: !(selected || correct),
               }}
-            />
+            >
+              {textInput && verse && (
+                <>
+                  <TextInput
+                    {...{
+                      text,
+                      setText,
+                      word: verse[+wordGroups[0].words[0].split(":")[2] - 1],
+                      isValid: () => {
+                        setCorrect(true);
+                        setText("");
+                        onClick(true, undefined, wordGroups[0].id);
+                      },
+                    }}
+                  />
+                </>
+              )}
+            </Verse>
           </div>
           {/* TRANSLATION */}{" "}
           <Translations
@@ -139,16 +164,58 @@ function MCQ({
                   </div>{" "}
                 </>
               )}
+            {textInput && !correct && (
+              <>
+                {!switch2MC && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Button
+                          variant={"outline"}
+                          onClick={() => setSwitch2MC(true)}
+                        >
+                          MC
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Switch to multiple choice</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                {!hintUsed && verse && (
+                  <Button
+                    variant={"outline"}
+                    onClick={() => {
+                      setText(
+                        text.trim() +
+                          verse[
+                            +wordGroups[0].words[0].split(":")[2] - 1
+                          ].text_imlaei
+                            .normalize("NFD")
+                            .replace(/[\u064B-\u065F]/g, "")
+                            .replace(text.trim(), "")[0]
+                      );
+                      setHintUsed(true);
+                    }}
+                  >
+                    hint!
+                  </Button>
+                )}
+              </>
+            )}
             {/* OPTIONS */}
-            <Options
-              {...{
-                allOptions,
-                correct,
-                currentWord: wordGroups[0].words[0],
-                selected,
-                onClick,
-              }}
-            ></Options>
+            {!(textInput && !switch2MC) && (
+              <Options
+                {...{
+                  allOptions,
+                  correct,
+                  currentWord: wordGroups[0].words[0],
+                  selected,
+                  onClick,
+                }}
+              ></Options>
+            )}
           </div>
           {/* show similar words */}
           {(correct || selected) && (
@@ -191,7 +258,7 @@ function MCQ({
   );
   async function onClick(
     isCorrect: boolean,
-    index: 1 | 2 | 3 | 4,
+    index: 1 | 2 | 3 | 4 | undefined,
     word_group_id: number
   ) {
     setCorrect(isCorrect);
@@ -213,6 +280,9 @@ function MCQ({
     });
   }
   async function nextClick() {
+    setSwitch2MC(false);
+    setHintUsed(false);
+    setText("");
     callback(correct ?? false);
     setCorrect(false);
     setSelected(undefined);
@@ -223,7 +293,7 @@ function MCQ({
   }
 }
 
-export default memo(MCQ, (prev, next) => {
+export default memo(Round, (prev, next) => {
   return prev.wordGroups.every((currentValue, index) => {
     if (next.wordGroups[index] == undefined) return false;
     return currentValue.id == next.wordGroups[index].id;
