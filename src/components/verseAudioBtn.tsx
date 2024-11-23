@@ -6,6 +6,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+
 import { Volume2 } from "lucide-react";
 import { Button } from "./ui/button";
 import AudioPlayer from "react-h5-audio-player";
@@ -35,25 +37,23 @@ export default function VerseAudioBtn({ verse_key }: { verse_key: string }) {
 
   return (
     <>
-      <div dir="rtl">
-        <Popover>
-          <PopoverTrigger>
-            <div className="flex">
-              <Button className="" size={"icon"} variant={"ghost"}>
-                <Volume2 />
-              </Button>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-[45vw] ">
-            <AudioPlayer
-              autoPlay
-              loop
-              src={verseAudio}
-              // other props here
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
+      <Drawer>
+        <DrawerTrigger>
+          <div className="flex">
+            <Button className="" size={"icon"} variant={"ghost"}>
+              <Volume2 />
+            </Button>
+          </div>
+        </DrawerTrigger>
+        <DrawerContent>
+          <AudioPlayer
+            autoPlay
+            loop
+            src={verseAudio}
+            // other props here
+          />
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }
