@@ -13,7 +13,7 @@ import { DialogHeader } from "./ui/dialog";
 import { Slider } from "./ui/slider";
 import { DatePicker } from "./ui/datePicker";
 
-export default function McqProgress({
+export default function RoundProgress({
   currentProgress,
   setCurrentProgress,
   word_group,

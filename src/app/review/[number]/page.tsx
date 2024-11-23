@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
-import MCQ from "@/components/MCQ";
+import Round from "@/components/Round";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Tables } from "@/database.types";
 import getToReview from "@/utils/getToReview";
@@ -18,6 +18,7 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
   const [toReviewCount, setToReviewCount] = useState<number>(0);
   const searchParams = useSearchParams();
   const collection_id = searchParams.get("collection_id");
+  const mode = searchParams.get("mode");
 
   //set wordGroups
   useEffect(() => {
@@ -58,10 +59,11 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
       <div className="min-h-dvh flex flex-col">
         {wordGroups !== undefined ? (
           wordGroups?.length ? (
-            <MCQ
+            <Round
               {...{
                 wordGroups,
                 callback,
+                textInput: mode == "text_input",
               }}
               noNewWord
             />

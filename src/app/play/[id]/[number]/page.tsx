@@ -1,26 +1,24 @@
 "use client";
 import React, { useEffect, useState, use } from "react";
-import MCQ from "@/components/MCQ";
+import Round from "@/components/Round";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 import PlayBtn from "@/components/PlayBtn";
 import Link from "@/components/ui/Link";
 import { Button } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
 
-export default function Page(
-  props: {
-    params: Promise<{ id: string; number: string }>;
-  }
-) {
+export default function Page(props: {
+  params: Promise<{ id: string; number: string }>;
+}) {
   const params = use(props.params);
 
-  const {
-    id,
-    number
-  } = params;
+  const { id, number } = params;
 
-  const [name, setName] = useState<string>();
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode");
+
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [count, setCount] = useState(0);
   const supabase = createClient<Database>();
@@ -68,10 +66,11 @@ export default function Page(
       <div className="min-h-dvh flex flex-col">
         {wordGroups !== undefined ? (
           wordGroups?.length ? (
-            <MCQ
+            <Round
               {...{
                 wordGroups,
                 callback,
+                textInput: mode == "text_input",
               }}
             />
           ) : (

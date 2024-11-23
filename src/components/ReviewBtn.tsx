@@ -11,8 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "@/components/ui/Link";
-import getToReview from "@/utils/getToReview";
-import { Tables } from "@/database.types";
+import { Checkbox } from "./ui/checkbox";
 
 export default function ReviewBtn({
   className,
@@ -24,6 +23,7 @@ export default function ReviewBtn({
   toReviewCount?: number;
 }) {
   const [number, setNumber] = useState<number>(10);
+  const [textInput, setTextInput] = useState(false);
 
   return (
     <>
@@ -39,7 +39,6 @@ export default function ReviewBtn({
             <DialogTitle>Review</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
-
           <div className="flex items-center gap-2">
             <div className="">verses per round:</div>
             <Input
@@ -50,9 +49,15 @@ export default function ReviewBtn({
               value={number}
               onChange={(e) => setNumber(Number(e.target.value))}
             />
+          </div>{" "}
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setTextInput(!textInput)}
+          >
+            <Checkbox checked={textInput} /> text Input (hard)
           </div>
           <Link
-            href={`/review/${number}${collection_id ? "?collection_id=" + collection_id : ""}`}
+            href={`/review/${number}${collection_id ? "?collection_id=" + collection_id : ""}${textInput ? "?mode=text_input" : ""}`}
           >
             <Button className="w-fit ml-auto">Start</Button>
           </Link>
