@@ -65,7 +65,6 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
                 callback,
                 textInput: mode == "text_input",
               }}
-              noNewWord
             />
           ) : (
             <>

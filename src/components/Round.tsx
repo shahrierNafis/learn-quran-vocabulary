@@ -142,10 +142,9 @@ function Round({
             {!noNewWord &&
               !(correct || selected) &&
               verse &&
-              verse[+wordGroups[0].words[0].split(":")[2] - 1] &&
-              currentProgress == 0 && (
+              verse[+wordGroups[0].words[0].split(":")[2] - 1] && (
                 <>
-                  <div className="flex justify-end -mt-5">
+                  <div className="flex justify-center mx-auto  my-4">
                     <WordInfo
                       {...{
                         // variant: "outline",
@@ -156,10 +155,12 @@ function Round({
                         word: verse[+wordGroups[0].words[0].split(":")[2] - 1],
                       }}
                     >
-                      <div className="flex my-auto text-xs">
-                        <div className="text-red-500 animate-pulse">*</div>
-                        <div className=""> new word?</div>
-                      </div>
+                      <Button
+                        variant={"destructive"}
+                        onClick={() => setCurrentProgress(0)}
+                      >
+                        <div className=""> {"Don't Know"}</div>
+                      </Button>
                     </WordInfo>
                   </div>{" "}
                 </>
