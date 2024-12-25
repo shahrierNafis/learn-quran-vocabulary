@@ -85,7 +85,8 @@ export function DataTable<TValue>({
             table.getColumn("index")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
-        />
+        />{" "}
+        <DataTablePagination table={table} />
       </div>
       <div className="rounded-md border flex-shrink-0">
         <Table>
