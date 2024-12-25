@@ -15,21 +15,19 @@ export default function TextInput({
   word: WORD;
   isValid: () => void;
 }) {
-  const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
-    usePreferenceStore(
-      useShallow((a) => [
-        a.showTranslation,
-        a.showTransliteration,
-        a.showTranslationOnHiddenWords,
-      ])
-    );
+  const [showTranslation, showTransliteration] = usePreferenceStore(
+    useShallow((a) => [a.showTranslation, a.showTransliteration])
+  );
   useEffect(() => {
     usePreferenceStore.persist.rehydrate();
   }, []);
   const [,] = useState();
   if (
-    word.text_imlaei.normalize("NFD").replace(/[\u064B-\u065F]/g, "") ===
-    text.trim()
+    word.text_imlaei
+      .normalize("NFD")
+      .replace(/[\u064B-\u065F]/g, "")
+      .replace(" ", "")
+      .trim() === text
   ) {
     isValid();
   }
@@ -38,9 +36,17 @@ export default function TextInput({
       <div className="flex flex-col justify-center items-center w-fit">
         <input
           type="text"
-          value={text.normalize("NFD").replace(/[\u064B-\u065F]/g, "")}
+          value={text}
           size={5}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) =>
+            setText(
+              e.target.value
+                .normalize("NFD")
+                .replace(/[\u064B-\u065F]/g, "")
+                .replace(" ", "")
+                .trim()
+            )
+          }
           placeholder="_?_?_?_"
           className={cn(
             "placeholder:text-center text-red-500",
@@ -48,12 +54,7 @@ export default function TextInput({
               word.text_imlaei
                 .normalize("NFD")
                 .replace(/[\u064B-\u065F]/g, "")
-                .startsWith(
-                  text
-                    .trim()
-                    .normalize("NFD")
-                    .replace(/[\u064B-\u065F]/g, "")
-                ) && "text-green-500 border "
+                .startsWith(text) && "text-green-500 border "
             }`
           )}
         />
