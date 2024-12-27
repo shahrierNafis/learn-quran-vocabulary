@@ -9,7 +9,7 @@ import prefix from "./.seed-data/prefixList.json";
 // });
 // if (process.env.RESET) await seed.$resetDatabase();
 
-const collections = [
+const collectionsD = [
   {
     id: 1,
     name: "ism & fi'l",
@@ -36,11 +36,11 @@ const collections = [
       "Arabic is a language with complex morphology. This means that a single Arabic word can convey a complete verse in English. For instance, the word 'fajaʿalnāhum' (فَجَعَلْنَٰهُمُ), found in verse (23:41), translates to the English verse 'and We made them'. In Arabic, suffixes could be attached to words to indicate the subjects and objects.",
   },
 ];
-const wordGroups = [
+const wordGroupsD = [
   ...ism_n_fill.map((wordGroup) => {
     return {
       words: wordGroup.positions,
-      collection_id: 1,
+      collectionId: 1,
       name: wordGroup.name,
       description: wordGroup.description,
       options: wordGroup.options,
@@ -49,7 +49,7 @@ const wordGroups = [
   ...herf.map((wordGroup) => {
     return {
       words: wordGroup.positions,
-      collection_id: 2,
+      collectionId: 2,
       name: wordGroup.name,
       description: wordGroup.description,
       options: wordGroup.options,
@@ -58,7 +58,7 @@ const wordGroups = [
   ...prefix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
-      collection_id: 3,
+      collectionId: 3,
       name: wordGroup.name,
       description: wordGroup.description,
       options: wordGroup.options,
@@ -67,7 +67,7 @@ const wordGroups = [
   ...suffix.map((wordGroup) => {
     return {
       words: wordGroup.positions,
-      collection_id: 4,
+      collectionId: 4,
       name: wordGroup.name,
       description: wordGroup.description,
       options: wordGroup.options,
@@ -78,26 +78,22 @@ const wordGroups = [
 // await seed.wordGroups(wordGroups);
 // Run it with: DRY=0 npx tsx seed.mts
 
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
+import { drizzle } from "drizzle-orm/postgres-js";
+import { collections, wordGroups } from "./drizzle/schema.ts";
 async function main() {
+  const db = drizzle(process.env.DATABASE_URL!);
+
   // ... you will write your Prisma Client queries here
   try {
-    await prisma.collections.createMany({ data: collections });
-    await prisma.word_groups.createMany({ data: wordGroups });
+    await db.insert(collections).values(collectionsD);
+    await db.insert(wordGroups).values(wordGroupsD);
   } catch (error) {
     console.log(error);
   }
 }
+
 console.log("Seeding data...");
-await main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+await main().catch(async (e) => {
+  console.error(e);
+  process.exit(1);
+});
