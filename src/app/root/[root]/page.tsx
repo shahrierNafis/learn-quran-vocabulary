@@ -4,7 +4,7 @@ import { DataTable } from "./data-table";
 import getRootData from "@/utils/getRootData";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import { buckwalter_to_arabic } from "@/utils/arabic-buckwalter-transliteration";
+import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 import useFont from "@/utils/useFont";
 import { cn } from "@/lib/utils";
 import CellComponent from "@/components/CellComponent";
@@ -73,7 +73,7 @@ export default function Page(props: { params: Promise<{ root: string }> }) {
                   )}
                   <div className={cn(font?.className, "text-3xl")}>
                     {row.depth == 0 &&
-                      buckwalter_to_arabic((getValue() as string) ?? "")}
+                      buckwalterToArabic((getValue() as string) ?? "")}
                   </div>
                 </>
               </div>

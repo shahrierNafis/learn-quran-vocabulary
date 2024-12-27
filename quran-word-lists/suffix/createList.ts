@@ -10,6 +10,7 @@ import { descriptions } from "./descriptions";
 import getOptions from "../lib/getOptions";
 import { HarfRequirement } from "../lib/requirements";
 import sortList from "../lib/sortList";
+import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 
 type Data = {
   [key: string]: {
@@ -47,7 +48,7 @@ for (const s in data) {
             position,
             segIndex: segIndex,
           });
-          suffixGroup.spellings?.add(word[segIndex].arabic);
+          suffixGroup.spellings?.add(word[segIndex].buckwalter);
           suffixGroup.name = SuffixGroupName;
           suffixGroup.description =
             getDescription(
@@ -104,9 +105,10 @@ for (const i in sortedList) {
   const word = data[+s][+v][+w];
   const extraSegments: WordSegment[] = Array.from(
     sortedList[i].spellings ?? []
-  ).map((ara) => {
+  ).map((buc) => {
     return {
-      arabic: ara,
+      arabic: buckwalterToArabic(buc),
+      buckwalter: buc,
       arPartOfSpeech: word[+sortedList[i].words[0]?.segIndex].arPartOfSpeech,
       partOfSpeech: word[+sortedList[i].words[0]?.segIndex].partOfSpeech,
       position: word[+sortedList[i].words[0]?.segIndex].position,

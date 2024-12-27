@@ -5,6 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useTheme } from "next-themes";
 import useFont from "@/utils/useFont";
 import WordInfo from "./WordInfo";
+import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 
 function Word({
   wordSegments,
@@ -41,7 +42,7 @@ function Word({
               }}
               className="inline"
             >
-              {segment.arabic.trim()}
+              {buckwalterToArabic(segment.buckwalter).trim()}
             </div>
           ))}
         </div>

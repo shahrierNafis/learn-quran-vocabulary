@@ -3,7 +3,7 @@ import { WordSegment } from "@/types/types";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import { useTheme } from "next-themes";
-import { buckwalter_to_arabic } from "@/utils/arabic-buckwalter-transliteration";
+import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 import useFont from "@/utils/useFont";
 import { cn } from "@/lib/utils";
 import relations from "@/utils/relations";
@@ -27,7 +27,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
               ],
             }}
           >
-            {segment.arabic}
+            {buckwalterToArabic(segment.buckwalter)}
           </div>
           {(Object.keys(segment) as Array<keyof typeof segment>).map(
             (property) => {
@@ -44,7 +44,7 @@ export default function SegmentInfo({ segment }: { segment: WordSegment }) {
                             href={"/root/" + segment.root}
                           >
                             <div className={cn(font?.className, "")}>
-                              {buckwalter_to_arabic(segment.root)
+                              {buckwalterToArabic(segment.root)
                                 .split("")
                                 .join(",")}
                             </div>

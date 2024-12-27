@@ -1,7 +1,7 @@
 import { WordData } from "../../src/types/types";
 import {
-  buckwalter_to_arabic as b2a,
-  arabic_to_buckwalter as a2b,
+  buckwalterToArabic as b2a,
+  arabicToBuckwalter as a2b,
 } from "@/utils/arabic-buckwalter-transliteration";
 
 type Data = {
@@ -45,9 +45,9 @@ export default async function getFillPgnOptions(
   }
   prefixes.forEach((p) => {
     const newSegments: WordData = JSON.parse(JSON.stringify(segments));
-    newSegments[segIndex].arabic = b2a(
-      p + a2b(newSegments[segIndex].arabic.slice(1))
-    );
+    newSegments[segIndex].buckwalter =
+      p + a2b(newSegments[segIndex].buckwalter.slice(1));
+
     if (newSegments.length != segments.length) {
       throw new Error();
     }

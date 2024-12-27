@@ -21,14 +21,13 @@ export default function TextInput({
   useEffect(() => {
     usePreferenceStore.persist.rehydrate();
   }, []);
+
+  useEffect(() => {
+    console.log(simplifyArabic(word.text_imlaei));
+  }, [word]);
+
   const [,] = useState();
-  if (
-    word.text_imlaei
-      .normalize("NFD")
-      .replace(/[\u064B-\u065F]/g, "")
-      .replace(" ", "")
-      .trim() === text
-  ) {
+  if (simplifyArabic(word.text_imlaei) === text) {
     isValid();
   }
   return (
@@ -38,23 +37,13 @@ export default function TextInput({
           type="text"
           value={text}
           size={5}
-          onChange={(e) =>
-            setText(
-              e.target.value
-                .normalize("NFD")
-                .replace(/[\u064B-\u065F]/g, "")
-                .replace(" ", "")
-                .trim()
-            )
-          }
+          onChange={(e) => setText(simplifyArabic(e.target.value))}
           placeholder="_?_?_?_"
           className={cn(
             "placeholder:text-center text-red-500",
             `${
-              word.text_imlaei
-                .normalize("NFD")
-                .replace(/[\u064B-\u065F]/g, "")
-                .startsWith(text) && "text-green-500 border "
+              simplifyArabic(word.text_imlaei).startsWith(text) &&
+              "text-green-500 border "
             }`
           )}
         />
@@ -71,4 +60,19 @@ export default function TextInput({
       </div>
     </>
   );
+}
+/**
+ * Removes Arabic diacritical marks (harakat/tashkeel) and dialectical marks from text
+ * @param {string} text - The Arabic text to clean
+ * @returns {string} The cleaned text with diacritical marks removed
+ */
+function simplifyArabic(text: string) {
+  // Arabic diacritics and special marks to remove
+  const arabicLetterPattern = /[\u0621-\u064A]/g;
+
+  // Find all Arabic letters and join them
+  const matches = text.normalize("NFD").match(arabicLetterPattern);
+  return (matches ? matches.join("") : "").replace(" ", "").trim();
+
+  // Remove all diacritics
 }

@@ -33,7 +33,7 @@ export type WordSegment = {
   root?: string;
   lemma?: string;
   arabic: string;
-
+  buckwalter: string;
   affix?: Affixes;
 
   person?: 1 | 2 | 3;

@@ -8,7 +8,7 @@ import {
 } from "../src/types/types";
 import { PrefixPOS, prefixPOS } from "./preffixPOS";
 
-import { buckwalter_to_arabic } from "../src/utils/arabic-buckwalter-transliteration";
+import { buckwalterToArabic } from "../src/utils/arabic-buckwalter-transliteration";
 let index = 0;
 let prevPosition: string;
 const data: {
@@ -51,7 +51,8 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
     // word.translation = translation[index];
     let arPartOfSpeech: "fiʿil" | "ism" | "ḥarf" | "prefix" | "suffix" =
       "fiʿil";
-    const arabic = buckwalter_to_arabic(getBuckWalter(line));
+    const buckwalter = getBuckWalter(line);
+    const arabic = buckwalterToArabic(buckwalter);
     const aspect = getAspect(line);
     const mood = getMood(line) as "IND" | "SUBJ" | "JUS" | undefined;
     const voice = getVoice(line);
@@ -133,6 +134,7 @@ fs.readFileSync("./quran-word-lists/morphology.txt")
     }
     word.push({
       arabic,
+      buckwalter,
       arPartOfSpeech,
       affix,
       person,
