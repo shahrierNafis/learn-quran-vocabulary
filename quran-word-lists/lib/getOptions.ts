@@ -1,96 +1,141 @@
 import { Requirements, WordData, WordSegment } from "../../src/types/types";
-type Data = {
-  [key: string]: {
-    [key: string]: {
-      [key: string]: WordData;
-    };
-  };
-};
-const data: Data = require("./../data.json");
 
+type Data = Record<string, Record<string, Record<string, WordData>>>;
+type FlattenedData = Record<string, WordData>;
+
+let flattenedDataCache: FlattenedData | null = null;
 export default async function getOptions(
   position: string,
   segIndex: string,
   requirements: Requirements,
-  extraSegments?: WordSegment[]
+  extraSegments: WordSegment[] = []
 ): Promise<WordData[]> {
-  const Segments: WordSegment[] = [];
-  const [s, v, w] = position.split(":");
-  const wordData = data[+s][+v][+w];
-  const shuffledWordData = Object.values(
-    shuffleObjectProperties(flattenDataObject(data))
-  ) as WordData[];
+  const data: Data = require("./../data.json");
+  const [surah, verse, word] = position.split(":").map(Number);
+  const wordData = data[surah][verse][word];
+
+  // Initialize or get cached data
+  if (!flattenedDataCache) {
+    flattenedDataCache = flattenDataObject(data);
+  }
+  const shuffledData = fisherYatesShuffle(Object.values(flattenedDataCache));
+
+  const segments = await findMatchingSegments(
+    wordData,
+    segIndex,
+    requirements,
+    extraSegments,
+    shuffledData
+  );
+
+  if (segments.length !== 3) {
+    throw new Error(
+      `Failed to find required segments: ${JSON.stringify(wordData)}`
+    );
+  }
+
+  return segments.map((segment) =>
+    createNewWordData(wordData, segment, segIndex)
+  );
+}
+
+function fisherYatesShuffle<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+async function findMatchingSegments(
+  wordData: WordData,
+  segIndex: string,
+  requirements: Requirements,
+  extraSegments: WordSegment[],
+  shuffledData: WordData[]
+): Promise<WordSegment[]> {
+  const segments: WordSegment[] = [];
+
   for (const { shouldNotMatch, shouldMatch } of requirements) {
-    if (Segments.length != 3) {
-      forLoop(shouldNotMatch, shouldMatch);
-    }
-  }
-  if (Segments.length != 3) {
-    throw new Error(JSON.stringify(wordData));
-  }
-  function forLoop(shouldNotMatch: string[], shouldMatch: string[]) {
-    for (const randomWordData of shuffledWordData) {
+    if (segments.length === 3) break;
+
+    for (const randomWordData of shuffledData) {
+      if (segments.length === 3) break;
+
       for (const randomSegment of randomWordData) {
-        if (Segments.length === 3) {
-          break;
-        }
+        if (segments.length === 3) break;
+
         if (
-          [wordData[+segIndex], ...Segments, ...(extraSegments ?? [])].every(
-            (wd) =>
-              Object.keys(wd).every((k) => {
-                if (shouldNotMatch.includes(k)) {
-                  return (randomSegment as any)[k] !== (wd as any)[k];
-                } else if (shouldMatch.includes(k)) {
-                  return (randomSegment as any)[k] === (wd as any)[k];
-                }
-                return true;
-              })
+          isSegmentValid(
+            randomSegment,
+            wordData[+segIndex],
+            segments,
+            extraSegments,
+            shouldNotMatch,
+            shouldMatch
           )
         ) {
-          Segments.push(randomSegment);
+          segments.push(randomSegment);
         }
       }
     }
   }
 
-  return Segments.map((seg) => {
-    const newWordData = JSON.parse(JSON.stringify(wordData));
-    newWordData[+segIndex] = seg;
-    if (wordData.length != newWordData.length) {
-      throw new Error();
-    }
-    return newWordData;
-  });
+  return segments;
 }
 
-function shuffleObjectProperties<T extends Record<string, any>>(obj: T): T {
-  // Get the keys of the object
-  const keys = Object.keys(obj);
+function isSegmentValid(
+  segment: WordSegment,
+  baseSegment: WordSegment,
+  existingSegments: WordSegment[],
+  extraSegments: WordSegment[],
+  shouldNotMatch: string[],
+  shouldMatch: string[]
+): boolean {
+  const allSegments = [baseSegment, ...existingSegments, ...extraSegments];
 
-  // Shuffle the keys using Fisher-Yates algorithm
-  for (let i = keys.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [keys[i], keys[j]] = [keys[j], keys[i]];
-  }
-
-  // Create a new object with shuffled keys
-  const shuffledObj = {} as T;
-  keys.forEach((key) => {
-    (shuffledObj as any)[key] = obj[key];
-  });
-
-  return shuffledObj;
-}
-function flattenDataObject(
-  data: Data,
-  result: { [key: string]: WordData } = {}
-): { [key: string]: WordData } {
-  for (const surah in data) {
-    for (const verse in data[surah]) {
-      for (const word in data[surah][verse]) {
-        result[surah + ":" + verse + ":" + word] = data[surah][verse][word];
+  return allSegments.every((existing) =>
+    Object.keys(existing).every((key) => {
+      if (shouldNotMatch.includes(key)) {
+        return (
+          segment[key as keyof WordSegment] !==
+          existing[key as keyof WordSegment]
+        );
       }
-    }
+      if (shouldMatch.includes(key)) {
+        return (
+          segment[key as keyof WordSegment] ===
+          existing[key as keyof WordSegment]
+        );
+      }
+      return true;
+    })
+  );
+}
+
+function createNewWordData(
+  originalData: WordData,
+  segment: WordSegment,
+  segIndex: string
+): WordData {
+  const newData = structuredClone(originalData);
+  newData[+segIndex] = segment;
+
+  if (originalData.length !== newData.length) {
+    throw new Error("Word data length mismatch after modification");
   }
-  return result;
+
+  return newData;
+}
+
+function flattenDataObject(data: Data): FlattenedData {
+  return Object.entries(data).reduce((result, [surah, verses]) => {
+    Object.entries(verses).forEach(([verse, words]) => {
+      Object.entries(words).forEach(([word, wordData]) => {
+        result[`${surah}:${verse}:${word}`] = wordData;
+      });
+    });
+    return result;
+  }, {} as FlattenedData);
 }

@@ -11,7 +11,15 @@ import getOptions from "../lib/getOptions";
 import { lemmaRequirements } from "../lib/requirements";
 import sortList from "../lib/sortList";
 import { buckwalterToArabic as bt } from "@/utils/arabic-buckwalter-transliteration";
-const wordCount: WordCount = require("../wordCount.json");
+import { cyrb64 } from "../lib/cyrb64";
+let options: {
+  [key: string]: WordData[];
+};
+try {
+  options = require("../../src/options.json");
+} catch (error) {
+  options = {};
+}
 
 type Data = {
   [key: string]: {
@@ -64,10 +72,11 @@ async function propGetOptions(
 const sortedList = sortList(list);
 
 for (const i in sortedList) {
-  sortedList[i].options = await sortedList[i].getOptions(
-    sortedList[i].words[0]?.position,
-    sortedList[i].words[0]?.segIndex + ""
-  );
+  options[cyrb64(sortedList[i].words.map((w) => w.position).join("")) + ""] =
+    await sortedList[i].getOptions(
+      sortedList[i].words[0]?.position,
+      sortedList[i].words[0]?.segIndex + ""
+    );
   console.log(i + "/" + sortedList.length);
 }
 
@@ -77,7 +86,7 @@ fs.writeFile(
   JSON.stringify(sortedList),
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log("./.seed-data/ism&fi'lList.json");
   }
 );
 // write listCount
@@ -90,6 +99,11 @@ fs.writeFile(
   ),
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log(__dirname + "listCount.json");
   }
 );
+// write options
+fs.writeFile("./src/options.json", JSON.stringify(options), function (err) {
+  if (err) throw err;
+  console.log("./src/options.json");
+});

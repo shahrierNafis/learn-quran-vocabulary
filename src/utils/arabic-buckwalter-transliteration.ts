@@ -90,7 +90,7 @@ export function arabicToBuckwalter(arabicStr?: string): string {
 
     // Check if character is valid
     if (!codePoint || !BUCKWALTER_EXTENDED_MAP[codePoint]) {
-      throw new Error(`String contains invalid chars [${char}]`);
+      continue;
     }
 
     buckwalterStr += BUCKWALTER_EXTENDED_MAP[codePoint];

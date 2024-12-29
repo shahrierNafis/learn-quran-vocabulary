@@ -39,9 +39,8 @@ export const columns: ColumnDef<TableData>[] = [
         getWord(index).then(setWord);
       }, [index]);
       useEffect(() => {
-        return () => {
-          setOptions(getOptions(getValue() as Tables<"word_groups">));
-        };
+        getOptions(getValue() as Tables<"word_groups">).then(setOptions);
+        return () => {};
       }, [getValue]);
 
       return (

@@ -57,7 +57,7 @@ export default function ReviewBtn({
             <Checkbox checked={textInput} /> text Input (hard)
           </div>
           <Link
-            href={`/review/${number}${collection_id ? "?collection_id=" + collection_id : ""}${textInput ? "?mode=text_input" : ""}`}
+            href={`/review/${number}${collection_id ? "?collection_id=" + collection_id : ""}${textInput ? (collection_id ? "&" : "?" + "mode=text_input") : ""}`}
           >
             <Button className="w-fit ml-auto">Start</Button>
           </Link>

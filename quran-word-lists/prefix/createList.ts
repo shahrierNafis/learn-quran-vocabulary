@@ -2,8 +2,6 @@ import fs from "fs";
 import {
   List,
   WordData,
-  WordCount,
-  Requirements,
   WordSegment,
   PartOfSpeech,
 } from "../../src/types/types";
@@ -13,7 +11,16 @@ import getFillPgnOptions, { FillPgn } from "../lib/getFillPgnOptions";
 import getOptions from "../lib/getOptions";
 import { HarfRequirement } from "../lib/requirements";
 import sortList from "../lib/sortList";
-const wordCount: WordCount = require("../wordCount.json");
+import { arabicToBuckwalter } from "@/utils/arabic-buckwalter-transliteration";
+import { cyrb64 } from "../lib/cyrb64";
+let options: {
+  [key: string]: WordData[];
+};
+try {
+  options = require("../../src/options.json");
+} catch (error) {
+  options = {};
+}
 
 type Data = {
   [key: string]: {
@@ -130,17 +137,6 @@ async function propGetHarfOptions(
   return await getOptions(position, segIndex, HarfRequirement, extraSegments);
 }
 
-console.dir(
-  Object.fromEntries(
-    Object.entries(spellingsArr).map(([name, spellings]) => [
-      name,
-      Array.from(spellings),
-    ])
-  ),
-  {
-    depth: Infinity,
-  }
-);
 const sortedList = sortList(list);
 
 for (const i in sortedList) {
@@ -150,6 +146,7 @@ for (const i in sortedList) {
     wordData[+sortedList[i].words[0]?.segIndex];
 
   const extraSegments: WordSegment[] = wordData
+
     .filter((seg) => {
       // all its sibling prefixes
       if (seg.arPartOfSpeech == "prefix") return seg;
@@ -159,21 +156,24 @@ for (const i in sortedList) {
       Object.values(spellingsArr)
         .filter((spellings) => spellings.includes(arabic))
         .flat(1)
-        ?.map((spelling) => ({
-          arabic: spelling,
-          arPartOfSpeech,
-          partOfSpeech,
-          position,
-        })) ?? []
+        ?.map((spelling) => {
+          return {
+            buckwalter: arabicToBuckwalter(spelling),
+            arabic: spelling,
+            arPartOfSpeech,
+            partOfSpeech,
+            position,
+          };
+        }) ?? []
     );
-  if (sortedList[i].name == "3rd person") {
-    console.log();
-  }
-  sortedList[i].options = await sortedList[i].getOptions(
-    sortedList[i].words[0]?.position,
-    sortedList[i].words[0]?.segIndex + "",
-    extraSegments
-  );
+
+  options[cyrb64(sortedList[i].words.map((w) => w.position).join("")) + ""] =
+    await sortedList[i].getOptions(
+      sortedList[i].words[0]?.position,
+      sortedList[i].words[0]?.segIndex + "",
+      extraSegments
+    );
+
   console.log(i + "/" + sortedList.length);
 }
 
@@ -185,7 +185,7 @@ fs.writeFile(
 
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log("./.seed-data/prefixList.json");
   }
 );
 // write listCount
@@ -198,6 +198,11 @@ fs.writeFile(
   ),
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log(__dirname + "listCount.json");
   }
 );
+// write options
+fs.writeFile("./src/options.json", JSON.stringify(options), function (err) {
+  if (err) throw err;
+  console.log("./src/options.json");
+});

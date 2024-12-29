@@ -12,8 +12,20 @@ import { descriptions } from "./descriptions";
 import getOptions from "../lib/getOptions";
 import { HarfRequirement } from "../lib/requirements";
 import sortList from "../lib/sortList";
-import { buckwalterToArabic as bt } from "@/utils/arabic-buckwalter-transliteration";
-const wordCount: WordCount = require("../wordCount.json");
+import {
+  arabicToBuckwalter,
+  buckwalterToArabic as bt,
+} from "@/utils/arabic-buckwalter-transliteration";
+import _ from "lodash";
+import { cyrb64 } from "../lib/cyrb64";
+let options: {
+  [key: string]: WordData[];
+};
+try {
+  options = require("../../src/options.json");
+} catch (error) {
+  options = {};
+}
 
 type Data = {
   [key: string]: {
@@ -290,19 +302,22 @@ for (const i in sortedList) {
       .filter((spellings) => spellings.includes(arabic))
       .flat(1)
       ?.map((spelling) => ({
+        buckwalter: arabicToBuckwalter(spelling),
         arabic: spelling,
         arPartOfSpeech,
         partOfSpeech,
         position,
       })) ?? [];
-  sortedList[i].options = await sortedList[i].getOptions(
-    sortedList[i].words[0]?.position,
-    sortedList[i].words[0]?.segIndex + "",
-    extraSegments
-  );
+
+  options[cyrb64(sortedList[i].words.map((w) => w.position).join("")) + ""] =
+    await sortedList[i].getOptions(
+      sortedList[i].words[0]?.position,
+      sortedList[i].words[0]?.segIndex + "",
+      extraSegments
+    );
+
   console.log(i + "/" + sortedList.length);
 }
-
 // write lists
 fs.writeFile(
   "./.seed-data/harfList.json",
@@ -310,7 +325,7 @@ fs.writeFile(
   JSON.stringify(sortedList),
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log("./.seed-data/harfList.json");
   }
 );
 // write listCount
@@ -323,6 +338,11 @@ fs.writeFile(
   ),
   function (err) {
     if (err) throw err;
-    console.log("complete");
+    console.log(__dirname + "listCount.json");
   }
 );
+// write options
+fs.writeFile("./src/options.json", JSON.stringify(options), function (err) {
+  if (err) throw err;
+  console.log("./src/options.json");
+});

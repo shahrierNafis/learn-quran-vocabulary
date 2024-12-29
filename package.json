@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "bun quran-word-lists/createData.ts && bun quran-word-lists/createWordCount.ts && bun quran-word-lists/createRootData.ts && next build  --no-lint",
+    "build": "mkdir -p .seed-data && bun quran-word-lists/runScripts.ts && next build  --no-lint",
     "start": "next start",
     "lint": "next lint"
   },

@@ -115,7 +115,6 @@ export type LI = {
   positions: string[];
   description: string;
   name: string;
-  options: WordData[];
   spellings?: Set<string>;
   getOptions: (
     position: string,

@@ -25,7 +25,10 @@ export default function useOptions(
           wordSegments: opData,
           wordGroupId: wordGroups[0].id,
         };
-        const shuffled = _.shuffle([...getOptions(wordGroups[0]), option]);
+        const shuffled = _.shuffle([
+          ...(await getOptions(wordGroups[0])),
+          option,
+        ]);
         setAllOptions(shuffled);
       }
     })();

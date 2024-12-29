@@ -1,14 +1,32 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
-      "name": "http://localhost:3000/dashboard",
+      "type": "node",
       "request": "launch",
-      "url": "http://localhost:3000/dashboard"
+      "name": "Debug Bun bvcbv",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/${relativeFile}",
+      "runtimeExecutable": "/home/shahriern/.bun/bin/bun",
+      "runtimeArgs": ["--wait-for-debugger", "--inspect-brk"],
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "autoAttachChildProcesses": true,
+      "stopOnEntry": true
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Bun",
+      "port": 6499,
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
     }
   ]
 }

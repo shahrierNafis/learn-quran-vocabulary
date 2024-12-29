@@ -1,4 +1,4 @@
-import { pgTable, unique, pgPolicy, bigint, text, boolean, foreignKey, jsonb, uuid, primaryKey, check, smallint, timestamp } from "drizzle-orm/pg-core"
+import { pgTable, unique, pgPolicy, bigint, text, boolean, foreignKey, uuid, jsonb, primaryKey, check, smallint, timestamp } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
@@ -22,7 +22,6 @@ export const wordGroups = pgTable("word_groups", {
 	collectionId: bigint("collection_id", { mode: "number" }).notNull(),
 	name: text(),
 	description: text(),
-	options: jsonb().array().notNull(),
 }, (table) => [
 	foreignKey({
 			columns: [table.collectionId],

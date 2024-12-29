@@ -43,7 +43,6 @@ const wordGroupsD = [
       collectionId: 1,
       name: wordGroup.name,
       description: wordGroup.description,
-      options: wordGroup.options,
     };
   }),
   ...herf.map((wordGroup) => {
@@ -52,7 +51,6 @@ const wordGroupsD = [
       collectionId: 2,
       name: wordGroup.name,
       description: wordGroup.description,
-      options: wordGroup.options,
     };
   }),
   ...prefix.map((wordGroup) => {
@@ -61,7 +59,6 @@ const wordGroupsD = [
       collectionId: 3,
       name: wordGroup.name,
       description: wordGroup.description,
-      options: wordGroup.options,
     };
   }),
   ...suffix.map((wordGroup) => {
@@ -70,7 +67,6 @@ const wordGroupsD = [
       collectionId: 4,
       name: wordGroup.name,
       description: wordGroup.description,
-      options: wordGroup.options,
     };
   }),
 ];
