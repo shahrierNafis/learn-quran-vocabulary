@@ -42,7 +42,11 @@ function Word({
               }}
               className="inline"
             >
-              {buckwalterToArabic(segment.buckwalter).trim()}
+              {buckwalterToArabic(
+                segment.buckwalter,
+                wordSegments.length - 1 > index,
+                index != 0
+              ).trim()}
             </div>
           ))}
         </div>

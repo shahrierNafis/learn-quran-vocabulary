@@ -17,7 +17,7 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
 import WordInfo from "./WordInfo";
-import TextInput from "./TextInput";
+import TextInput, { simplifyArabic } from "./TextInput";
 import {
   Tooltip,
   TooltipContent,
@@ -190,12 +190,13 @@ function Round({
                     onClick={() => {
                       setText(
                         text.trim() +
-                          verse[
-                            +wordGroups[0].words[0].split(":")[2] - 1
-                          ].text_imlaei
-                            .normalize("NFD")
-                            .replace(/[\u064B-\u065F]/g, "")
-                            .replace(text.trim(), "")[0]
+                          simplifyArabic(
+                            verse[
+                              +wordGroups[0].words[0].split(":")[2] - 1
+                            ].wordSegments
+                              .map((w) => w.arabic)
+                              .join("")
+                          ).replace(text, "")[0]
                       );
                       setHintUsed(true);
                     }}

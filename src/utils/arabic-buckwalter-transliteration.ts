@@ -105,28 +105,32 @@ export function arabicToBuckwalter(arabicStr?: string): string {
  * @returns {string} The Arabic text
  * @throws {Error} If the input is not valid Buckwalter transliteration
  */
-export function buckwalterToArabic(transliteratedStr?: string): string {
+export function buckwalterToArabic(
+  transliteratedStr?: string,
+  hasMoreL?: boolean,
+  hasMoreR?: boolean
+): string {
   if (!transliteratedStr) return "";
   let arabicStr = "";
   let i = 0;
   while (i < transliteratedStr.length) {
     const char = transliteratedStr[i];
 
-    // Handle ' character with specific rules
-    if (char === "'") {
-      if (
-        i === transliteratedStr.length - 1 ||
-        i === transliteratedStr.length - 2 ||
-        i == 0 ||
-        i == 1
-      ) {
-        arabicStr += String.fromCodePoint(1569); // 'ء'
-      } else {
-        arabicStr += "ـٰ";
-      }
-      i++;
-      continue;
-    }
+    // // Handle ' character with specific rules
+    // if (char === "'") {
+    //   if (
+    //     (!hasMoreL &&
+    //       (i === transliteratedStr.length - 1 ||
+    //         i === transliteratedStr.length - 2)) ||
+    //     (!hasMoreR && (i == 0 || i == 1))
+    //   ) {
+    //     arabicStr += String.fromCodePoint(1569); // 'ء'
+    //   } else {
+    //     arabicStr += "ـٰ";
+    //   }
+    //   i++;
+    //   continue;
+    // }
 
     // Skip space and number 2
     if (char === " " || char === "2") {

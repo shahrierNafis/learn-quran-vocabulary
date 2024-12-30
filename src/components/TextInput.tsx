@@ -22,14 +22,14 @@ export default function TextInput({
     usePreferenceStore.persist.rehydrate();
   }, []);
 
-  useEffect(() => {
-    console.log(simplifyArabic(word.text_imlaei));
-  }, [word]);
-
   const [,] = useState();
-  if (simplifyArabic(word.text_imlaei) === text) {
+  if (
+    simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")) === text
+  ) {
     isValid();
   }
+  console.log(simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")));
+
   return (
     <>
       <div className="flex flex-col justify-center items-center w-fit">
@@ -42,8 +42,9 @@ export default function TextInput({
           className={cn(
             "placeholder:text-center text-red-500",
             `${
-              simplifyArabic(word.text_imlaei).startsWith(text) &&
-              "text-green-500 border "
+              simplifyArabic(
+                word.wordSegments.map((w) => w.arabic).join("")
+              ).startsWith(text) && "text-green-500 border "
             }`
           )}
         />
@@ -66,13 +67,22 @@ export default function TextInput({
  * @param {string} text - The Arabic text to clean
  * @returns {string} The cleaned text with diacritical marks removed
  */
-function simplifyArabic(text: string) {
-  // Arabic diacritics and special marks to remove
-  const arabicLetterPattern = /[\u0621-\u064A]/g;
+export function simplifyArabic(text: string): string {
+  // Replace variations of letters
+  let normalizedText = text
+    .replace(/أ|إ|ٱ|ا۟|آ/g, "ا") // Normalize Alef
+    .replace(/ؤ/g, "و") // Normalize Waw with Hamza
+    .replace(/ئ/g, "ى"); // Normalize Ya with Hamza
+  // .replace(/ة/g, "ه"); // Normalize Ta Marbuta to Ha
 
-  // Find all Arabic letters and join them
-  const matches = text.normalize("NFD").match(arabicLetterPattern);
-  return (matches ? matches.join("") : "").replace(" ", "").trim();
+  // Remove diacritics (including dagger alef and superscript alef)
+  normalizedText = normalizedText.replace(
+    /[\u064B-\u065F\u0670\u06DF\u06E5\u0631\u06E2]/g,
+    ""
+  );
 
-  // Remove all diacritics
+  // Remove Tatweel (Kashida)
+  normalizedText = normalizedText.replace(/ـ+/g, "");
+
+  return normalizedText.replaceAll(" ", "");
 }
