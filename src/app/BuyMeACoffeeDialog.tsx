@@ -28,7 +28,6 @@ export default function BuyMeACoffeeDialog() {
                 src="/static/buyMeACoffee.svg"
                 alt=""
               />
-              <div> Buy me a coffee</div>
             </div>
           </Button>
         </DialogTrigger>
