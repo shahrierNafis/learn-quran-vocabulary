@@ -23,7 +23,7 @@ export default function ReviewBtn({
   toReviewCount?: number;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const [textInput, setTextInput] = useState(false);
+  const [textInput, setTextInput] = useState(true);
 
   return (
     <>

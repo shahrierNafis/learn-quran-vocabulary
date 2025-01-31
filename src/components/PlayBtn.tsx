@@ -24,7 +24,7 @@ export default function Learn({
   wordGroupsCount?: number | null | undefined;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const [textInput, setTextInput] = useState(false);
+  const [textInput, setTextInput] = useState(true);
   return (
     <>
       <Dialog>
