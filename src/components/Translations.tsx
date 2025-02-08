@@ -22,7 +22,7 @@ function Translations({
             return (
               <>
                 <div key={index + translation?.id}>
-                  {translation?.text.replaceAll(/<sup.*>.*<\/sup>/g, "")}
+                  {translation?.text.replaceAll(/<sup.*?>.*?<\/sup>/g, "")}
                 </div>
                 <div className="text-gray-500 text-xs">
                   {"— "}

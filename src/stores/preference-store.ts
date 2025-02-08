@@ -101,7 +101,7 @@ export const usePreferenceStore = create<PreferenceStore>()(
   persist(
     (set) => {
       return {
-        translation_ids: ["20", "131"],
+        translation_ids: ["20"],
         setTranslation_ids: (translation_ids: string[]) =>
           set({ translation_ids }),
         showTranslation: false,
