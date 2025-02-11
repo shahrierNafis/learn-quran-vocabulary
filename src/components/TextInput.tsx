@@ -77,7 +77,7 @@ export function simplifyArabic(text: string): string {
 
   // Remove diacritics (including dagger alef and superscript alef)
   normalizedText = normalizedText.replace(
-    /[\u064B-\u065F\u0670\u06DF\u06E5\u06E2\u06E6 ]/g,
+    /[\u064B-\u065F\u0670\u06DF\u06E5\u06E2\u06ED\u06E6 ]/g,
     ""
   );
 
