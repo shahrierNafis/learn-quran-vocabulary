@@ -72,14 +72,19 @@ export function simplifyArabic(text: string): string {
   let normalizedText = text
     .replace(/أ|إ|ٱ|ا۟|آ/g, "ا") // Normalize Alef
     .replace(/ؤ/g, "و") // Normalize Waw with Hamza
-    .replace(/ئ/g, "ى"); // Normalize Ya with Hamza
-  // .replace(/ة/g, "ه"); // Normalize Ta Marbuta to Ha
+    // .replace(/ئ/g, "ى"); // Normalize Ya with Hamza
+    .replace(/ة/g, "ت"); // Normalize Ta Marbuta to Ta
 
   // Remove diacritics (including dagger alef and superscript alef)
   normalizedText = normalizedText.replace(
     /[\u064B-\u065F\u0670\u06DF\u06E5\u06E2\u06ED\u06E6 ]/g,
     ""
   );
+  //remove Hamza;
+  normalizedText = normalizedText
+    .replace(/ئ/g, "")
+    .replace(/ى/g, "")
+    .replace(/ء/g, "");
 
   // Remove Tatweel (Kashida)
   normalizedText = normalizedText.replace(/ـ+/g, "");
