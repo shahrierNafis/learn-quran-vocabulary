@@ -30,3 +30,7 @@ fs.writeFile(
     console.log("complete");
   }
 );
+fs.writeFile("./src/wordCount.json", JSON.stringify(wordCount), function (err) {
+  if (err) throw err;
+  console.log("complete");
+});

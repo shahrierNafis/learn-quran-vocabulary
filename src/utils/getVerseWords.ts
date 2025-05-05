@@ -17,7 +17,7 @@ export default cache(async function getVerseWords(
       await fetch(`/api/get/data/${surahI}/${ayahI}`, { cache: "force-cache" })
     ).json();
     return verse.words.map((word: WORD) => {
-      const wordSegments = verseData[+word.position];
+      const wordSegments = verseData[+word.position] ?? [];
       return {
         text_imlaei: word.text_imlaei,
         translation: word.translation,

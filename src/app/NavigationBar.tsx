@@ -38,7 +38,20 @@ export default function NavigationBar() {
               </Button>
             </Link>
           </div>
-        )}
+        )}{" "}
+        <div>
+          <Link
+            href="/hearingExercise"
+            disabled={pathname == "/hearingExercise"}
+          >
+            <Button
+              disabled={pathname == "/hearingExercise"}
+              variant={"outline"}
+            >
+              Hearing Exercise
+            </Button>
+          </Link>
+        </div>
         <Preference />
         <ReadQuranBtn />
         <BuyMeACoffeeDialog />

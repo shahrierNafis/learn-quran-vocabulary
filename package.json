@@ -44,6 +44,7 @@
     "framer-motion": "^10.18.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.453.0",
+    "motion": "^12.9.4",
     "next": "15.0.1",
     "next-themes": "^0.2.1",
     "postgres": "^3.4.5",
