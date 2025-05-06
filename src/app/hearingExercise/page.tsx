@@ -113,6 +113,9 @@ export default function Page() {
           )
           .flat()
           .filter((i) => typeof i === "string");
+        const texts = words
+          .map((word) => word.char_type_name == "word" && word.text_imlaei)
+          .filter((i) => typeof i === "string");
         console.log(lemmas);
 
         for (let i = 0; i < extra; i++) {
@@ -126,7 +129,8 @@ export default function Page() {
                 if (
                   word.wordSegments.some((wordSegment) =>
                     lemmas.includes(wordSegment.lemma ?? "undefined")
-                  )
+                  ) ||
+                  texts.includes(word.text_imlaei)
                 ) {
                   console.log(word.wordSegments[0].lemma);
                   return false;
