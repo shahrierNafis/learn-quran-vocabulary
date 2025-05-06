@@ -87,8 +87,8 @@ export default function VerseLengths() {
                       }}
                     ></div>
                     <div className="z-10 flex items-center justify-between w-full p-2">
-                      verses with {count} words:{" "}
-                      {((verses.length * 100) / 6236).toFixed(2)}%
+                      verses with {count} words:
+                      {verses.length}
                     </div>
                   </div>
                 </div>
