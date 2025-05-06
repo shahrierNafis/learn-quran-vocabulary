@@ -49,11 +49,16 @@ export const useVerseLengths = create<VerseLengths>()(
 );
 
 export default function VerseLengths() {
-  const { verseLengths, addVerseLength, removeVerseLength, setVLDialogOpen } =
-    useVerseLengths(useShallow((state) => state));
+  const {
+    verseLengths,
+    addVerseLength,
+    VLDialogOpen,
+    removeVerseLength,
+    setVLDialogOpen,
+  } = useVerseLengths(useShallow((state) => state));
 
   return (
-    <Dialog onOpenChange={(open) => setVLDialogOpen(open)}>
+    <Dialog open={VLDialogOpen} onOpenChange={(open) => setVLDialogOpen(open)}>
       <DialogTrigger>
         <Button variant={"outline"}>
           Verses with length {JSON.stringify(verseLengths)}

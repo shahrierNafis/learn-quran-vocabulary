@@ -63,9 +63,10 @@ export default function Page() {
 
   const setRandomVerse = useCallback(() => {
     // set a random verse
-    getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) =>
-      setVerse_key(_.shuffle(a)[0])
-    );
+    getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) => {
+      setVerse_key(_.shuffle(a)[0]);
+      setVerse([]);
+    });
   }, [setVerse_key, verseLengths]);
   useEffect(() => {
     !verse_key && setRandomVerse(); // set a random verse if verse_key is null
@@ -92,6 +93,8 @@ export default function Page() {
     if (VLDialogOpen) return; // if dialog is open, do not set words
     setUserWords([]); //reset
     setWords([]);
+    setVerse([]);
+    if (!verse_key) return; // if verse_key is null, do not set words
     // Create an AbortController for this effect instance
     const abortController = new AbortController();
     const signal = abortController.signal;
@@ -105,38 +108,13 @@ export default function Page() {
         setVerse(words.filter((word) => word.char_type_name == "word"));
         if (signal.aborted) return;
 
-        const lemmas = words
-          .map(
-            (word) =>
-              word.char_type_name == "word" &&
-              word.wordSegments.map((wordSegment) => wordSegment.lemma)
-          )
-          .flat()
-          .filter((i) => typeof i === "string");
-        const texts = words
-          .map((word) => word.char_type_name == "word" && word.text_imlaei)
-          .filter((i) => typeof i === "string");
-        console.log(lemmas);
-
         for (let i = 0; i < extra; i++) {
           if (signal.aborted) return;
           console.log(words);
           const verse = _.shuffle(await getVersesWithLength(verseLengths[0]));
           words = words.concat(
             (await getVerseWords(verse[0] as `${string}:${string}`)).filter(
-              (word) => {
-                if (word.char_type_name !== "word") return false;
-                if (
-                  word.wordSegments.some((wordSegment) =>
-                    lemmas.includes(wordSegment.lemma ?? "undefined")
-                  ) ||
-                  texts.includes(word.text_imlaei)
-                ) {
-                  console.log(word.wordSegments[0].lemma);
-                  return false;
-                }
-                return true;
-              }
+              (word) => word.char_type_name == "word"
             )
           );
         }
@@ -211,7 +189,13 @@ export default function Page() {
           </Button>
         </div>
         <Button size={"sm"} className="text-sm" disabled variant={"outline"}>
-          Verse {verse_key} with length {verse.length}
+          {verse.length ? (
+            <>
+              Verse {verse_key} with length {verse.length}
+            </>
+          ) : (
+            <>loading...</>
+          )}
         </Button>
         <div
           dir="rtl"
@@ -273,9 +257,9 @@ export default function Page() {
                     size={"lg"}
                     disabled={userWords.length == verse.length}
                     onClick={() => {
-                      const [s, v] = verse_key?.split(":") as [string, string];
-                      const [cs, cv, cw] = word.index.split(":");
-                      if (s != cs || v != cv || +cw != userWords.length + 1) {
+                      if (
+                        verse[userWords.length].text_imlaei != word.text_imlaei
+                      ) {
                         setRedIndex(i);
                         setTimeout(() => {
                           setRedIndex(undefined);
