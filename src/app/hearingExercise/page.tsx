@@ -20,7 +20,7 @@ import getVerseTranslations from "@/utils/getVerseTranslations";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { useDragControls } from "motion/react";
+
 export const useVerse = create<{
   verse_key: string | null;
   setVerse_key: (verse: string | null) => void;
@@ -53,7 +53,6 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
-  const controls = useDragControls();
 
   const setRandomVerse = useCallback(() => {
     // set a random verse
@@ -245,8 +244,6 @@ export default function Page() {
                     mass: 2,
                     velocity: 2,
                   }}
-                  drag
-                  dragControls={controls}
                   layout
                 >
                   <Button
