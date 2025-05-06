@@ -1,5 +1,11 @@
 "use client";
-import React, { use, useCallback, useEffect, useState } from "react";
+import React, {
+  use,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { useShallow } from "zustand/react/shallow";
 import VerseLengths, { useVerseLengths } from "./VerseLengths";
 import ExtraVerse from "./ExtraVerse";
@@ -10,7 +16,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import useVerseAudio from "@/components/useVerseAudio";
 import { Button } from "@/components/ui/button";
-import { User, Volume2 } from "lucide-react";
+import { User, Volume2, X } from "lucide-react";
 import { WORD } from "@/types/types";
 import Word from "@/components/Word";
 import getVerseWords from "@/utils/getVerseWords";
@@ -53,6 +59,7 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
+  const [, rerender] = useReducer((x) => x + 1, 0); // force rerender
 
   const setRandomVerse = useCallback(() => {
     // set a random verse
@@ -73,7 +80,11 @@ export default function Page() {
 
   useEffect(() => {
     // update audio element
-    setAudio(new Audio(verseAudio));
+    const newAudio = new Audio(verseAudio);
+    newAudio.addEventListener("ended", () => {
+      rerender(); // force rerender
+    });
+    setAudio(newAudio);
   }, [verseAudio]);
 
   useEffect(() => {
@@ -166,20 +177,26 @@ export default function Page() {
           <Button
             onClick={() => {
               if (!audio) return;
-              audio.currentTime = 0;
-              audio?.play();
-              if (userWords.length !== verse.length) {
-                setUserWords([]); // penalty
-                setWords((prev) => {
-                  return _.shuffle([...prev, ...userWords]);
-                });
+              if (audio.paused) {
+                audio.currentTime = 0;
+                audio.play();
+                rerender(); // force rerender
+                if (userWords.length !== verse.length && userWords.length) {
+                  setUserWords([]); // penalty
+                  setWords((prev) => {
+                    return _.shuffle([...prev, ...userWords]);
+                  });
+                }
+              } else {
+                audio.pause();
+                rerender(); // force rerender
               }
             }}
             className="rounded-full aspect-square mx-auto"
             variant={"outline"}
             size={"icon"}
           >
-            <Volume2 />
+            {audio?.paused ? <Volume2 /> : <X />}
           </Button>
           {/* new Btn */}
           <Button
