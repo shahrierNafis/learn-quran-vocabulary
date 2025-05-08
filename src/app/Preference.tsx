@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Settings } from "lucide-react";
 import {
@@ -21,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { ModeToggle } from "@/components/ui/ModeToggle";
 import { SetReviewOrder } from "@/components/SetReviewOrder";
 import ChangeReciter from "@/components/ChangeReciter";
+import { SidebarMenuItem, SidebarMenuButton } from "@/components/ui/sidebar";
 export default function Preference() {
   const [
     setShowTransliteration,
@@ -46,13 +48,12 @@ export default function Preference() {
   return (
     <>
       <Dialog>
-        <DialogTrigger className="flex">
-          <Button variant={"outline"} asChild>
-            <div>
-              <Settings />
-              Preference
-            </div>
-          </Button>
+        <DialogTrigger>
+          <SidebarMenuItem>
+            <SidebarMenuButton>
+              <Settings /> Preference{" "}
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

@@ -1,104 +1,156 @@
+"use client";
 import React from "react";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Book, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar";
 
-export default function ReadQuranBtn() {
+export default function CollapsibleQuranMenu() {
   const pathname = usePathname();
   const num = pathname.split("/")[pathname.split("/").length - 1];
+
+  // Determine if we should open Surah or Juz by default based on current path
+  const pathType = pathname.split("/")[2];
+  const isSurahPath = !pathType || pathType === "surah";
+  const isJuzPath = pathType === "juz";
+
   return (
     <>
-      <DropdownMenu>
-        <Button asChild variant={"outline"} className="p-0 shadow-sm">
-          <DropdownMenuTrigger className="px-6">
-            <div className="flex items-center">
-              {pathname.startsWith("/quran/surah") ? (
-                <>
-                  <div>{surahArr[+num - 1]}</div>
-                </>
-              ) : pathname.startsWith("/quran/juz") ? (
-                <>juz {num}</>
-              ) : (
-                "Read Quran"
-              )}
+      <div className="sidebar-menu w-full">
+        <Collapsible className="group/collapsible w-full">
+          <SidebarMenuItem className="w-full">
+            <CollapsibleTrigger className="w-full">
+              <SidebarMenuButton className="w-full flex items-center justify-between shadow-sm">
+                <Book />
+                <div className="flex items-center">
+                  {pathname.startsWith("/quran/surah") ? (
+                    <div>{surahArr[+num - 1]}</div>
+                  ) : pathname.startsWith("/quran/juz") ? (
+                    <>Juz {num}</>
+                  ) : (
+                    "Read Quran"
+                  )}
+                </div>
+                <ChevronRight
+                  className="h-3 w-3  duration-200 lucide lucide-chevron-right transition-transform ml-auto group-data-[state=open]/collapsible:rotate-90"
+                  aria-hidden="true"
+                />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+          </SidebarMenuItem>
 
-              <ChevronDown
-                className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-data-[state=open]:rotate-180"
-                aria-hidden="true"
-              />
+          <CollapsibleContent className="mt-2 space-y-2">
+            {/* Surah Submenu */}
+            <div className="sidebar-menu-sub">
+              <Collapsible
+                defaultOpen={isSurahPath}
+                className="group/surah-collapsible"
+              >
+                {" "}
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full flex items-center justify-between"
+                  >
+                    <span>Surah</span>
+                    <ChevronRight
+                      className="h-3 w-3  duration-200 lucide lucide-chevron-right transition-transform ml-auto group-data-[state=open]/surah-collapsible:rotate-90"
+                      aria-hidden="true"
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-1">
+                  <ScrollArea className="h-[40vh]">
+                    <div className="space-y-1 py-1 pl-4">
+                      {Array.from(Array(114).keys()).map((num) => (
+                        <Link
+                          key={num + 1}
+                          disabled={pathname === `/quran/surah/${num + 1}`}
+                          href={`/quran/surah/${num + 1}`}
+                          className="w-full"
+                        >
+                          <Button
+                            disabled={pathname === `/quran/surah/${num + 1}`}
+                            className="w-full flex items-center justify-start gap-4"
+                            variant="ghost"
+                            size="sm"
+                          >
+                            <div className="w-6 text-right">{num + 1}.</div>
+                            <div>{surahArr[num]}</div>
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CollapsibleContent>
+              </Collapsible>
             </div>
-          </DropdownMenuTrigger>
-        </Button>
-        <DropdownMenuContent>
-          <Tabs
-            defaultValue={pathname.split("/")[2] == "juz" ? "juz" : "surah"}
-            className="flex justify-center flex-col w-48"
-          >
-            <TabsList>
-              <TabsTrigger value="surah">Surah</TabsTrigger>
-              <TabsTrigger value="juz">Juz</TabsTrigger>
-            </TabsList>
-            <TabsContent value="surah">
-              <ScrollArea className="h-[75vh]">
-                {Array.from(Array(114).keys()).map((num) => {
-                  return (
-                    <Link
-                      key={num + 1}
-                      disabled={pathname == "/quran/surah/" + (num + 1)}
-                      href={"/quran/surah/" + (num + 1)}
-                      className={"w-full"}
-                    >
-                      <Button
-                        disabled={pathname == "/quran/surah/" + (num + 1)}
-                        className="grow flex gap-4 justify-start"
-                        variant={"outline"}
-                      >
-                        <div>{num + 1}</div>
-                        <div>{surahArr[num]}</div>
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </ScrollArea>
-            </TabsContent>
-            <TabsContent value="juz">
-              <ScrollArea className="h-[75vh]  grid grid-cols-1">
-                {Array.from(Array(30).keys()).map((num) => {
-                  return (
-                    <Link
-                      className={"w-full"}
-                      key={num + 1}
-                      disabled={pathname == "/quran/juz/" + (num + 1)}
-                      href={"/quran/juz/" + (num + 1)}
-                    >
-                      <Button
-                        disabled={pathname == "/quran/juz/" + (num + 1)}
-                        className="grow flex gap-4 justify-center"
-                        variant={"outline"}
-                      >
-                        <div>Juz</div> <div>{num + 1}</div>
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
-        </DropdownMenuContent>
-      </DropdownMenu>
+
+            {/* Juz Submenu */}
+            <div className="sidebar-menu-sub">
+              <Collapsible
+                defaultOpen={isJuzPath}
+                className="group/juz-collapsible"
+              >
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full flex items-center justify-between"
+                  >
+                    <span>Juz</span>
+                    <ChevronRight
+                      className="h-3 w-3  duration-200 lucide lucide-chevron-right transition-transform ml-auto group-data-[state=open]/juz-collapsible:rotate-90"
+                      aria-hidden="true"
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="mt-1">
+                  <ScrollArea className="h-[30vh]">
+                    <div className="space-y-1 py-1 pl-4">
+                      {Array.from(Array(30).keys()).map((num) => (
+                        <Link
+                          key={num + 1}
+                          disabled={pathname === `/quran/juz/${num + 1}`}
+                          href={`/quran/juz/${num + 1}`}
+                          className="w-full"
+                        >
+                          <Button
+                            disabled={pathname === `/quran/juz/${num + 1}`}
+                            className="w-full flex items-center justify-start gap-4"
+                            variant="ghost"
+                            size="sm"
+                          >
+                            <div className="w-6 text-right">{num + 1}.</div>
+                            <div>Juz {num + 1}</div>
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>{" "}
+      </div>
     </>
   );
 }
+
 const surahArr = [
   "Al-Fatihah",
   "Al-Baqarah",

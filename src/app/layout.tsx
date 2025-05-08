@@ -3,8 +3,8 @@ import { Comfortaa } from "next/font/google";
 import "./globals.css";
 import CheckAuth from "@/components/CheckAuth";
 import { ThemeProvider } from "@/components/theme-provider";
-
-import NavigationBar from "./NavigationBar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/app/app-sidebar";
 
 const comfortaa = Comfortaa({ subsets: ["latin"] });
 
@@ -30,6 +30,7 @@ export default function RootLayout({
         />
       </head>
       <body className={comfortaa.className}>
+        {" "}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -37,8 +38,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CheckAuth />
-          <NavigationBar />
-          {children}
+          {/* <NavigationBar /> */}
+          <SidebarProvider defaultOpen={false}>
+            div
+            <AppSidebar />
+            <main>{children}</main>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

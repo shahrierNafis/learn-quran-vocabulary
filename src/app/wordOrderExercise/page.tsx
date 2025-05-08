@@ -148,7 +148,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="flex items-center justify-center w-full h-full gap-4 p-4">
+      <div className="flex items-center justify-center w-full gap-4 p-4">
         <VerseLengths />
         <ExtraVerse {...{ setExtra }} />
         <Score />

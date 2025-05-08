@@ -41,14 +41,14 @@ export default function NavigationBar() {
         )}{" "}
         <div>
           <Link
-            href="/hearingExercise"
-            disabled={pathname == "/hearingExercise"}
+            href="/wordOrderExercise"
+            disabled={pathname == "/wordOrderExercise"}
           >
             <Button
-              disabled={pathname == "/hearingExercise"}
+              disabled={pathname == "/wordOrderExercise"}
               variant={"outline"}
             >
-              Hearing Exercise
+              Word Order Exercise
             </Button>
           </Link>
         </div>
