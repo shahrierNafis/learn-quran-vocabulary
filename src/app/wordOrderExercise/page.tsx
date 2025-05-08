@@ -154,12 +154,6 @@ export default function Page() {
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-center gap-4 p-4">
           <Show {...{ verse, verse_key }} onClick={penalty} />
-          {/* audio Btn */}
-          <VerseAudioBtn
-            variant={"outline"}
-            onClick={penalty}
-            verse_key={`${surah}:${ayah}`}
-          />
           {/* new Btn */}
           <Button
             variant={"outline"}

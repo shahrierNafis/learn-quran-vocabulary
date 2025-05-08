@@ -1,16 +1,15 @@
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import useVerseAudio from "@/components/useVerseAudio";
 import Verse from "@/components/Verse";
 import { WORD } from "@/types/types";
-import { Volume2 } from "lucide-react";
+import { X } from "lucide-react";
+import { useState } from "react";
 export default function Show({
   verse,
   verse_key,
@@ -20,32 +19,23 @@ export default function Show({
   verse_key: string | null;
   onClick: () => void;
 }) {
-  const { setOpenedVerse } = useVerseAudio(verse_key!);
   return (
     <>
-      <Dialog modal={false}>
-        <DialogTrigger>
+      <AlertDialog>
+        <AlertDialogTrigger>
           <Button {...{ onClick }} variant={"outline"}>
-            Show
+            Read/Listen Verse
           </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <div className="flex items-center justify-center">
-            <Button
-              onClick={() => {
-                setOpenedVerse(verse_key!);
-              }}
-              className=""
-              size={"icon"}
-              variant={"ghost"}
-              disabled={!verse_key}
-            >
-              <Volume2 />
-            </Button>
-            <Verse hideAudioPlayer {...{ verse }}></Verse>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogCancel className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground h-4 w-4 p-2 m-0">
+            <X className="h-4 w-4" />
+          </AlertDialogCancel>
+          <div dir="rtl" className="flex items-center justify-center">
+            <Verse {...{ verse }}></Verse>
           </div>
-        </DialogContent>
-      </Dialog>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
