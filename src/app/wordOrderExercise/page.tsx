@@ -26,6 +26,8 @@ import getVerseTranslations from "@/utils/getVerseTranslations";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import Show from "./Show";
+import VerseAudioBtn from "@/components/verseAudioBtn";
 
 export const useVerse = create<{
   verse_key: string | null;
@@ -48,8 +50,7 @@ export default function Page() {
   const [extra, setExtra] = useState<number>(3);
   const [addScore] = useScoreStore(useShallow((state) => [state.addScore]));
   const { setVerse_key, verse_key } = useVerse(useShallow((state) => state));
-  const { verseAudio, openedVerse, setOpenedVerse } = useVerseAudio();
-  const [audio, setAudio] = useState<HTMLAudioElement>();
+  const { openedVerse, setOpenedVerse } = useVerseAudio();
   const [words, setWords] = useState<WORD[]>([]);
   const [verse, setVerse] = useState<WORD[]>([]);
   const [userWords, setUserWords] = useState<WORD[]>([]);
@@ -59,7 +60,6 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
-  const [, rerender] = useReducer((x) => x + 1, 0); // force rerender
 
   const setRandomVerse = useCallback(() => {
     // set a random verse
@@ -72,21 +72,6 @@ export default function Page() {
     !verse_key && setRandomVerse(); // set a random verse if verse_key is null
     return () => {};
   }, [setRandomVerse, verse_key]);
-
-  useEffect(() => {
-    // update audio hook
-    verse_key && setOpenedVerse(verse_key);
-    return () => {};
-  }, [setOpenedVerse, verse_key]);
-
-  useEffect(() => {
-    // update audio element
-    const newAudio = new Audio(verseAudio);
-    newAudio.addEventListener("ended", () => {
-      rerender(); // force rerender
-    });
-    setAudio(newAudio);
-  }, [verseAudio]);
 
   useEffect(() => {
     // set Words
@@ -145,7 +130,20 @@ export default function Page() {
 
     return () => {};
   }, [translation_ids, verse_key]);
+  const [surah, ayah] = verse.length ? verse[0].index.split(":") : ["1", "1"];
 
+  function penalty() {
+    if (
+      userWords.length !== verse.length && // if verse is not complete
+      userWords.length && // if userWords is not empty
+      openedVerse !== verse_key // if audio is not playing
+    ) {
+      setUserWords([]); // penalty
+      setWords((prev) => {
+        return _.shuffle([...prev, ...userWords]);
+      });
+    }
+  }
   return (
     <>
       <div className="flex items-center justify-center w-full gap-4 p-4">
@@ -155,31 +153,13 @@ export default function Page() {
       </div>
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-center gap-4 p-4">
+          <Show {...{ verse, verse_key }} onClick={penalty} />
           {/* audio Btn */}
-          <Button
-            onClick={() => {
-              if (!audio) return;
-              if (audio.paused) {
-                audio.currentTime = 0;
-                audio.play();
-                rerender(); // force rerender
-                if (userWords.length !== verse.length && userWords.length) {
-                  setUserWords([]); // penalty
-                  setWords((prev) => {
-                    return _.shuffle([...prev, ...userWords]);
-                  });
-                }
-              } else {
-                audio.pause();
-                rerender(); // force rerender
-              }
-            }}
-            className="rounded-full aspect-square mx-auto"
+          <VerseAudioBtn
             variant={"outline"}
-            size={"icon"}
-          >
-            {audio?.paused ? <Volume2 /> : <X />}
-          </Button>
+            onClick={penalty}
+            verse_key={`${surah}:${ayah}`}
+          />
           {/* new Btn */}
           <Button
             variant={"outline"}
@@ -257,6 +237,7 @@ export default function Page() {
                     size={"lg"}
                     disabled={userWords.length == verse.length}
                     onClick={() => {
+                      setOpenedVerse(undefined); // close audio
                       if (
                         verse[userWords.length].text_imlaei != word.text_imlaei
                       ) {

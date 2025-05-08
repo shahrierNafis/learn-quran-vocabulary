@@ -6,18 +6,40 @@ import AudioPlayer, { RHAP_UI } from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import useVerseAudio from "./useVerseAudio";
 
-export default function VerseAudioBtn({ verse_key }: { verse_key: string }) {
+export default function VerseAudioBtn({
+  verse_key,
+  onClick,
+  modal = false,
+  variant = "ghost",
+}: {
+  verse_key: string;
+  onClick?: () => void;
+  modal?: boolean;
+  variant?:
+    | "ghost"
+    | "outline"
+    | "link"
+    | "default"
+    | "destructive"
+    | "secondary"
+    | null
+    | undefined;
+}) {
   const { verseAudio, openedVerse, setOpenedVerse } = useVerseAudio(verse_key);
   return (
     <>
-      <Drawer open={openedVerse == verse_key} modal={false}>
+      <Drawer open={openedVerse == verse_key} modal={modal}>
         <DrawerTrigger>
           <div className="flex">
             <Button
-              onClick={() => setOpenedVerse(verse_key)}
+              onClick={() => {
+                setOpenedVerse(verse_key);
+                onClick?.();
+              }}
               className=""
               size={"icon"}
-              variant={"ghost"}
+              variant={variant}
+              disabled={!verseAudio}
             >
               <Volume2 />
             </Button>

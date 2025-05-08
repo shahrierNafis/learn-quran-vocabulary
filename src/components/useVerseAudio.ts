@@ -15,12 +15,6 @@ export default function useVerseAudio(verse_key?: string) {
     usePreferenceStore.persist.rehydrate();
   }, []);
   useEffect(() => {
-    if (verse_key) {
-      setOpenedVerse(verse_key);
-    }
-    return () => {};
-  }, [setOpenedVerse, verse_key]);
-  useEffect(() => {
     setVerseAudio(
       `https://cdn.islamic.network/quran/audio/${bitrate[reciter_id][0]}/${reciter_id}/${getVerseNOWithKey(openedVerse ?? "")}.mp3`
     );
