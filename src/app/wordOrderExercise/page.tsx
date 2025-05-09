@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useShallow } from "zustand/react/shallow";
 import VerseLengths, { useVerseLengths } from "./VerseLengths";
-import ExtraVerse from "./ExtraVerse";
+import ExtraWords from "./ExtraWords";
 import Score, { useScoreStore } from "./Score";
 import _ from "lodash";
 import getVersesWithLength from "./getVersesWithLegnth";
@@ -27,16 +27,19 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Show from "./Show";
-import VerseAudioBtn from "@/components/verseAudioBtn";
 
 export const useVerse = create<{
   verse_key: string | null;
   setVerse_key: (verse: string | null) => void;
+  extra: number;
+  setExtra: (extra: number) => void;
 }>()(
   persist(
     (set, get) => ({
       verse_key: "", // initial state
       setVerse_key: (verse_key: string | null) => set({ verse_key }),
+      extra: 0,
+      setExtra: (extra: number) => set({ extra }),
     }),
     {
       name: "verseStorage", // name of the item in the storage (must be unique)
@@ -47,9 +50,10 @@ export default function Page() {
   const [verseLengths, VLDialogOpen] = useVerseLengths(
     useShallow((state) => [state.verseLengths, state.VLDialogOpen])
   );
-  const [extra, setExtra] = useState<number>(3);
   const [addScore] = useScoreStore(useShallow((state) => [state.addScore]));
-  const { setVerse_key, verse_key } = useVerse(useShallow((state) => state));
+  const { setVerse_key, verse_key, extra } = useVerse(
+    useShallow((state) => state)
+  );
   const { openedVerse, setOpenedVerse } = useVerseAudio();
   const [words, setWords] = useState<WORD[]>([]);
   const [verse, setVerse] = useState<WORD[]>([]);
@@ -88,17 +92,21 @@ export default function Page() {
       try {
         if (signal.aborted) return;
 
-        let words: WORD[] = [];
-        words = await getVerseWords(verse_key as `${string}:${string}`);
+        const words: WORD[] = [];
+        words.push(
+          ...(await getVerseWords(verse_key as `${string}:${string}`)).filter(
+            (word) => word.char_type_name == "word"
+          )
+        );
         setVerse(words.filter((word) => word.char_type_name == "word"));
         if (signal.aborted) return;
-
-        for (let i = 0; i < extra; i++) {
+        const extraWords: WORD[] = [];
+        while (extraWords.length < extra * words.length) {
           if (signal.aborted) return;
           console.log(words);
           const verse = _.shuffle(await getVersesWithLength(verseLengths[0]));
-          words = words.concat(
-            (await getVerseWords(verse[0] as `${string}:${string}`)).filter(
+          extraWords.push(
+            ...(await getVerseWords(verse[0] as `${string}:${string}`)).filter(
               (word) => word.char_type_name == "word"
             )
           );
@@ -107,7 +115,7 @@ export default function Page() {
         if (signal.aborted) return;
 
         setWords(
-          _.shuffle(words.filter((word) => word.char_type_name == "word"))
+          _.shuffle([...words, ...extraWords.slice(0, extra * words.length)])
         );
       } catch (error: any) {
         // Only log non-abort errors
@@ -146,9 +154,9 @@ export default function Page() {
   }
   return (
     <>
-      <div className="flex items-center justify-center w-full gap-4 p-4">
+      <div className="flex items-end justify-center w-full gap-4 p-4">
         <VerseLengths />
-        <ExtraVerse {...{ setExtra }} />
+        <ExtraWords />
         <Score />
       </div>
       <div className="flex flex-col items-center justify-center">
@@ -246,7 +254,7 @@ export default function Page() {
                       } else {
                         if (userWords.length + 1 === verse.length) {
                           addScore(
-                            (verse.length * verse.length * (extra + 1)) / 4
+                            verse.length * verse.length + verse.length * extra
                           );
                         }
                         setUserWords((prev) => [...prev, word]);

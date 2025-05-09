@@ -45,7 +45,7 @@ export default function RootLayout({
               <SidebarTrigger />
             </div>
 
-            <main>{children}</main>
+            <main className="w-full">{children}</main>
           </SidebarProvider>
         </ThemeProvider>
       </body>
