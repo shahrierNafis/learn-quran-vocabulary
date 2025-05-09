@@ -57,6 +57,10 @@ export default function WordInfo({
       >
         <DialogTrigger>
           <div
+            onAuxClick={(e) => {
+              e.preventDefault();
+              new Audio("https://audio.qurancdn.com/" + word?.audio_url).play();
+            }}
             className={cn(
               buttonVariants({ variant: variant, size: size }),
               "text-[length:inherit] px-1"
