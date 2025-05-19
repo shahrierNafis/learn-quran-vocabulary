@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import useFont from "@/utils/useFont";
+import VerseAudioBtn from "@/components/verseAudioBtn";
 export default function Header({ surah }: { surah?: number }) {
   const [font] = useFont();
   const [title, setTitle] = useState("");
@@ -24,6 +25,7 @@ export default function Header({ surah }: { surah?: number }) {
             <div className="m-8">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
           </div>
         )}
+        <VerseAudioBtn verse_key={surah + ":0"} />
         <div className="m-4">{title}</div>
       </div>
     </>

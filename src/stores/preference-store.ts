@@ -145,13 +145,13 @@ export const usePreferenceStore = create<PreferenceStore>()(
         },
         reviewOrder: "next_review ASC",
         setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
-        reciter_id: "ar.alafasy",
+        reciter_id: 7 + "",
         setReciter_id: (reciter_id) => set({ reciter_id }),
       };
     },
 
     {
-      version: 5,
+      version: 6,
       name: "preference-storage",
       skipHydration: true,
       storage: storage,

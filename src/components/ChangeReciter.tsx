@@ -27,23 +27,22 @@ export default function ChangeReciter() {
     usePreferenceStore.persist.rehydrate();
   }, []);
   type Reciter = {
-    identifier: string;
-    language: string;
+    id: number;
+    reciter_id: number;
     name: string;
-    englishName: string;
-    format: string;
-    type: string;
-    direction: null;
+    translated_name: {
+      name: string;
+    };
   };
   const [reciters, setReciters] = useState<Reciter[]>([]);
   useEffect(() => {
-    fetch("https://api.alquran.cloud/v1/edition/format/audio")
+    fetch("https://api.qurancdn.com/api/qdc/audio/reciters")
       .then((r) => r.json())
       .then((r) =>
         setReciters(
-          (r.data as Reciter[]).filter(
+          (r.reciters as Reciter[]).filter(
             (obj1, i, arr) =>
-              arr.findIndex((obj2) => obj2.identifier === obj1.identifier) === i
+              arr.findIndex((obj2) => obj2.reciter_id === obj1.reciter_id) === i
           )
         )
       );
@@ -63,8 +62,8 @@ export default function ChangeReciter() {
               className=" w-full justify-between"
             >
               {reciter_id
-                ? reciters.find((reciter) => reciter.identifier === reciter_id)
-                    ?.englishName
+                ? reciters.find((reciter) => reciter.id + "" === reciter_id)
+                    ?.name
                 : "Select reciter..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -77,8 +76,8 @@ export default function ChangeReciter() {
                 <CommandGroup>
                   {reciters.map((reciter) => (
                     <CommandItem
-                      key={reciter.identifier}
-                      value={reciter.identifier + ""}
+                      key={reciter.id}
+                      value={reciter.id + ""}
                       onSelect={(currentValue) => {
                         setReciter_id(currentValue);
                         setOpen(false);
@@ -87,12 +86,12 @@ export default function ChangeReciter() {
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          reciter_id === reciter.identifier + ""
+                          reciter_id === reciter.id + ""
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
-                      {reciter.englishName}
+                      {reciter.name}
                     </CommandItem>
                   ))}
                 </CommandGroup>

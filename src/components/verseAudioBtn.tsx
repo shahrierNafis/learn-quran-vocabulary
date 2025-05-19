@@ -1,10 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Volume2, X } from "lucide-react";
 import { Button } from "./ui/button";
 import AudioPlayer, { RHAP_UI } from "react-h5-audio-player";
 import "react-h5-audio-player/lib/styles.css";
 import useVerseAudio from "./useVerseAudio";
+import { useShallow } from "zustand/react/shallow";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+export const useTimeListened = create<{
+  timeListened: number;
+  setTimeListened: (timeListened: number) => void;
+  addTimeListened: (amount: number) => void;
+  stringTimeListened: string;
+}>()(
+  persist(
+    (set) => ({
+      timeListened: 0,
+      setTimeListened: (timeListened: number) => set({ timeListened }),
+      addTimeListened: (amount: number) =>
+        set((state) => ({
+          timeListened: state.timeListened + amount,
+          stringTimeListened: millisecondsToHMS(state.timeListened + amount),
+        })),
+      stringTimeListened: "00:00:00",
+    }),
+    {
+      name: "TimeListened", // add a name for the store
+      // skipHydration: true,
+    }
+  )
+);
 
 export default function VerseAudioBtn({
   verse_key,
@@ -26,6 +52,11 @@ export default function VerseAudioBtn({
     | undefined;
 }) {
   const { verseAudio, openedVerse, setOpenedVerse } = useVerseAudio(verse_key);
+  const [addTimeListened] = useTimeListened(
+    useShallow((s) => [s.addTimeListened])
+  );
+  const callCountRef = useRef(0); // To track how many times onListen is called
+
   return (
     <>
       <Drawer open={openedVerse == verse_key} modal={modal}>
@@ -47,8 +78,15 @@ export default function VerseAudioBtn({
         </DrawerTrigger>
         <DrawerContent>
           <AudioPlayer
+            listenInterval={1000}
+            onListen={(e) => {
+              callCountRef.current += 1;
+              if (callCountRef.current % 2 === 0) {
+                return; // Skip every second call
+              }
+              addTimeListened(1000);
+            }}
             autoPlay
-            loop
             src={verseAudio}
             showJumpControls={false}
             // other props here
@@ -72,4 +110,15 @@ export default function VerseAudioBtn({
       </Drawer>
     </>
   );
+}
+function millisecondsToHMS(milliseconds: number): string {
+  const seconds = Math.floor((milliseconds / 1000) % 60);
+  const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+  const hours = Math.floor(milliseconds / (1000 * 60 * 60));
+
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+  const formattedSeconds = String(seconds).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
