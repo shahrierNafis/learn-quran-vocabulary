@@ -1,11 +1,5 @@
 "use client";
-import React, {
-  use,
-  useCallback,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import VerseLengths, { useVerseLengths } from "./VerseLengths";
 import ExtraWords from "./ExtraWords";
@@ -16,7 +10,6 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import useVerseAudio from "@/components/useVerseAudio";
 import { Button } from "@/components/ui/button";
-import { User, Volume2, X } from "lucide-react";
 import { WORD } from "@/types/types";
 import Word from "@/components/Word";
 import getVerseWords from "@/utils/getVerseWords";
@@ -64,7 +57,7 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
-
+  const [penalty, setPenalty] = useState(false);
   const setRandomVerse = useCallback(() => {
     // set a random verse
     getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) => {
@@ -140,16 +133,18 @@ export default function Page() {
   }, [translation_ids, verse_key]);
   const [surah, ayah] = verse.length ? verse[0].index.split(":") : ["1", "1"];
 
-  function penalty() {
+  function penaltyFunc() {
     if (
       userWords.length !== verse.length && // if verse is not complete
       userWords.length && // if userWords is not empty
       openedVerse !== verse_key // if audio is not playing
     ) {
-      setUserWords([]); // penalty
-      setWords((prev) => {
-        return _.shuffle([...prev, ...userWords]);
-      });
+      if (penalty) {
+        setUserWords([]); // penalty
+        setWords((prev) => {
+          return _.shuffle([...prev, ...userWords]);
+        });
+      }
     }
   }
   return (
@@ -158,10 +153,18 @@ export default function Page() {
         <VerseLengths />
         <ExtraWords />
         <Score />
+        <Button
+          variant={"outline"}
+          onClick={() => {
+            setPenalty((prev) => !prev);
+          }}
+        >
+          {penalty ? "penalty:on" : "penalty:off"}
+        </Button>
       </div>
       <div className="flex flex-col items-center justify-center">
         <div className="flex items-center justify-center gap-4 p-4">
-          <Show {...{ verse, verse_key }} onClick={penalty} />
+          <Show {...{ verse, verse_key }} onClick={penaltyFunc} />
           {/* new Btn */}
           <Button
             variant={"outline"}
@@ -246,15 +249,15 @@ export default function Page() {
                         setRedIndex(i);
                         setTimeout(() => {
                           setRedIndex(undefined);
-                          setUserWords([]); // penalty
-                          setWords((prev) => {
-                            return _.shuffle([...prev, ...userWords]);
-                          });
+                          penaltyFunc();
                         }, 150);
                       } else {
                         if (userWords.length + 1 === verse.length) {
                           addScore(
-                            verse.length * verse.length + verse.length * extra
+                            (penalty
+                              ? verse.length * verse.length
+                              : verse.length) +
+                              verse.length * extra
                           );
                         }
                         setUserWords((prev) => [...prev, word]);
