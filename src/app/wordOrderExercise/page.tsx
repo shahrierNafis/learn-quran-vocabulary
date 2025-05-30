@@ -123,7 +123,8 @@ export default function Page() {
   }, [extra, verseLengths, verse_key, VLDialogOpen]);
   useEffect(() => {
     // set translation
-    verse_key &&
+    translation_ids &&
+      verse_key &&
       getVerseTranslations(
         translation_ids,
         verse_key as `${string}:${string}`
