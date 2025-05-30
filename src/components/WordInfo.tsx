@@ -47,6 +47,8 @@ export default function WordInfo({
   if (disabled) {
     return <>{children}</>;
   }
+
+  const [s, v, w] = word?.index.split(":") ?? ["112", "2", "1"];
   return (
     <>
       <Dialog
@@ -59,7 +61,10 @@ export default function WordInfo({
           <div
             onAuxClick={(e) => {
               e.preventDefault();
-              new Audio("https://audio.qurancdn.com/" + word?.audio_url).play();
+              new Audio(
+                "https://audio.qurancdn.com/" +
+                  `wbw/${s.padStart(3, "0")}_${v.padStart(3, "0")}_${w.padStart(3, "0")}.mp3`
+              ).play();
             }}
             className={cn(
               buttonVariants({ variant: variant, size: size }),
@@ -87,7 +92,8 @@ export default function WordInfo({
                         className=""
                         onClick={() => {
                           new Audio(
-                            "https://audio.qurancdn.com/" + word.audio_url
+                            "https://audio.qurancdn.com/" +
+                              `wbw/${s.padStart(3, "0")}_${v.padStart(3, "0")}_${w.padStart(3, "0")}.mp3`
                           ).play();
                         }}
                         size={"icon"}
