@@ -29,11 +29,13 @@ function Round({
   callback,
   noNewWord,
   textInput,
+  listen,
 }: {
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
   noNewWord?: boolean;
   textInput?: boolean;
+  listen?: boolean;
 }) {
   const supabase = createClient<Database>();
   const { verse, setVerse, preloadedVerse } = useVerse(wordGroups);
@@ -106,7 +108,7 @@ function Round({
                     ? +wordGroups[0].words[0].split(":")[2] - 1
                     : undefined,
                 verse,
-                hideAudioPlayer: !(selected || correct),
+                hideAudioPlayer: !listen && !(selected || correct),
               }}
             >
               {textInput && verse && (
@@ -289,6 +291,11 @@ function Round({
     setCorrect(false);
     setSelected(undefined);
     setShowSimilarWords(false);
+    
+    setOpData(undefined);
+    setVerse(undefined);
+    setTranslations(undefined);
+    
     setOpData(await preLoadedOpData);
     setVerse(await preloadedVerse);
     setTranslations(await preLoadedT);

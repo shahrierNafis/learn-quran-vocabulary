@@ -24,7 +24,9 @@ export default function Learn({
   wordGroupsCount?: number | null | undefined;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const [textInput, setTextInput] = useState(true);
+  const [textInput, setTextInput] = useState(false);
+  const [listening, setListening] = useState(true);
+
   return (
     <>
       <Dialog>
@@ -54,9 +56,15 @@ export default function Learn({
             onClick={() => setTextInput(!textInput)}
           >
             <Checkbox checked={textInput} /> text Input (hard)
+          </div>{" "}
+          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setListening(!listening)}
+          >
+            <Checkbox checked={listening} /> learn listening skill
           </div>
           <Link
-            href={`/play/${collection_id}/${number}${textInput ? "?mode=text_input" : ""}`}
+            href={`/play/${collection_id}/${number}?mode=${textInput ? "text_input" : ""}&skill=${listening ? "listening" : ""}`}
           >
             <Button className="w-fit ml-auto">Start </Button>
           </Link>

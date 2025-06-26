@@ -30,6 +30,8 @@ export default function useOptions(
           option,
         ]);
         setAllOptions(shuffled);
+      } else {
+        setAllOptions([])
       }
     })();
 

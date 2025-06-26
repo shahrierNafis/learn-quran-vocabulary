@@ -19,6 +19,7 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
   const searchParams = useSearchParams();
   const collection_id = searchParams.get("collection_id");
   const mode = searchParams.get("mode");
+  const skill = searchParams.get("skill");
 
   //set wordGroups
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
                 wordGroups,
                 callback,
                 textInput: mode == "text_input",
+                listen: skill == "listening",
               }}
             />
           ) : (
