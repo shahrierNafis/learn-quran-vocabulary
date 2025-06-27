@@ -5,11 +5,12 @@ export default async function getVerseTranslations(
   verse_key: `${string}:${string}`
 ): Promise<(T & Awaited<ReturnType<typeof getTranslationInfo>>[number])[]> {
   try {
+    if (translation_ids.length == 0) return []
     const { verse } = await (
       await fetch(
         `https://api.quran.com/api/v4/verses/by_key/${verse_key}?translations=${translation_ids.join(",")}`
       )
-    ).json();
+    ).json() ?? { translations: [] };
     const info = await getTranslationInfo();
     return verse.translations.map((t: T) => {
       return {
@@ -18,9 +19,9 @@ export default async function getVerseTranslations(
           return i.id == t.resource_id;
         })[0],
       };
-    });
+    }) ?? [];
   } catch (error) {
-    console.log(
+    alert(
       ` https://api.quran.com/api/v4/verses/by_key/${verse_key}?translations=${translation_ids.join(",")} \n ${error}`
     );
     return getVerseTranslations(translation_ids, verse_key);
