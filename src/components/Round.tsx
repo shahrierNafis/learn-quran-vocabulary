@@ -24,18 +24,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import VerseAudioBtn from "./verseAudioBtn";
+import useVerseAudio from "./useVerseAudio";
 function Round({
   wordGroups,
   callback,
   noNewWord,
   textInput,
-  listen,
 }: {
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
   noNewWord?: boolean;
   textInput?: boolean;
-  listen?: boolean;
 }) {
   const supabase = createClient<Database>();
   const { verse, setVerse, preloadedVerse } = useVerse(wordGroups);
@@ -47,6 +47,7 @@ function Round({
   const [correct, setCorrect] = useState<boolean>(false);
   const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
   const intervals = usePreferenceStore(useShallow((state) => state.intervals));
+  const { setOpenedVerse } = useVerseAudio();
 
   const [translation_ids] = usePreferenceStore(
     useShallow((a) => [a.translation_ids])
@@ -108,7 +109,7 @@ function Round({
                     ? +wordGroups[0].words[0].split(":")[2] - 1
                     : undefined,
                 verse,
-                hideAudioPlayer: !listen && !(selected || correct),
+                hideAudioPlayer: !(selected || correct),
               }}
             >
               {textInput && verse && (
@@ -164,6 +165,7 @@ function Round({
                         <div className=""> {"Don't Know"}</div>
                       </Button>
                     </WordInfo>
+                    <VerseAudioBtn onClick={() => { setCurrentProgress(0) }} variant={"destructive"} verse_key={`${+wordGroups[0].words[0].split(":")[0]}:${+wordGroups[0].words[0].split(":")[1]}`} />
                   </div>{" "}
                 </>
               )}
@@ -192,13 +194,13 @@ function Round({
                     onClick={() => {
                       setText(
                         text.trim() +
-                          simplifyArabic(
-                            verse[
-                              +wordGroups[0].words[0].split(":")[2] - 1
-                            ].wordSegments
-                              .map((w) => w.arabic)
-                              .join("")
-                          ).replace(text, "")[0]
+                        simplifyArabic(
+                          verse[
+                            +wordGroups[0].words[0].split(":")[2] - 1
+                          ].wordSegments
+                            .map((w) => w.arabic)
+                            .join("")
+                        ).replace(text, "")[0]
                       );
                       setHintUsed(true);
                     }}
@@ -265,6 +267,9 @@ function Round({
     index: 1 | 2 | 3 | 4 | undefined,
     word_group_id: number
   ) {
+
+    setOpenedVerse(undefined)
+
     setCorrect(isCorrect);
     setSelected(index);
 
@@ -291,11 +296,12 @@ function Round({
     setCorrect(false);
     setSelected(undefined);
     setShowSimilarWords(false);
-    
+    setOpenedVerse(undefined)
+
     setOpData(undefined);
     setVerse(undefined);
     setTranslations(undefined);
-    
+
     setOpData(await preLoadedOpData);
     setVerse(await preloadedVerse);
     setTranslations(await preLoadedT);

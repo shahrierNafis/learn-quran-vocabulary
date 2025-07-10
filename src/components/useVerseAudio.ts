@@ -15,6 +15,7 @@ export default function useVerseAudio(verse_key?: string) {
     usePreferenceStore.persist.rehydrate();
   }, []);
   useEffect(() => {
+    if (!verse_key) return
     const [s, v] = verse_key?.split(":") || [];
     let url = `https://api.quran.com/api/v4/recitations/${reciter_id}/by_ayah/${verse_key}`;
     if (+v == 0) {
@@ -36,7 +37,7 @@ export default function useVerseAudio(verse_key?: string) {
         } else
           setVerseAudio("https://audio.qurancdn.com/" + r.audio_files[0].url);
       });
-    return () => {};
+    return () => { };
   }, [reciter_id, verse_key]);
 
   return {

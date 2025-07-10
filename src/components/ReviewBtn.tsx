@@ -23,8 +23,7 @@ export default function ReviewBtn({
   toReviewCount?: number;
 }) {
   const [number, setNumber] = useState<number>(10);
-  const [textInput, setTextInput] = useState(true);
-  const [listening, setListening] = useState(true);
+  const [textInput, setTextInput] = useState(false);
 
   return (
     <>
@@ -50,21 +49,15 @@ export default function ReviewBtn({
               value={number}
               onChange={(e) => setNumber(Number(e.target.value))}
             />
-          </div>{" "}
+          </div>
           <div
             className="flex items-center cursor-pointer"
             onClick={() => setTextInput(!textInput)}
           >
             <Checkbox checked={textInput} /> text Input (hard)
-          </div>{" "}
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={() => setListening(!listening)}
-          >
-            <Checkbox checked={listening} /> learn listening skill
           </div>
           <Link
-            href={`/review/${number}?collection_id=${collection_id ?? ""}&mode=${textInput ? "text_input" : ""}&skill=${listening ?  "listening" : ""}`}
+            href={`/review/${number}?collection_id=${collection_id ?? ""}&mode=${textInput ? "text_input" : ""}`}
           >
             <Button className="w-fit ml-auto">Start</Button>
           </Link>

@@ -42,14 +42,14 @@ export default function VerseAudioBtn({
   onClick?: () => void;
   modal?: boolean;
   variant?:
-    | "ghost"
-    | "outline"
-    | "link"
-    | "default"
-    | "destructive"
-    | "secondary"
-    | null
-    | undefined;
+  | "ghost"
+  | "outline"
+  | "link"
+  | "default"
+  | "destructive"
+  | "secondary"
+  | null
+  | undefined;
 }) {
   const { verseAudio, openedVerse, setOpenedVerse } = useVerseAudio(verse_key);
   const [addTimeListened] = useTimeListened(
@@ -70,7 +70,7 @@ export default function VerseAudioBtn({
               className=""
               size={"icon"}
               variant={variant}
-              disabled={!verseAudio}
+              disabled={!verseAudio || !!openedVerse}
             >
               <Volume2 />
             </Button>
