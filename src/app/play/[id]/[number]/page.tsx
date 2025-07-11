@@ -18,6 +18,8 @@ export default function Page(props: {
 
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode");
+  const skill = searchParams.get("skill");
+
 
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
   const [count, setCount] = useState(0);
@@ -70,7 +72,9 @@ export default function Page(props: {
               {...{
                 wordGroups,
                 callback,
-                textInput: mode == "text_input",
+                textInput: mode == "text_input", listen: skill == "listening",
+
+
               }}
             />
           ) : (

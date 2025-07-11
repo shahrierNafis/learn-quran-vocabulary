@@ -30,12 +30,14 @@ function Round({
   wordGroups,
   callback,
   noNewWord,
-  textInput,
+  textInput, listen,
+
 }: {
   wordGroups: Tables<"word_groups">[];
   callback: (bool: boolean) => void;
   noNewWord?: boolean;
-  textInput?: boolean;
+  textInput?: boolean; listen?: boolean;
+
 }) {
   const supabase = createClient<Database>();
   const { verse, setVerse, preloadedVerse } = useVerse(wordGroups);
@@ -165,7 +167,7 @@ function Round({
                         <div className=""> {"Don't Know"}</div>
                       </Button>
                     </WordInfo>
-                    <VerseAudioBtn onClick={() => { setCurrentProgress(0) }} variant={"destructive"} verse_key={`${+wordGroups[0].words[0].split(":")[0]}:${+wordGroups[0].words[0].split(":")[1]}`} />
+                    <VerseAudioBtn onClick={() => { if (!listen) setCurrentProgress(0) }} variant={listen ? "default" : "destructive"} verse_key={`${+wordGroups[0].words[0].split(":")[0]}:${+wordGroups[0].words[0].split(":")[1]}`} />
                   </div>{" "}
                 </>
               )}

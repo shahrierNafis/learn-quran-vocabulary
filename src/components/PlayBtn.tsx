@@ -25,6 +25,7 @@ export default function Learn({
 }) {
   const [number, setNumber] = useState<number>(10);
   const [textInput, setTextInput] = useState(false);
+  const [listening, setListening] = useState(false);
 
   return (
     <>
@@ -55,9 +56,15 @@ export default function Learn({
             onClick={() => setTextInput(!textInput)}
           >
             <Checkbox checked={textInput} /> text Input (hard)
-          </div>{" "}
+          </div>{" "}          <div
+            className="flex items-center cursor-pointer"
+            onClick={() => setListening(!listening)}
+          >
+            <Checkbox checked={listening} /> learn listening skill
+          </div>
+
           <Link
-            href={`/play/${collection_id}/${number}?mode=${textInput ? "text_input" : ""}`}
+            href={`/play/${collection_id}/${number}?mode=${textInput ? "text_input" : ""}&skill=${listening ? "listening" : ""}`}
           >
             <Button className="w-fit ml-auto">Start </Button>
           </Link>
