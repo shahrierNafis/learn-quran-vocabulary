@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Database } from "@/database.types";
-import { createClient } from "@/utils/supabase/clients";
-import React, { useState } from "react";
+import React from "react";
 import AddInterval from "./AddInterval";
 import { usePreferenceStore } from "@/stores/preference-store";
 import { useShallow } from "zustand/react/shallow";
+import IntervalPresets from "./IntervalPresets";
 
 export default function SetIntervals() {
   const [intervals, setInterval, removeInterval] = usePreferenceStore(
@@ -15,18 +14,11 @@ export default function SetIntervals() {
       state.removeInterval,
     ])
   );
-  const supabase = createClient<Database>();
   function handleInpuTChange(
     e: React.ChangeEvent<HTMLInputElement>,
     progress: number
   ) {
     setInterval(progress, +e.target.value * 8.64e7);
-
-    supabase
-      .from("user_intervals")
-      .update({ interval_ms: +e.target.value * 8.64e7 })
-      .eq("progress", progress)
-      .then();
   }
   function handleDelete(progress: number) {
     removeInterval(progress);
@@ -75,7 +67,8 @@ export default function SetIntervals() {
                 );
               })}
           </div>{" "}
-          <AddInterval {...{ setInterval }} />
+          <div className="flex gap-4">
+            <AddInterval {...{ setInterval }} /><IntervalPresets /></div>
         </div>
       </div>
     </>

@@ -13,8 +13,6 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { createClient } from "@/utils/supabase/clients";
-import { Database } from "@/database.types";
 
 export default function AddInterval({
   setInterval,
@@ -23,14 +21,9 @@ export default function AddInterval({
 }) {
   const [progress, setProgress] = useState<number>();
   const [newInterval, setNewInterval] = useState<number>();
-  const supabase = createClient<Database>();
   function handleAdd() {
     if (progress === undefined || newInterval === undefined) return;
     setInterval(progress, newInterval);
-    supabase
-      .from("user_intervals")
-      .upsert({ progress, interval_ms: newInterval })
-      .then();
   }
 
   return (
@@ -41,7 +34,7 @@ export default function AddInterval({
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Add newInterval</AlertDialogTitle>
+            <AlertDialogTitle>Add new Interval</AlertDialogTitle>
             <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex items-center gap-2">

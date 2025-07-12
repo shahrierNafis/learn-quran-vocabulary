@@ -92,6 +92,7 @@ type PreferenceStore = {
   };
   setInterval: (percentage: number, interval: number) => void;
   removeInterval: (percentage: number) => void;
+  setAllIntervals: (intervals: { [key: number]: number }) => void;
   reviewOrder: reviewOrderType;
   setReviewOrder: (reviewOrder: reviewOrderType) => void;
   reciter_id: string;
@@ -143,6 +144,9 @@ export const usePreferenceStore = create<PreferenceStore>()(
             return { intervals: newIntervals };
           });
         },
+        setAllIntervals: (intervals: { [key: number]: number }) => set(() => ({
+          intervals
+        })),
         reviewOrder: "next_review ASC",
         setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
         reciter_id: 7 + "",
