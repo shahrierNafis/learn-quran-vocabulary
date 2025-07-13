@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "@/components/ui/Link";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useLocalStorage } from "@uidotdev/usehooks";
 export default function Learn({
   className,
   collection_id,
@@ -23,9 +24,9 @@ export default function Learn({
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
   wordGroupsCount?: number | null | undefined;
 }) {
-  const [number, setNumber] = useState<number>(10);
-  const [textInput, setTextInput] = useState(false);
-  const [listening, setListening] = useState(false);
+  const [number, setNumber] = useLocalStorage<number>("verses per round", 10);
+  const [textInput, setTextInput] = useLocalStorage("mode", false);
+  const [listening, setListening] = useLocalStorage("skill", false);
 
   return (
     <>
