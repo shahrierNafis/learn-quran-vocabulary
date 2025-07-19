@@ -20,6 +20,7 @@ import { usePreferenceStore } from "@/stores/preference-store";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Show from "./Show";
+import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 
 export const useVerse = create<{
   verse_key: string | null;
@@ -40,6 +41,12 @@ export const useVerse = create<{
   )
 );
 export default function Page() {
+  const isClient = useIsClient()
+
+  if (isClient === false) {
+    return null
+  }
+
   const [verseLengths, VLDialogOpen] = useVerseLengths(
     useShallow((state) => [state.verseLengths, state.VLDialogOpen])
   );
@@ -57,7 +64,7 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
-  const [penalty, setPenalty] = useState(false);
+  const [penalty, setPenalty] = useLocalStorage("penalty", false);
   const setRandomVerse = useCallback(() => {
     // set a random verse
     getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) => {
@@ -67,7 +74,7 @@ export default function Page() {
   }, [setVerse_key, verseLengths]);
   useEffect(() => {
     !verse_key && setRandomVerse(); // set a random verse if verse_key is null
-    return () => {};
+    return () => { };
   }, [setRandomVerse, verse_key]);
 
   useEffect(() => {
@@ -130,7 +137,7 @@ export default function Page() {
         verse_key as `${string}:${string}`
       ).then((r) => setTranslations(r));
 
-    return () => {};
+    return () => { };
   }, [translation_ids, verse_key]);
   const [surah, ayah] = verse.length ? verse[0].index.split(":") : ["1", "1"];
 
@@ -195,8 +202,9 @@ export default function Page() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{
                   type: "spring",
-                  damping: 20,
-                  stiffness: 300,
+                  damping: 30,
+                  stiffness: 300, mass: 2,
+                  velocity: 2,
                 }}
                 layout
               >
@@ -223,7 +231,7 @@ export default function Page() {
             words.map((word, i) => {
               return (
                 <motion.div
-                  whileHover={{ scale: 1.2 }}
+                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.8 }}
                   key={word.index}
                   initial={{ opacity: 0, scale: 0 }}
@@ -231,7 +239,7 @@ export default function Page() {
                   transition={{
                     type: "spring",
                     stiffness: 300,
-                    damping: 20,
+                    damping: 30,
                     mass: 2,
                     velocity: 2,
                   }}
@@ -258,7 +266,7 @@ export default function Page() {
                             (penalty
                               ? verse.length * verse.length
                               : verse.length) +
-                              verse.length * extra
+                            verse.length * extra
                           );
                         }
                         setUserWords((prev) => [...prev, word]);
