@@ -9,17 +9,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/utils/cn";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 export function SetReviewOrder({ className }: { className?: string }) {
-  const [reviewOrder, setReviewOrder] = usePreferenceStore(
+  const [reviewOrder, setReviewOrder] = useOnlineStorage(
     useShallow((state) => [state.reviewOrder, state.setReviewOrder])
   );
 
   React.useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
-    return () => {};
+    useOnlineStorage.persist.rehydrate();
+    return () => { };
   }, []);
   return (
     <div className={cn(className)}>

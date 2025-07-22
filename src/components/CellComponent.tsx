@@ -13,7 +13,7 @@ import getVerseTranslations from "@/utils/getVerseTranslations";
 import Translations from "./Translations";
 
 import Word from "./Word";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import Verse from "./Verse";
 
@@ -28,19 +28,19 @@ export default memo(
     const [verse, setVerse] = useState<WORD[]>();
     const [translations, setTranslations] =
       useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
-    const [showTranslation, showTransliteration] = usePreferenceStore(
+    const [showTranslation, showTransliteration] = useOnlineStorage(
       useShallow((a) => [a.showTranslation, a.showTransliteration])
     );
 
     useEffect(() => {
-      usePreferenceStore.persist.rehydrate();
+      useOnlineStorage.persist.rehydrate();
     }, []);
 
     // set verse
     useEffect(() => {
       getVerseWords(verse_key as `${string}:${string}${string}`).then(setVerse);
 
-      return () => {};
+      return () => { };
     }, [verse_key]);
     // set translation
     useEffect(() => {
@@ -49,7 +49,7 @@ export default memo(
         setTranslations(r)
       );
 
-      return () => {};
+      return () => { };
     }, [translation_ids, verse_key]);
 
     return (

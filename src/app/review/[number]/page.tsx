@@ -4,7 +4,7 @@ import Round from "@/components/Round";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import { Tables } from "@/database.types";
 import getToReview from "@/utils/getToReview";
-import ReviewBtn from "@/components/ReviewBtn";
+import PlayBtn from "@/components/PlayBtn";
 import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
 import { useSearchParams } from "next/navigation";
@@ -82,14 +82,14 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
                     {!!(toReviewCount - +number) && (
                       <>
                         {" "}
-                        <ReviewBtn
+                        <PlayBtn type="review"
                           {...{
                             collection_id: collection_id
                               ? +collection_id
                               : undefined,
                           }}
-                        />{" "}
-                        them?
+                        >Review them?</PlayBtn>{" "}
+
                       </>
                     )}
                   </div>

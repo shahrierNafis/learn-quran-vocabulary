@@ -10,52 +10,17 @@ import {
 import inverseWordCount from "../../inverseWordCount.json";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
-type VerseLengths = {
-  verseLengths: number[];
-  setVerseLengths: (verseLengths: number[]) => void;
-  addVerseLength: (verseLength: number) => void;
-  removeVerseLength: (verseLength: number) => void;
-  VLDialogOpen: boolean;
-  setVLDialogOpen: (open: boolean) => void;
-};
-
-export const useVerseLengths = create<VerseLengths>()(
-  persist(
-    (set, get) => ({
-      verseLengths: [4], // initial state
-      setVerseLengths: (verseLengths: number[]) => set({ verseLengths }),
-      addVerseLength: (verseLength: number) => {
-        set((state) => ({
-          verseLengths: [...state.verseLengths, verseLength],
-        }));
-      },
-      removeVerseLength: (verseLength: number) => {
-        set((state) => ({
-          verseLengths: state.verseLengths.filter((i) => i !== verseLength),
-        }));
-      },
-      VLDialogOpen: false,
-      setVLDialogOpen: (open: boolean) => {
-        set({ VLDialogOpen: open });
-      },
-    }),
-    {
-      name: "verseLengthsStorage", // name of the item in the storage (must be unique)
-    }
-  )
-);
+import { useLocalStorage } from "@/stores/localStorage";
 
 export default function VerseLengths() {
-  const {
-    verseLengths,
-    addVerseLength,
-    VLDialogOpen,
-    removeVerseLength,
-    setVLDialogOpen,
-  } = useVerseLengths(useShallow((state) => state));
+  const
+    [verseLengths,
+      addVerseLength,
+      VLDialogOpen,
+      removeVerseLength,
+      setVLDialogOpen,
+    ] = useLocalStorage(useShallow((state) => [state.verseLengths, state.addVerseLength, state.VLDialogOpen, state.removeVerseLength, state.setVLDialogOpen,]));
 
   return (
     <Dialog open={VLDialogOpen} onOpenChange={(open) => setVLDialogOpen(open)}>

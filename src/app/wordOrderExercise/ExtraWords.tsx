@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { useShallow } from "zustand/react/shallow";
-import { useVerse } from "./page";
 import { Label } from "@/components/ui/label";
+import { useLocalStorage } from "@/stores/localStorage";
 export default function ExtraWords() {
-  const [setExtra, extra] = useVerse(
+
+  const [setExtra, extra] = useLocalStorage(
     useShallow((state) => [state.setExtra, state.extra])
   );
 

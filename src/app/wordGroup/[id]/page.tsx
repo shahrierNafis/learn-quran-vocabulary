@@ -2,7 +2,7 @@
 import GotoDashboard from "@/components/GotoDashboard";
 import SimilarWordsTable from "@/components/SimilarWordsTable";
 import { Database, Tables } from "@/database.types";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 import { createClient } from "@/utils/supabase/clients";
@@ -15,12 +15,12 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
     id
   } = params;
 
-  const [translation_ids] = usePreferenceStore(
+  const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
   );
 
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
 
   const supabase = createClient<Database>();

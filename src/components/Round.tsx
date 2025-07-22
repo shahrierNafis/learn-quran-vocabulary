@@ -13,7 +13,7 @@ import useProgress from "./useProgress";
 import Options from "./Options";
 import Translations from "./Translations";
 import useTranslations from "./useTranslations";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
 import WordInfo from "./WordInfo";
@@ -48,14 +48,14 @@ function Round({
   const [showSimilarWords, setShowSimilarWords] = useState<boolean>(false);
   const [correct, setCorrect] = useState<boolean>(false);
   const [selected, setSelected] = useState<1 | 2 | 3 | 4>();
-  const intervals = usePreferenceStore(useShallow((state) => state.intervals));
+  const intervals = useOnlineStorage(useShallow((state) => state.intervals));
   const { setOpenedVerse } = useVerseAudio();
 
-  const [translation_ids] = usePreferenceStore(
+  const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
   );
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
   const { allOptions, setOpData, preLoadedOpData } = useOptions(
     wordGroups,

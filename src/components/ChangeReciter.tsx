@@ -15,16 +15,16 @@ import {
 import { Button } from "./ui/button";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 export default function ChangeReciter() {
   const [open, setOpen] = React.useState(false);
-  const [reciter_id, setReciter_id] = usePreferenceStore(
+  const [reciter_id, setReciter_id] = useOnlineStorage(
     useShallow((s) => [s.reciter_id, s.setReciter_id])
   );
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
   type Reciter = {
     id: number;
@@ -47,7 +47,7 @@ export default function ChangeReciter() {
         )
       );
 
-    return () => {};
+    return () => { };
   }, []);
 
   return (
@@ -63,7 +63,7 @@ export default function ChangeReciter() {
             >
               {reciter_id
                 ? reciters.find((reciter) => reciter.id + "" === reciter_id)
-                    ?.name
+                  ?.name
                 : "Select reciter..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>

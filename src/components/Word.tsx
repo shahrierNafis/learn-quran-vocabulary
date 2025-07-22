@@ -1,6 +1,6 @@
 import { WORD, WordData } from "@/types/types";
 import React from "react";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { useTheme } from "next-themes";
 import useFont from "@/utils/useFont";
@@ -18,7 +18,7 @@ function Word({
   word?: WORD;
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
 }) {
-  const [colours] = usePreferenceStore(useShallow((a) => [a.colours]));
+  const [colours] = useOnlineStorage(useShallow((a) => [a.colours]));
   const { systemTheme, theme } = useTheme();
   const [font] = useFont();
   return (

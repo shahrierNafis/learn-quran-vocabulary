@@ -8,7 +8,7 @@ import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 import useFont from "@/utils/useFont";
 import { cn } from "@/lib/utils";
 import CellComponent from "@/components/CellComponent";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 export type TableData = {
   lemma: string;
@@ -18,7 +18,7 @@ export type TableData = {
 export default function Page(props: { params: Promise<{ root: string }> }) {
   const params = use(props.params);
   const { root } = params;
-  const translation_ids = usePreferenceStore(
+  const translation_ids = useOnlineStorage(
     useShallow((a) => a.translation_ids)
   );
 
@@ -39,7 +39,7 @@ export default function Page(props: { params: Promise<{ root: string }> }) {
       })
       .then(setRootData);
 
-    return () => {};
+    return () => { };
   }, [root]);
   const columns: ColumnDef<TableData>[] = useMemo(
     () => [

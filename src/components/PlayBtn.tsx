@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,34 +11,34 @@ import {
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import Link from "@/components/ui/Link";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useLocalStorage } from "@uidotdev/usehooks";
-export default function Learn({
-  className,
-  collection_id,
-  size,
-  wordGroupsCount,
-}: {
-  className?: string;
-  collection_id: number;
-  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
-  wordGroupsCount?: number | null | undefined;
-}) {
-  const [number, setNumber] = useLocalStorage<number>("verses per round", 10);
-  const [textInput, setTextInput] = useLocalStorage("mode", false);
-  const [listening, setListening] = useLocalStorage("skill", false);
+import { Checkbox } from "./ui/checkbox";
+import { useShallow } from "zustand/react/shallow";
+import { useLocalStorage } from "@/stores/localStorage";
+import { Label } from "./ui/label";
 
+export default function PlayBtn({
+  children,
+  type,
+  className, collection_id
+}: {
+  children: React.ReactNode,
+  type: "review" | "play",
+  className?: string; collection_id?: number
+
+}) {
+  useEffect(() => { useLocalStorage.persist.rehydrate() }, [])
+  const [versesPerRound, setVersesPerRound, mode, setMode, skill, setSkill] = useLocalStorage(
+    useShallow((state) => [state.versesPerRound, state.setVersesPerRound, state.mode, state.setMode, state.skill, state.setSkill])
+  );
   return (
     <>
       <Dialog>
         <DialogTrigger className={cn(className)} asChild>
-          <Button disabled={wordGroupsCount === 0} size={size ?? "sm"}>
-            Play
-          </Button>
+          {children}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Play</DialogTitle>
+            <DialogTitle>Review</DialogTitle>
             <DialogDescription></DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2">
@@ -46,28 +46,18 @@ export default function Learn({
             <Input
               className="w-20"
               min={1}
-              max={wordGroupsCount ?? 0}
               type="number"
-              value={number}
-              onChange={(e) => setNumber(Number(e.target.value))}
+              value={versesPerRound}
+              onChange={(e) => setVersesPerRound(Number(e.target.value))}
             />
           </div>
-          <div
-            className="flex items-center cursor-pointer"
-            onClick={() => setTextInput(!textInput)}
-          >
-            <Checkbox checked={textInput} /> text Input (hard)
-          </div>{" "}          <div
-            className="flex items-center cursor-pointer"
-            onClick={() => setListening(!listening)}
-          >
-            <Checkbox checked={listening} /> learn listening skill
-          </div>
 
+          <Label className="flex items-center gap-2"> <Checkbox checked={mode === "textInput"} onCheckedChange={(textInput) => setMode(textInput ? "textInput" : "")} /> text Input (hard)</Label>
+          <Label className="flex items-center gap-2"> <Checkbox checked={skill === "listening"} onCheckedChange={(listening) => setSkill(listening ? "listening" : "")} /> learn listening skill</Label>
           <Link
-            href={`/play/${collection_id}/${number}?mode=${textInput ? "text_input" : ""}&skill=${listening ? "listening" : ""}`}
+            href={`/${type}/${versesPerRound}?collection_id=${collection_id ?? ""}&mode=${mode}&skill=${skill}`}
           >
-            <Button className="w-fit ml-auto">Start </Button>
+            <Button className="w-fit ml-auto">Start</Button>
           </Link>
         </DialogContent>
       </Dialog>

@@ -21,7 +21,7 @@ import {
 import { DataTablePagination } from "@/components/ui/DataTablePagination";
 import getJuzData from "./getJuzData";
 import CellComponent from "@/components/CellComponent";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import Header from "../../Header";
 
@@ -33,7 +33,7 @@ export default function Page(props: { params: Promise<{ juz: number }> }) {
   } = params;
 
   const router = useRouter();
-  const translation_ids = usePreferenceStore(
+  const translation_ids = useOnlineStorage(
     useShallow((state) => state.translation_ids)
   );
   const columns: ColumnDef<string, string>[] = [
@@ -68,7 +68,7 @@ export default function Page(props: { params: Promise<{ juz: number }> }) {
   const [data, setData] = useState<string[]>([]);
   useEffect(() => {
     getJuzData(juz).then(setData);
-    return () => {};
+    return () => { };
   }, [juz]);
   const table = useReactTable({
     data,
@@ -92,9 +92,9 @@ export default function Page(props: { params: Promise<{ juz: number }> }) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

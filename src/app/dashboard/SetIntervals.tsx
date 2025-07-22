@@ -2,12 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React from "react";
 import AddInterval from "./AddInterval";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import IntervalPresets from "./IntervalPresets";
 
 export default function SetIntervals() {
-  const [intervals, setInterval, removeInterval] = usePreferenceStore(
+  const [intervals, setInterval, removeInterval] = useOnlineStorage(
     useShallow((state) => [
       state.intervals,
       state.setInterval,

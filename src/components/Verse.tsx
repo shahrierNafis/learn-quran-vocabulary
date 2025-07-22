@@ -3,7 +3,7 @@ import { WORD } from "@/types/types";
 import React, { ReactNode, useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 import Word from "./Word";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { ArrowLeftRight, Volume2 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -26,7 +26,7 @@ export default function Verse({
 }) {
   const [switchOn, setSwitchOn] = useState(false);
   const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
-    usePreferenceStore(
+    useOnlineStorage(
       useShallow((a) => [
         a.showTranslation,
         a.showTransliteration,
@@ -34,7 +34,7 @@ export default function Verse({
       ])
     );
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
   useEffect(() => {
     setSwitchOn(false);
@@ -117,7 +117,7 @@ export default function Verse({
                     <div
                       className={cn(
                         index == highlightIndex &&
-                          "border-2 rounded border-green-500"
+                        "border-2 rounded border-green-500"
                       )}
                       dir="rtl"
                     >

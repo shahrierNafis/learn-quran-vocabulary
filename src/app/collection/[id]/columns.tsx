@@ -8,7 +8,7 @@ import { WORD } from "@/types/types";
 import { Database, Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/clients";
 import Link from "@/components/ui/Link";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 import Word from "@/components/Word";
@@ -274,7 +274,7 @@ export const columns: ColumnDef<TableData>[] = [
       const supabase = createClient<Database>();
       const interval = progress ? getInterval(progress) : null;
 
-      usePreferenceStore(useShallow((state) => [state.intervals]));
+      useOnlineStorage(useShallow((state) => [state.intervals]));
       useEffect(() => {
         if (row.depth == 0) {
           supabase

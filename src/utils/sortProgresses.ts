@@ -1,8 +1,8 @@
 import { Tables } from "@/database.types";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import getInterval from "./getInterval";
 export default function sortProgresses(progresses: Tables<"user_progress">[]) {
-  const reviewOrder = usePreferenceStore.getState().reviewOrder;
+  const reviewOrder = useOnlineStorage.getState().reviewOrder;
   switch (reviewOrder) {
     case "level ASC":
       return progresses.toSorted((a, b) => a.progress - b.progress);

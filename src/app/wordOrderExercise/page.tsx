@@ -1,13 +1,11 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import VerseLengths, { useVerseLengths } from "./VerseLengths";
+import VerseLengths from "./VerseLengths";
 import ExtraWords from "./ExtraWords";
-import Score, { useScoreStore } from "./Score";
+import Score from "./Score";
 import _ from "lodash";
 import getVersesWithLength from "./getVersesWithLegnth";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import useVerseAudio from "@/components/useVerseAudio";
 import { Button } from "@/components/ui/button";
 import { WORD } from "@/types/types";
@@ -16,55 +14,49 @@ import getVerseWords from "@/utils/getVerseWords";
 import { motion } from "framer-motion";
 import Translations from "@/components/Translations";
 import getVerseTranslations from "@/utils/getVerseTranslations";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import Show from "./Show";
-import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
+import { useLocalStorage } from "@/stores/localStorage";
 
-export const useVerse = create<{
-  verse_key: string | null;
-  setVerse_key: (verse: string | null) => void;
-  extra: number;
-  setExtra: (extra: number) => void;
-}>()(
-  persist(
-    (set, get) => ({
-      verse_key: "", // initial state
-      setVerse_key: (verse_key: string | null) => set({ verse_key }),
-      extra: 0,
-      setExtra: (extra: number) => set({ extra }),
-    }),
-    {
-      name: "verseStorage", // name of the item in the storage (must be unique)
-    }
-  )
-);
 export default function Page() {
-  const isClient = useIsClient()
+  useEffect(() => {
+    useLocalStorage.persist.rehydrate();
+  }, []);
 
-  if (isClient === false) {
-    return null
-  }
+  const [
+    setVerse_key,
+    verse_key,
+    extra,
+    addScore,
+    verseLengths,
+    VLDialogOpen,
+    penalty,
+    setPenalty,
+  ] = useLocalStorage(
+    useShallow((state) => [
+      state.setVerse_key,
+      state.verse_key,
+      state.extra,
+      state.addScore,
+      state.verseLengths,
+      state.VLDialogOpen,
+      state.penalty,
+      state.setPenalty,
+    ])
+  );
 
-  const [verseLengths, VLDialogOpen] = useVerseLengths(
-    useShallow((state) => [state.verseLengths, state.VLDialogOpen])
-  );
-  const [addScore] = useScoreStore(useShallow((state) => [state.addScore]));
-  const { setVerse_key, verse_key, extra } = useVerse(
-    useShallow((state) => state)
-  );
   const { openedVerse, setOpenedVerse } = useVerseAudio();
   const [words, setWords] = useState<WORD[]>([]);
   const [verse, setVerse] = useState<WORD[]>([]);
   const [userWords, setUserWords] = useState<WORD[]>([]);
   const [translations, setTranslations] =
     useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
-  const [translation_ids] = usePreferenceStore(
+  const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
-  const [penalty, setPenalty] = useLocalStorage("penalty", false);
   const setRandomVerse = useCallback(() => {
     // set a random verse
     getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) => {
@@ -164,7 +156,7 @@ export default function Page() {
         <Button
           variant={"outline"}
           onClick={() => {
-            setPenalty((prev) => !prev);
+            setPenalty(!penalty);
           }}
         >
           {penalty ? "penalty:on" : "penalty:off"}
@@ -203,7 +195,8 @@ export default function Page() {
                 transition={{
                   type: "spring",
                   damping: 30,
-                  stiffness: 300, mass: 2,
+                  stiffness: 300,
+                  mass: 2,
                   velocity: 2,
                 }}
                 layout

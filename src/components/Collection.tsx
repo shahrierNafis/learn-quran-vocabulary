@@ -1,12 +1,10 @@
 import Link from "@/components/ui/Link";
-import { Database, Tables } from "@/database.types";
-import { createClient } from "@/utils/supabase/clients";
 import React, { useEffect, useState } from "react";
-import PlayBtn from "@/components/PlayBtn";
 import { Button } from "./ui/button";
 import CollectionProgress from "./CollectionProgress";
-import ReviewBtn from "./ReviewBtn";
+import PlayBtn from "./PlayBtn";
 import getToReviewIds from "@/utils/getToReviewIds";
+import { Tables } from "@/database.types";
 export default function Collection({
   collection,
   wordGroups,
@@ -18,23 +16,23 @@ export default function Collection({
     words: string[];
   }[];
   progressArr:
-    | {
-        progress: number;
-        word_group_id: number;
-        updated_at: string;
-        word_groups: {
-          collection_id: number;
-          id: number;
-        } | null;
-      }[]
-    | null;
+  | {
+    progress: number;
+    word_group_id: number;
+    updated_at: string;
+    word_groups: {
+      collection_id: number;
+      id: number;
+    } | null;
+  }[]
+  | null;
 }) {
   const [toReviewCount, setToReviewCount] = useState(0);
   useEffect(() => {
     progressArr &&
       getToReviewIds(progressArr).then((ids) => setToReviewCount(ids.length));
 
-    return () => {};
+    return () => { };
   }, [progressArr]);
 
   return (
@@ -54,17 +52,23 @@ export default function Collection({
                   Manage{" "}
                 </Button>
               </Link>
-
               <PlayBtn
+                type="play"
                 {...{
-                  wordGroupsCount: progressArr
-                    ? wordGroups.length -
-                      progressArr?.filter((p) => p.progress != 0).length
-                    : 0,
                   collection_id: collection.id,
-                }}
-              />
-              <ReviewBtn {...{ collection_id: collection.id, toReviewCount }} />
+                }}>
+                <Button disabled={(progressArr
+                  ? wordGroups.length -
+                  progressArr?.filter((p) => p.progress != 0).length
+                  : 0) === 0} size={"sm"}>
+                  Play
+                </Button>
+              </PlayBtn>
+
+              <PlayBtn type="review"{...{ collection_id: collection.id, toReviewCount }}><Button disabled={toReviewCount === 0} size={"sm"}>
+                Review{" "}
+                {toReviewCount != undefined && toReviewCount > 0 && toReviewCount}
+              </Button></PlayBtn>
             </div>
           </div>
         </div>

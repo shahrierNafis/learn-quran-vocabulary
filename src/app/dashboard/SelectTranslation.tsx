@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { MultiSelect } from "@/components/MultiSelect";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 export default function SelectTranslation() {
-  const [translation_ids, setTranslation_ids] = usePreferenceStore(
+  const [translation_ids, setTranslation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids, a.setTranslation_ids])
   );
 
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
 
   const [translations, setTranslations] = useState<
@@ -24,7 +24,7 @@ export default function SelectTranslation() {
       })
       .then(({ translations }) => setTranslations(translations));
 
-    return () => {};
+    return () => { };
   }, []);
 
   return (

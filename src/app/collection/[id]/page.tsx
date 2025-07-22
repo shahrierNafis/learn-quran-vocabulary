@@ -7,10 +7,11 @@ import React from "react";
 import { Database, Tables } from "@/database.types";
 import SetProgress from "./SetProgress";
 import { RowSelectionState } from "@tanstack/react-table";
-import PlayBtn from "../../../components/PlayBtn";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
 import CollectionProgress from "@/components/CollectionProgress";
+import PlayBtn from "@/components/PlayBtn";
+import { Button } from "@/components/ui/button";
 export default function Page(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
 
@@ -24,7 +25,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     getCollectionName(+id).then(setName);
-    return () => {};
+    return () => { };
   }, [id]);
 
   useEffect(() => {
@@ -42,14 +43,14 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   const [progressArr, setProgressArr] = useState<
     | {
-        progress: number;
-        word_group_id: number;
-        updated_at: string;
-        word_groups: {
-          collection_id: number;
-          id: number;
-        } | null;
-      }[]
+      progress: number;
+      word_group_id: number;
+      updated_at: string;
+      word_groups: {
+        collection_id: number;
+        id: number;
+      } | null;
+    }[]
     | null
   >([]);
 
@@ -84,10 +85,22 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
             </div>
             <div className="rounded-md border ">
               <PlayBtn
-                size={"default"}
+                type="play"
                 {...{ collection_id: +id }}
                 className="float-right my-auto"
-              />
+              >
+                <Button
+                  disabled={
+                    (progressArr
+                      ? wordGroups.length -
+                      progressArr?.filter((p) => p.progress != 0).length
+                      : 0) === 0
+                  }
+                  size={"default"}
+                >
+                  Play
+                </Button>
+              </PlayBtn>
               <DataTable
                 {...{
                   columns,

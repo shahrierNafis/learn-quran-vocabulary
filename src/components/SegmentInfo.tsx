@@ -1,6 +1,6 @@
 import React from "react";
 import { WordSegment } from "@/types/types";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { useTheme } from "next-themes";
 import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
@@ -10,7 +10,7 @@ import relations from "@/utils/relations";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 export default function SegmentInfo({ segment }: { segment: WordSegment }) {
-  const [colours] = usePreferenceStore(useShallow((a) => [a.colours]));
+  const [colours] = useOnlineStorage(useShallow((a) => [a.colours]));
   const { theme } = useTheme();
   const [font] = useFont();
 

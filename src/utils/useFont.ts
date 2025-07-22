@@ -5,7 +5,7 @@ import {
   Noto_Naskh_Arabic,
   Amiri_Quran,
 } from "next/font/google";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { create } from "zustand/react";
 import { NextFont } from "next/dist/compiled/@next/font";
@@ -46,7 +46,7 @@ export default function useFont(): [
   string,
   typeof googleFonts,
 ] {
-  const fontName = usePreferenceStore(useShallow((a) => a.font));
+  const fontName = useOnlineStorage(useShallow((a) => a.font));
   const { font, setFont } = useStore(useShallow((a) => a));
   setFont(googleFonts[fontName]);
 

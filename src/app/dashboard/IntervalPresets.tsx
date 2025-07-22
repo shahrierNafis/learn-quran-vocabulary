@@ -11,12 +11,12 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { Button } from "@/components/ui/button";
-import { usePreferenceStore } from "@/stores/preference-store"; import { useShallow } from "zustand/react/shallow";
+import { useOnlineStorage } from "@/stores/onlineStorage"; import { useShallow } from "zustand/react/shallow";
 
 
 
 export default function IntervalPresets() {
-    const [intervals, setAllIntervals] = usePreferenceStore(useShallow((state) => [state.intervals, state.setAllIntervals]));
+    const [intervals, setAllIntervals] = useOnlineStorage(useShallow((state) => [state.intervals, state.setAllIntervals]));
 
     return (<>      <AlertDialog>
         <AlertDialogTrigger className="flex">

@@ -16,7 +16,7 @@ import ChangeColours from "@/components/ui/ChangeColours";
 import ChangeFont from "@/components/ui/ChangeFont";
 import { useEffect } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";
 import { ModeToggle } from "@/components/ui/ModeToggle";
@@ -31,7 +31,7 @@ export default function Preference() {
     showTranslation,
     setShowTranslationOnHiddenWords,
     showTranslationOnHiddenWords,
-  ] = usePreferenceStore(
+  ] = useOnlineStorage(
     useShallow((a) => [
       a.setShowTransliteration,
       a.showTransliteration,
@@ -43,7 +43,7 @@ export default function Preference() {
   );
 
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
   return (
     <>

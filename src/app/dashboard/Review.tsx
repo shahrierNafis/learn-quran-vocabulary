@@ -1,14 +1,13 @@
 "use client";
+import React from "react";
 
-import { Tables } from "@/database.types";
-import React, { useEffect, useState } from "react";
-import getToReview from "../../utils/getToReview";
-import ReviewBtn from "../../components/ReviewBtn";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import PlayBtn from "@/components/PlayBtn";
 export default function Review({
   toReviewCount,
 }: {
@@ -19,9 +18,12 @@ export default function Review({
       {toReviewCount != undefined ? (
         <>
           <div className="text-nowrap">Ready for Review {toReviewCount}</div>
-          <ReviewBtn
-            toReviewCount={toReviewCount == 0 ? toReviewCount : undefined}
-          />
+          <PlayBtn type="review">
+            <Button disabled={toReviewCount === 0} size={"sm"}>
+              Review{" "}
+              {toReviewCount != undefined && toReviewCount > 0 && toReviewCount}
+            </Button>
+          </PlayBtn >
         </>
       ) : (
         "loading"

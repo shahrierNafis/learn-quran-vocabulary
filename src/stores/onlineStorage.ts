@@ -98,7 +98,7 @@ type PreferenceStore = {
   reciter_id: string;
   setReciter_id: (reciter_id: string) => void;
 };
-export const usePreferenceStore = create<PreferenceStore>()(
+export const useOnlineStorage = create<PreferenceStore>()(
   persist(
     (set) => {
       return {
@@ -163,7 +163,7 @@ export const usePreferenceStore = create<PreferenceStore>()(
   )
 );
 
-usePreferenceStore.persist.onHydrate(async () => {
+useOnlineStorage.persist.onHydrate(async () => {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -173,7 +173,7 @@ usePreferenceStore.persist.onHydrate(async () => {
       .select("*")
       .single();
     if (data?.preference && !error) {
-      usePreferenceStore.setState(
+      useOnlineStorage.setState(
         (state) => (superJson.parse(data.preference as string) as any).state
       );
     }

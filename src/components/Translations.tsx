@@ -1,6 +1,6 @@
 import { Skeleton } from "./ui/skeleton";
 import getVerseTranslations from "@/utils/getVerseTranslations";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 function Translations({
@@ -10,7 +10,7 @@ function Translations({
   translations?: Awaited<ReturnType<typeof getVerseTranslations>>;
   index: string;
 }) {
-  const [translation_ids] = usePreferenceStore(
+  const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
   );
   return (

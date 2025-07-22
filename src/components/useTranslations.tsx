@@ -1,5 +1,5 @@
 import { Tables } from "@/database.types";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import getVerseTranslations from "@/utils/getVerseTranslations";
 import { useEffect, useMemo, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
@@ -9,7 +9,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
     useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
   const [preLoadedT, setPreLoadedT] =
     useState<ReturnType<typeof getVerseTranslations>>();
-  const [translation_ids] = usePreferenceStore(
+  const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
   );
 
@@ -27,7 +27,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
         setTranslations
       );
     }
-    return () => {};
+    return () => { };
   }, [translation_ids, translations, wordGroups]);
 
   //set PreLoaded translations
@@ -36,7 +36,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
       const [surah, verse] = wordGroups[1].words[0].split(":");
       setPreLoadedT(getVerseTranslations(translation_ids, `${surah}:${verse}`));
     }
-    return () => {};
+    return () => { };
   }, [translation_ids, translations, wordGroups]);
 
   return { translations, preLoadedT, setTranslations };

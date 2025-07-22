@@ -11,34 +11,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { useShallow } from "zustand/react/shallow";
-type ScoreStore = {
-  score: number;
-  setScore: (score: number) => void;
-  addScore: (score: number) => void;
-};
-
-export const useScoreStore = create<ScoreStore>()(
-  persist(
-    (set, get) => ({
-      score: 0, // initial state
-      setScore: (score: number) => set({ score }),
-      addScore: (score: number) => {
-        set((state) => ({
-          score: state.score + score,
-        }));
-      },
-    }),
-    {
-      name: "scoreStorage", // name of the item in the storage (must be unique)
-    }
-  )
-);
+import { useLocalStorage } from "@/stores/localStorage";
 
 export default function Score() {
-  const [score, setScore] = useScoreStore(
+
+  const [score, setScore] = useLocalStorage(
     useShallow((state) => [state.score, state.setScore])
   );
 

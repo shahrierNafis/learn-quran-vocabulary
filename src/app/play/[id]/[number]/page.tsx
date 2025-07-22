@@ -85,7 +85,7 @@ export default function Page(props: {
                     Round Complete.
                     {!!(count - +number) && (
                       <div className="inline">
-                        <PlayBtn {...{ collection_id: +id }} /> again?
+                        <PlayBtn type="play"{...{ collection_id: +id }} >play again?</PlayBtn>
                       </div>
                     )}
                   </div>

@@ -7,14 +7,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import relations from "@/utils/relations";
 import { PartOfSpeech } from "@/types/types";
 import { ColourPicker } from "./ColourPicker";
 import { Button } from "./button";
 export default function ChangeColours() {
-  const [colours, setColours, resetColours] = usePreferenceStore(
+  const [colours, setColours, resetColours] = useOnlineStorage(
     useShallow((a) => [a.colours, a.setColours, a.resetColours])
   );
 

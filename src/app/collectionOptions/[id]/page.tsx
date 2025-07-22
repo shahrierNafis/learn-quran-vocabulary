@@ -5,12 +5,11 @@ import { useEffect, useState, use } from "react";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import React from "react";
 import { Database, Tables } from "@/database.types";
-import SetProgress from "./SetProgress";
 import { RowSelectionState } from "@tanstack/react-table";
-import PlayBtn from "../../../components/PlayBtn";
-import GotoDashboard from "@/components/GotoDashboard";
 import getCollectionName from "@/utils/getCollectionName";
 import { createClient } from "@/utils/supabase/clients";
+import PlayBtn from "@/components/PlayBtn";
+import { Button } from "@/components/ui/button";
 export default function Page(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
 
@@ -26,7 +25,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     getCollectionName(+id).then(setName);
-    return () => {};
+    return () => { };
   }, [id]);
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
               {name}
             </div>
             <div className="rounded-md border">
-              <PlayBtn className="float-right" {...{ id }} />
+              <PlayBtn type="play" className="float-right" {...{ id }} ><Button>play</Button></PlayBtn>
               <DataTable
                 {...{
                   columns,

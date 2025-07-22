@@ -1,4 +1,4 @@
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -15,11 +15,11 @@ export default function TextInput({
   word: WORD;
   isValid: () => void;
 }) {
-  const [showTranslation, showTransliteration] = usePreferenceStore(
+  const [showTranslation, showTransliteration] = useOnlineStorage(
     useShallow((a) => [a.showTranslation, a.showTransliteration])
   );
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
 
   const [,] = useState();
@@ -41,10 +41,9 @@ export default function TextInput({
           placeholder="_?_?_?_"
           className={cn(
             "placeholder:text-center text-red-500",
-            `${
-              simplifyArabic(
-                word.wordSegments.map((w) => w.arabic).join("")
-              ).startsWith(text) && "text-green-500 border "
+            `${simplifyArabic(
+              word.wordSegments.map((w) => w.arabic).join("")
+            ).startsWith(text) && "text-green-500 border "
             }`
           )}
         />

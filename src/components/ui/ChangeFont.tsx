@@ -1,4 +1,4 @@
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import React, { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import {
@@ -17,7 +17,7 @@ import { Button } from "./button";
 import useFont from "@/utils/useFont";
 
 export default function ChangeFont() {
-  const [fontName, setFont] = usePreferenceStore(
+  const [fontName, setFont] = useOnlineStorage(
     useShallow((a) => [a.font, a.setFont])
   );
   const [font, , googleFont] = useFont();

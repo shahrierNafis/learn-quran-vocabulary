@@ -1,18 +1,17 @@
-import { useAudioPlayerStore } from "@/stores/AudioPlayerStore";
-import { usePreferenceStore } from "@/stores/preference-store";
-import { WordCount } from "@/types/types";
+import { useLocalStorage } from "@/stores/localStorage";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 export default function useVerseAudio(verse_key?: string) {
-  const [reciter_id] = usePreferenceStore(useShallow((s) => [s.reciter_id]));
+  const [reciter_id] = useOnlineStorage(useShallow((s) => [s.reciter_id]));
   const [verseAudio, setVerseAudio] = useState<string>();
-  const [openedVerse, setOpenedVerse] = useAudioPlayerStore(
+  const [openedVerse, setOpenedVerse] = useLocalStorage(
     useShallow((s) => [s.openedVerse, s.setOpenedVerse])
   );
 
   useEffect(() => {
-    usePreferenceStore.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
   useEffect(() => {
     if (!verse_key) return

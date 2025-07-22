@@ -21,7 +21,7 @@ import {
 import { DataTablePagination } from "@/components/ui/DataTablePagination";
 import getSurahData from "./getSurahData";
 import CellComponent from "@/components/CellComponent";
-import { usePreferenceStore } from "@/stores/preference-store";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import Header from "../../Header";
 
@@ -37,7 +37,7 @@ export default function Page(
   } = params;
 
   const router = useRouter();
-  const translation_ids = usePreferenceStore(
+  const translation_ids = useOnlineStorage(
     useShallow((state) => state.translation_ids)
   );
   const columns: ColumnDef<string>[] = [
@@ -69,7 +69,7 @@ export default function Page(
   const [data, setData] = useState<string[]>([]);
   useEffect(() => {
     getSurahData(surah).then(setData);
-    return () => {};
+    return () => { };
   }, [surah]);
   const table = useReactTable({
     data,
@@ -94,9 +94,9 @@ export default function Page(
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}
