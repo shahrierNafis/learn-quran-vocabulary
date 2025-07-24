@@ -17,7 +17,7 @@ import getVerseTranslations from "@/utils/getVerseTranslations";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import Show from "./Show";
+import Verse from "@/components/Verse";
 import { useLocalStorage } from "@/stores/localStorage";
 
 export default function Page() {
@@ -57,6 +57,8 @@ export default function Page() {
     useShallow((a) => [a.translation_ids])
   );
   const [redIndex, setRedIndex] = useState<number>();
+  const [show, setShow] = useState(false);
+  const [green, setGreen] = useState(false);
   const setRandomVerse = useCallback(() => {
     // set a random verse
     getVersesWithLength(_.shuffle(verseLengths)[0]).then((a) => {
@@ -66,7 +68,7 @@ export default function Page() {
   }, [setVerse_key, verseLengths]);
   useEffect(() => {
     !verse_key && setRandomVerse(); // set a random verse if verse_key is null
-    return () => { };
+    return () => {};
   }, [setRandomVerse, verse_key]);
 
   useEffect(() => {
@@ -129,9 +131,8 @@ export default function Page() {
         verse_key as `${string}:${string}`
       ).then((r) => setTranslations(r));
 
-    return () => { };
+    return () => {};
   }, [translation_ids, verse_key]);
-  const [surah, ayah] = verse.length ? verse[0].index.split(":") : ["1", "1"];
 
   function penaltyFunc() {
     if (
@@ -149,7 +150,7 @@ export default function Page() {
   }
   return (
     <>
-      <div className="flex items-end justify-center w-full gap-4 p-4">
+      <div className="flex items-end justify-center w-full gap-4 my-4">
         <VerseLengths />
         <ExtraWords />
         <Score />
@@ -162,17 +163,45 @@ export default function Page() {
           {penalty ? "penalty:on" : "penalty:off"}
         </Button>
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <div className="flex items-center justify-center gap-4 p-4">
-          <Show {...{ verse, verse_key }} onClick={penaltyFunc} />
+      <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4">
+          <Button
+            variant={show ? "secondary" : "outline"}
+            onClick={() => {
+              setShow(!show);
+              penaltyFunc();
+            }}
+          >
+            Read/Listen Verse
+          </Button>
           {/* new Btn */}
           <Button
+            className={cn(`${green && "ring ring-green-400"}`)}
             variant={"outline"}
-            onClick={() => confirm("Are you sure!") && setRandomVerse()}
+            onClick={() => {
+              if (verse.length !== userWords.length) confirm("Are you sure!");
+              setRandomVerse();
+            }}
           >
-            new
+            {verse.length !== userWords.length ? "new" : "next"}{" "}
           </Button>
         </div>
+        {show && verse && (
+          <>
+            <motion.div
+              key={verse_key}
+              transition={{ duration: 0.25, type: "tween" }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              layout
+            >
+              <div dir="rtl" className="text-3xl">
+                <Verse {...{ verse }}></Verse>
+              </div>
+            </motion.div>
+          </>
+        )}
         <Button size={"sm"} className="text-sm" disabled variant={"outline"}>
           {verse.length ? (
             <>
@@ -182,9 +211,10 @@ export default function Page() {
             <>loading...</>
           )}
         </Button>
+
         <div
           dir="rtl"
-          className="flex flex-wrap items-center justify-center w-full gap-4 p-4"
+          className="flex flex-wrap items-center justify-center w-full gap-4"
         >
           {userWords.map((word) => {
             return (
@@ -192,13 +222,8 @@ export default function Page() {
                 key={word.index}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  type: "spring",
-                  damping: 30,
-                  stiffness: 300,
-                  mass: 2,
-                  velocity: 2,
-                }}
+                exit={{ opacity: 0, scale: 0 }}
+                transition={{ duration: 0.25, type: "tween" }}
                 layout
               >
                 <Button className="text-3xl" variant={"outline"} size={"lg"}>
@@ -218,7 +243,7 @@ export default function Page() {
         <Translations {...{ translations, index: verse_key! }}></Translations>
         <div
           dir="rtl"
-          className="flex flex-wrap items-center justify-center w-full gap-4 p-4 overflow-hidden"
+          className="flex flex-wrap items-center justify-center w-full gap-4 overflow-hidden"
         >
           {words.length ? (
             words.map((word, i) => {
@@ -229,13 +254,8 @@ export default function Page() {
                   key={word.index}
                   initial={{ opacity: 0, scale: 0 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30,
-                    mass: 2,
-                    velocity: 2,
-                  }}
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{ duration: 0.25, type: "tween" }}
                   layout
                 >
                   <Button
@@ -244,6 +264,7 @@ export default function Page() {
                     size={"lg"}
                     disabled={userWords.length == verse.length}
                     onClick={() => {
+                      setShow(false);
                       setOpenedVerse(undefined); // close audio
                       if (
                         verse[userWords.length].text_imlaei != word.text_imlaei
@@ -255,11 +276,16 @@ export default function Page() {
                         }, 150);
                       } else {
                         if (userWords.length + 1 === verse.length) {
+                          setGreen(true);
+                          setTimeout(() => {
+                            setGreen(false);
+                          }, 1500);
+
                           addScore(
                             (penalty
                               ? verse.length * verse.length
                               : verse.length) +
-                            verse.length * extra
+                              verse.length * extra
                           );
                         }
                         setUserWords((prev) => [...prev, word]);
