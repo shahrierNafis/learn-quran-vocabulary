@@ -179,8 +179,8 @@ export default function Page() {
             className={cn(`${green && "ring ring-green-400"}`)}
             variant={"outline"}
             onClick={() => {
-              if (verse.length !== userWords.length) confirm("Are you sure!");
-              setRandomVerse();
+              if (verse.length === userWords.length || confirm("Are you sure!"))
+                setRandomVerse();
             }}
           >
             {verse.length !== userWords.length ? "new" : "next"}{" "}
@@ -267,7 +267,14 @@ export default function Page() {
                       setShow(false);
                       setOpenedVerse(undefined); // close audio
                       if (
-                        verse[userWords.length].text_imlaei != word.text_imlaei
+                        !(
+                          verse[userWords.length].text_imlaei ==
+                            word.text_imlaei ||
+                          verse[userWords.length].wordSegments
+                            .map((ws) => ws.buckwalter)
+                            .join() ==
+                            word.wordSegments.map((ws) => ws.buckwalter).join()
+                        )
                       ) {
                         setRedIndex(i);
                         setTimeout(() => {
@@ -309,18 +316,20 @@ export default function Page() {
             })
           ) : (
             <>
-              {Array(verse.length > 0 ? verse.length * (extra + 1) : 40)
-                .fill(1)
-                .map((a, i) => {
-                  return (
-                    <>
-                      <Skeleton
-                        key={i}
-                        className="w-[10vw] h-[48px] rounded-md"
-                      />
-                    </>
-                  );
-                })}
+              {userWords.length
+                ? ""
+                : Array(verse.length > 0 ? verse.length * (extra + 1) : 40)
+                    .fill(1)
+                    .map((a, i) => {
+                      return (
+                        <>
+                          <Skeleton
+                            key={i}
+                            className="w-[10vw] h-[48px] rounded-md"
+                          />
+                        </>
+                      );
+                    })}
             </>
           )}
         </div>
