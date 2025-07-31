@@ -13,9 +13,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
 import { useLocalStorage } from "@/stores/localStorage";
+import { LightAsync as SyntaxHighlighter } from "react-syntax-highlighter";
+import { androidstudio } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 export default function Score() {
-
   const [score, setScore] = useLocalStorage(
     useShallow((state) => [state.score, state.setScore])
   );
@@ -25,10 +26,22 @@ export default function Score() {
       <AlertDialogTrigger>
         <Button variant={"outline"}> Score: {score}</Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-fit">
         <AlertDialogHeader>
           <AlertDialogTitle>Reset Score?</AlertDialogTitle>
-          <AlertDialogDescription></AlertDialogDescription>
+          <AlertDialogDescription>
+            <SyntaxHighlighter
+              wrapLongLines
+              language="mathematica"
+              style={androidstudio}
+            >
+              (penalty ? verse.length * verse.length : verse.length) +
+              verse.length * extra
+            </SyntaxHighlighter>
+            <br />
+            Score is squared if penalty is turned on [verse.length *
+            verse.length]. [verse.length * extra] is also added to the score.
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
