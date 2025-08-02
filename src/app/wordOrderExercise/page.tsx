@@ -23,13 +23,13 @@ import { useLocalStorage } from "@/stores/localStorage";
 export default function Page() {
   useEffect(() => {
     useLocalStorage.persist.rehydrate();
+    useOnlineStorage.persist.rehydrate();
   }, []);
 
   const [
     setVerse_key,
     verse_key,
     extra,
-    addScore,
     verseLengths,
     VLDialogOpen,
     penalty,
@@ -39,14 +39,13 @@ export default function Page() {
       state.setVerse_key,
       state.verse_key,
       state.extra,
-      state.addScore,
       state.verseLengths,
       state.VLDialogOpen,
       state.penalty,
       state.setPenalty,
     ])
   );
-
+  const addScore = useOnlineStorage(useShallow((state) => state.addWOEscore));
   const { openedVerse, setOpenedVerse } = useVerseAudio();
   const [words, setWords] = useState<WORD[]>([]);
   const [verse, setVerse] = useState<WORD[]>([]);

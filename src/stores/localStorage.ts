@@ -9,10 +9,6 @@ export const useLocalStorage = create<{
     extra: number;
     setExtra: (extra: number) => void;
 
-    score: number, // initial state
-    setScore: (score: number) => void,
-    addScore: (score: number) => void,
-
     verseLengths: number[];
     setVerseLengths: (verseLengths: number[]) => void;
     addVerseLength: (verseLength: number) => void;
@@ -40,14 +36,6 @@ export const useLocalStorage = create<{
             setVerse_key: (verse_key: string | null) => set({ verse_key }),
             extra: 0,
             setExtra: (extra: number) => set({ extra }),
-            score: 0, // initial state
-            setScore: (score: number) => set({ score }),
-            addScore: (score: number) => {
-                set((state) => ({
-                    score: state.score + score,
-                }));
-            },
-
 
             verseLengths: [4], // initial state
             setVerseLengths: (verseLengths: number[]) => set({ verseLengths }),

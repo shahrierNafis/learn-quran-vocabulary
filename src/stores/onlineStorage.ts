@@ -97,6 +97,10 @@ type PreferenceStore = {
   setReviewOrder: (reviewOrder: reviewOrderType) => void;
   reciter_id: string;
   setReciter_id: (reciter_id: string) => void;
+
+  WOEscore: number; // initial state
+  setWOEscore: (score: number) => void;
+  addWOEscore: (score: number) => void;
 };
 export const useOnlineStorage = create<PreferenceStore>()(
   persist(
@@ -144,9 +148,17 @@ export const useOnlineStorage = create<PreferenceStore>()(
             return { intervals: newIntervals };
           });
         },
-        setAllIntervals: (intervals: { [key: number]: number }) => set(() => ({
-          intervals
-        })),
+        setAllIntervals: (intervals: { [key: number]: number }) =>
+          set(() => ({
+            intervals,
+          })),
+        WOEscore: 0, // initial state
+        setWOEscore: (WOEscore: number) => set({ WOEscore }),
+        addWOEscore: (WOEscore: number) => {
+          set((state) => ({
+            WOEscore: state.WOEscore + WOEscore,
+          }));
+        },
         reviewOrder: "next_review ASC",
         setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
         reciter_id: 7 + "",

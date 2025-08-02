@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useShallow } from "zustand/react/shallow";
-import { useLocalStorage } from "@/stores/localStorage";
 import { LightAsync as SyntaxHighlighter } from "react-syntax-highlighter";
 import { androidstudio } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { useOnlineStorage } from "@/stores/onlineStorage";
 
 export default function Score() {
-  const [score, setScore] = useLocalStorage(
-    useShallow((state) => [state.score, state.setScore])
+  const [score, setScore] = useOnlineStorage(
+    useShallow((state) => [state.WOEscore, state.setWOEscore])
   );
 
   return (
