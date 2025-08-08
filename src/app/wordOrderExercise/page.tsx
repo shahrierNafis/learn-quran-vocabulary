@@ -204,7 +204,10 @@ export default function Page() {
         <Button size={"sm"} className="text-sm" disabled variant={"outline"}>
           {verse.length ? (
             <>
-              Verse {verse_key} with length {verse.length}
+              Verse {verse_key} with length {verse.length} and{" "}
+              {(penalty ? verse.length * verse.length : verse.length) +
+                verse.length * extra}{" "}
+              score points
             </>
           ) : (
             <>loading...</>
