@@ -35,12 +35,13 @@ export default function Score() {
               language="mathematica"
               style={androidstudio}
             >
-              (penalty ? verse.length * verse.length : verse.length) +
-              verse.length * extra
+              (penalty ? (verse.length * (extraWordsPerWord+1))**2 :
+              verse.length * (extraWordsPerWord+1))
             </SyntaxHighlighter>
             <br />
-            Score is squared if penalty is turned on [verse.length *
-            verse.length]. [verse.length * extra] is also added to the score.
+            If penalty is turned on Score is squared [(verse.length *
+            (extraWordsPerWord+1))**2]. Or else just [verse.length *
+            (extraWordsPerWord+1)] is the score.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

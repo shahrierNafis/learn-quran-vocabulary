@@ -29,7 +29,7 @@ export default function Page() {
   const [
     setVerse_key,
     verse_key,
-    extra,
+    extraWordsPerWord,
     verseLengths,
     VLDialogOpen,
     penalty,
@@ -38,7 +38,7 @@ export default function Page() {
     useShallow((state) => [
       state.setVerse_key,
       state.verse_key,
-      state.extra,
+      state.extraWordsPerWord,
       state.verseLengths,
       state.VLDialogOpen,
       state.penalty,
@@ -94,7 +94,7 @@ export default function Page() {
         setVerse(words.filter((word) => word.char_type_name == "word"));
         if (signal.aborted) return;
         const extraWords: WORD[] = [];
-        while (extraWords.length < extra * words.length) {
+        while (extraWords.length < extraWordsPerWord * words.length) {
           if (signal.aborted) return;
           console.log(words);
           const verse = _.shuffle(await getVersesWithLength(verseLengths[0]));
@@ -108,7 +108,10 @@ export default function Page() {
         if (signal.aborted) return;
 
         setWords(
-          _.shuffle([...words, ...extraWords.slice(0, extra * words.length)])
+          _.shuffle([
+            ...words,
+            ...extraWords.slice(0, extraWordsPerWord * words.length),
+          ])
         );
       } catch (error: any) {
         // Only log non-abort errors
@@ -120,7 +123,7 @@ export default function Page() {
     return () => {
       abortController.abort();
     };
-  }, [extra, verseLengths, verse_key, VLDialogOpen]);
+  }, [extraWordsPerWord, verseLengths, verse_key, VLDialogOpen]);
   useEffect(() => {
     // set translation
     translation_ids &&
@@ -205,8 +208,9 @@ export default function Page() {
           {verse.length ? (
             <>
               Verse {verse_key} with length {verse.length} and{" "}
-              {(penalty ? verse.length * verse.length : verse.length) +
-                verse.length * extra}{" "}
+              {penalty
+                ? (verse.length * (extraWordsPerWord + 1)) ** 2
+                : verse.length * (extraWordsPerWord + 1)}{" "}
               score points
             </>
           ) : (
@@ -291,10 +295,9 @@ export default function Page() {
                           }, 1500);
 
                           addScore(
-                            (penalty
-                              ? verse.length * verse.length
-                              : verse.length) +
-                              verse.length * extra
+                            penalty
+                              ? (verse.length * (extraWordsPerWord + 1)) ** 2
+                              : verse.length * (extraWordsPerWord + 1)
                           );
                         }
                         setUserWords((prev) => [...prev, word]);
@@ -320,7 +323,11 @@ export default function Page() {
             <>
               {userWords.length
                 ? ""
-                : Array(verse.length > 0 ? verse.length * (extra + 1) : 40)
+                : Array(
+                    verse.length > 0
+                      ? verse.length * (extraWordsPerWord + 1)
+                      : 40
+                  )
                     .fill(1)
                     .map((a, i) => {
                       return (
