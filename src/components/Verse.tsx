@@ -40,7 +40,7 @@ export default function Verse({
     setSwitchOn(false);
   }, [verse]);
 
-  const [surah, ayah] = verse ? verse[0].index.split(":") : ["1", "1"];
+  const [surah, ayah] = verse?.length ? verse[0].index.split(":") : ["1", "1"];
   return (
     <>
       <div className="flex justify-center items-center">
@@ -56,6 +56,7 @@ export default function Verse({
         >
           {verse ? (
             verse.map((word, index) => {
+              if (!word.index) console.log(word);
               if (word.char_type_name !== "word") return "";
               if (index == hideIndex)
                 return children ? (
@@ -117,7 +118,7 @@ export default function Verse({
                     <div
                       className={cn(
                         index == highlightIndex &&
-                        "border-2 rounded border-green-500"
+                          "border-2 rounded border-green-500"
                       )}
                       dir="rtl"
                     >

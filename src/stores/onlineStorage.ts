@@ -101,6 +101,13 @@ type PreferenceStore = {
   WOEscore: number; // initial state
   setWOEscore: (score: number) => void;
   addWOEscore: (score: number) => void;
+
+  WOEProgress: {
+    [key: number]: number;
+  };
+  setWOEProgress: (chapter: number, progress: number) => void;
+  addWOEProgress: (chapter: number, progress: number) => void;
+  resetWOEProgress: () => void;
 };
 export const useOnlineStorage = create<PreferenceStore>()(
   persist(
@@ -163,11 +170,39 @@ export const useOnlineStorage = create<PreferenceStore>()(
         setReviewOrder: (reviewOrder: reviewOrderType) => set({ reviewOrder }),
         reciter_id: 7 + "",
         setReciter_id: (reciter_id) => set({ reciter_id }),
+
+        WOEProgress: Object.fromEntries(
+          Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
+            chapter,
+            0,
+          ])
+        ),
+        setWOEProgress: (chapter: number, progress: number) => {
+          set((state) => {
+            state.WOEProgress[chapter] = progress;
+            return { WOEProgress: Object.assign({}, state.WOEProgress) };
+          });
+        },
+        addWOEProgress: (chapter: number, progress: number) => {
+          set((state) => {
+            state.WOEProgress[chapter] += progress;
+            return { WOEProgress: Object.assign({}, state.WOEProgress) };
+          });
+        },
+        resetWOEProgress: () =>
+          set({
+            WOEProgress: Object.fromEntries(
+              Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
+                chapter,
+                0,
+              ])
+            ),
+          }),
       };
     },
 
     {
-      version: 6,
+      version: 7,
       name: "preference-storage",
       skipHydration: true,
       storage: storage,

@@ -8,7 +8,7 @@ function Translations({
   index,
 }: {
   translations?: Awaited<ReturnType<typeof getVerseTranslations>>;
-  index: string;
+  index?: string | null;
 }) {
   const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
@@ -16,8 +16,8 @@ function Translations({
   return (
     <>
       {translation_ids.length ? (
-        <div className="text-xl">
-          {translations?.length ? (
+        <div className="text-sm md:text-xl">
+          {index && translations?.length ? (
             translation_ids
               .map((id) => translations.filter((t) => t.id == +id)[0])
               .map((translation) => {
@@ -26,7 +26,7 @@ function Translations({
                     <div key={index + translation?.id}>
                       {translation?.text.replaceAll(/<sup.*?>.*?<\/sup>/g, "")}
                     </div>
-                    <div className="text-gray-500 text-xs">
+                    <div className="text-xs text-gray-500">
                       {"— "}
                       {translation?.name}
                     </div>

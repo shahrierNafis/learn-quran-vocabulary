@@ -4,17 +4,8 @@ export const useLocalStorage = create<{
   penalty: boolean;
   setPenalty: (penalty: boolean) => void;
 
-  verse_key: string | null;
-  setVerse_key: (verse: string | null) => void;
   extraWordsPerWord: number;
   setExtraWordsPerWord: (extraWordsPerWord: number) => void;
-
-  verseLengths: number[];
-  setVerseLengths: (verseLengths: number[]) => void;
-  addVerseLength: (verseLength: number) => void;
-  removeVerseLength: (verseLength: number) => void;
-  VLDialogOpen: boolean;
-  setVLDialogOpen: (open: boolean) => void;
 
   versesPerRound: number;
   setVersesPerRound: (versesPerRound: number) => void;
@@ -25,36 +16,24 @@ export const useLocalStorage = create<{
 
   openedVerse: string | undefined;
   setOpenedVerse: (isOpen: string | undefined) => void;
+
+  chapters: number[];
+  setChapters: (chapters: number[]) => void;
+  addChapter: (chapter: number) => void;
+  removeChapter: (chapter: number) => void;
+  VFSDialogOpen: boolean;
+  setVFSDialogOpen: (open: boolean) => void;
 }>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       penalty: true,
       setPenalty: (penalty: boolean) => {
         set({ penalty });
       },
 
-      verse_key: "", // initial state
-      setVerse_key: (verse_key: string | null) => set({ verse_key }),
       extraWordsPerWord: 0,
       setExtraWordsPerWord: (extraWordsPerWord: number) =>
         set({ extraWordsPerWord }),
-
-      verseLengths: [4], // initial state
-      setVerseLengths: (verseLengths: number[]) => set({ verseLengths }),
-      addVerseLength: (verseLength: number) => {
-        set((state) => ({
-          verseLengths: [...state.verseLengths, verseLength],
-        }));
-      },
-      removeVerseLength: (verseLength: number) => {
-        set((state) => ({
-          verseLengths: state.verseLengths.filter((i) => i !== verseLength),
-        }));
-      },
-      VLDialogOpen: false,
-      setVLDialogOpen: (VLDialogOpen: boolean) => {
-        set({ VLDialogOpen });
-      },
 
       versesPerRound: 10,
       setVersesPerRound: (versesPerRound: number) => set({ versesPerRound }),
@@ -65,9 +44,28 @@ export const useLocalStorage = create<{
 
       openedVerse: undefined,
       setOpenedVerse: (openedVerse: string | undefined) => set({ openedVerse }),
+
+      chapters: Array.from({ length: 114 }, (_, i) => i + 1), // initial state
+      setChapters: (chapters: number[]) => set({ chapters }),
+      addChapter: (chapter: number) => {
+        set((state) => ({
+          chapters: [...state.chapters, chapter],
+        }));
+      },
+      removeChapter: (chapter: number) => {
+        set((state) => ({
+          chapters: state.chapters.filter((i) => i !== chapter),
+        }));
+      },
+
+      VFSDialogOpen: false,
+      setVFSDialogOpen: (VFSDialogOpen: boolean) => {
+        set({ VFSDialogOpen });
+      },
     }),
     {
       name: "useLocalStorage", // name of the item in the storage (must be unique)
+      version: 2,
     }
   )
 );

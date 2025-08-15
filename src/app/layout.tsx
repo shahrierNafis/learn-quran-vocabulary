@@ -41,7 +41,7 @@ export default function RootLayout({
           {/* <NavigationBar /> */}
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
-            <div className="md:hidden m-4">
+            <div className="absolute md:m-4 md:hidden">
               <SidebarTrigger />
             </div>
 

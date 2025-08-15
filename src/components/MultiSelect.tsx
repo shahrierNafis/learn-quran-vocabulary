@@ -91,7 +91,7 @@ interface MultiSelectProps
   animation?: number;
 
   /**
-   * Maximum number of items to display. extraWordsPerWord selected items will be summarized.
+   * Maximum number of items to display. extra selected items will be summarized.
    * Optional, defaults to 3.
    */
   maxCount?: number;
