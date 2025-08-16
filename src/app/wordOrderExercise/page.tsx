@@ -57,20 +57,17 @@ export default function Page() {
   const [show, setShow] = useState(false);
   const [green, setGreen] = useState(false);
   const setNextVerse = useCallback(() => {
-    const sortedWOEProgress = Object.entries(
-      Object.fromEntries(chapters.map((k) => [k, WOEProgress[k]]))
-    ).sort((a, b) => {
-      const iterationA = a[1] / getChapterLength(+a[0]);
-      const iterationB = b[1] / getChapterLength(+b[0]);
+    const nextChapter = chapters.sort((a, b) => {
+      const iterationA = Math.floor(WOEProgress[a] / getChapterLength(a));
+      const iterationB = Math.floor(WOEProgress[b] / getChapterLength(b));
       if (iterationA == iterationB) {
-        return +a[0] - +b[0]; // put chapters with lower index first
+        return +a - +b; // put chapters with lower index first
       }
       return iterationA - iterationB; // put chapters with lower iteration first
-    });
-    const nextChapter = sortedWOEProgress[0];
+    })[0];
     nextChapter
       ? setVerse_key(
-          `${nextChapter[0]}:${Math.trunc((nextChapter[1] % getChapterLength(+nextChapter[0])) + 1)}` // set the next verse
+          `${nextChapter}:${Math.trunc((WOEProgress[nextChapter] % getChapterLength(nextChapter)) + 1)}` // set the next verse
         )
       : setVerse_key(null);
     setUserWords([]); // clear user input

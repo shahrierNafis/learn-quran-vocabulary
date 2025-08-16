@@ -15,6 +15,7 @@ import _ from "lodash";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import getChapterLength from "./getChapterLength";
 import { Edit } from "lucide-react";
+import getPretendIterationNum from "./getPretendIterationNum";
 export default function SelectChapters() {
   const [
     chapters,
@@ -41,7 +42,8 @@ export default function SelectChapters() {
       (previousValue: number, currentValue: number) => {
         return (
           previousValue +
-          progressPercentage(currentValue) * getChapterLength(currentValue)
+          getPretendProgressPercentage(currentValue) *
+            getChapterLength(currentValue)
         );
       },
       0
@@ -97,7 +99,7 @@ export default function SelectChapters() {
                   iteration{" "}
                   {_.min(
                     Array.from({ length: 114 }, (_, i) => i + 1).map((i) => {
-                      return getIterationNum(i);
+                      return getPretendIterationNum(i, WOEProgress);
                     })
                   )}
                 </div>
@@ -124,14 +126,17 @@ export default function SelectChapters() {
                     <div
                       className="absolute z-0 h-full rounded-md bg-gradient-to-r from-zinc-50 to-zinc-300"
                       style={{
-                        width: `${progressPercentage(chapter)}%`,
+                        width: `${getPretendProgressPercentage(chapter)}%`,
                       }}
                     ></div>
                     <div className="z-10 flex justify-center w-full p-2">
                       surah {chapter}:
                     </div>
                     <div className="z-10 flex flex-col items-center w-full p-2">
-                      <div> iteration {getIterationNum(chapter)}</div>
+                      <div>
+                        {" "}
+                        iteration {getPretendIterationNum(chapter, WOEProgress)}
+                      </div>
                       <div className="flex">
                         {WOEProgress[chapter]} /{getChapterLength(chapter)}
                       </div>
@@ -149,7 +154,7 @@ export default function SelectChapters() {
                       }}
                     />
                     <div className="z-10 flex justify-center w-full p-2">
-                      {progressPercentage(chapter)}%
+                      {getPretendProgressPercentage(chapter)}%
                     </div>
                   </div>
                 </div>
@@ -160,20 +165,11 @@ export default function SelectChapters() {
       </DialogContent>
     </Dialog>
   );
-  function progressPercentage(chapter: number) {
+  function getPretendProgressPercentage(chapter: number) {
+    if (WOEProgress[chapter] == 0) return 0;
     return +(
-      ((((WOEProgress[chapter] ?? 0.0000001) - 0.0000001) %
-        getChapterLength(chapter)) *
-        100) /
+      (((WOEProgress[chapter] - 0.0000001) % getChapterLength(chapter)) * 100) /
       getChapterLength(chapter)
     ).toFixed(2);
-  }
-  function getIterationNum(chapter: number) {
-    return (
-      Math.ceil(
-        ((WOEProgress[chapter] ?? 0.0000001) - 0.0000001) /
-          getChapterLength(chapter)
-      ) + 1
-    );
   }
 }
