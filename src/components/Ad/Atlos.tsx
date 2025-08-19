@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Switch } from "./ui/switch";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Switch } from "../ui/switch";
 
-export default function BuyMeACoffee() {
+export default function Atlos() {
   const [amount, setAmount] = useState(5);
   const [recurMonthly, setRecurMonthly] = useState(false);
 
@@ -45,7 +45,7 @@ export default function BuyMeACoffee() {
         <Button
           onClick={() => {
             window.open(
-              `/static/buyMeACoffee.html?orderAmount=${amount}&${recurMonthly && "recurMonthly"}`,
+              `/static/Atlos.html?orderAmount=${amount}&${recurMonthly && "recurMonthly"}`,
               "_blank",
               "location=yes,scrollbars=yes,status=yes"
             );

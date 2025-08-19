@@ -1,30 +1,22 @@
 "use client";
-import {
-  Calendar,
-  Home,
-  ArrowLeftRight,
-  Search,
-  Settings,
-  LayoutDashboard,
-} from "lucide-react";
+import { Home, ArrowLeftRight, LayoutDashboard } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import BuyMeACoffeeDialog from "./BuyMeACoffeeDialog";
 import Preference from "./Preference";
 import ReadQuranBtn from "./ReadQuranBtn";
 import Link from "@/components/ui/Link";
 import { usePathname } from "next/navigation";
+import AdDialog from "@/components/Ad/AdDialog";
 
 // Menu items.
 const items = [
@@ -66,7 +58,7 @@ export function AppSidebar() {
               ))}{" "}
               <Preference />
               <ReadQuranBtn />
-              <BuyMeACoffeeDialog />
+              <AdDialog />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
