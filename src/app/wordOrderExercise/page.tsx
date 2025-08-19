@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 import ExtraWords from "./ExtraWords";
 import Score from "./Score";
-import _ from "lodash";
+import _, { set } from "lodash";
 import useVerseAudio from "@/components/useVerseAudio";
 import { Button } from "@/components/ui/button";
 import { WORD } from "@/types/types";
@@ -45,9 +45,12 @@ export default function Page() {
   );
   const [verse_key, setVerse_key] = useState<string | null>();
   const { openedVerse, setOpenedVerse } = useVerseAudio();
-  const [words, setWords] = useState<WORD[]>([]);
-  const [verse, setVerse] = useState<WORD[]>([]);
-  const [userWords, setUserWords] = useState<WORD[]>([]);
+  const [hold, setHold] = useState(false);
+
+  const [verse, setVerse] = useState<WORD[]>([]); // the actual verse
+  const [words, setWords] = useState<WORD[]>([]); // the actual verse + extra words
+  const [userWords, setUserWords] = useState<WORD[]>([]); // user input words
+
   const [translations, setTranslations] =
     useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
   const [translation_ids] = useOnlineStorage(
@@ -56,6 +59,7 @@ export default function Page() {
   const [redIndex, setRedIndex] = useState<number>();
   const [show, setShow] = useState(false);
   const [green, setGreen] = useState(false);
+
   const setNextVerse = useCallback(() => {
     const nextChapter = chapters.sort((a, b) => {
       const iterationA = Math.floor(WOEProgress[a] / getChapterLength(a));
@@ -74,25 +78,16 @@ export default function Page() {
   }, [WOEProgress, chapters]);
   useEffect(() => {
     if (VFSDialogOpen) return; // if dialog is open, do not set words
-    chapters.length && setNextVerse(); // set a next verse if verse_key is null
+    !hold && chapters.length && setNextVerse(); // set a next verse if chapters is not empty and hold is false
     return () => {};
-  }, [VFSDialogOpen, chapters.length, setNextVerse]);
-  useEffect(() => {
-    console.log("hit WOEProgress");
-    return () => {};
-  }, [WOEProgress]);
+  }, [VFSDialogOpen, chapters.length, hold, setNextVerse]);
 
-  useEffect(() => {
-    // set Words
-    setUserWords([]); //reset
-    setWords([]);
-    setVerse([]);
-    if (!verse_key) return; // if verse_key is null, do not set words
-    // Create an AbortController for this effect instance
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-
-    (async () => {
+  const reload = useCallback(
+    async (signal: AbortSignal) => {
+      setUserWords([]); //reset
+      setWords([]);
+      setVerse([]);
+      if (!verse_key) return; // if verse_key is null, do not set words
       try {
         if (signal.aborted) return;
 
@@ -132,11 +127,19 @@ export default function Page() {
           console.error("Error fetching words:", error);
         }
       }
-    })();
+    },
+    [extraWordsPerWord, verse_key]
+  );
+
+  useEffect(() => {
+    // Create an AbortController for this effect instance
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    reload(signal);
     return () => {
       abortController.abort();
     };
-  }, [extraWordsPerWord, verse_key]);
+  }, [extraWordsPerWord, reload, verse_key]);
   useEffect(() => {
     // set translation
     translation_ids &&
@@ -196,13 +199,19 @@ export default function Page() {
               variant={"outline"}
               onClick={() => {
                 if (
+                  userWords.length === 0 ||
                   verse.length === userWords.length ||
                   confirm("Are you sure!")
                 )
-                  setNextVerse();
+                  verse.length !== userWords.length &&
+                    reload(new AbortController().signal); // reload
+                //proceed to next verse
+                setHold(false);
               }}
             >
-              {verse.length !== userWords.length ? "reload" : "next"}{" "}
+              {verse.length && verse.length === userWords.length
+                ? "next"
+                : "reload"}{" "}
             </Button>
           </div>
           {verse_key === null ? (
@@ -302,9 +311,10 @@ export default function Page() {
                           size={"lg"}
                           disabled={userWords.length == verse.length}
                           onClick={() => {
-                            setShow(false);
+                            setShow(false); // hide verse
                             setOpenedVerse(undefined); // close audio
                             if (
+                              //mistake
                               !(
                                 verse[userWords.length].text_imlaei ==
                                   word.text_imlaei ||
@@ -323,10 +333,12 @@ export default function Page() {
                               }, 150);
                             } else {
                               if (userWords.length + 1 === verse.length) {
+                                // if verse is complete
                                 setGreen(true);
                                 setTimeout(() => {
                                   setGreen(false);
                                 }, 1500);
+                                setHold(true); // hold till next button is clicked
                                 verse_key &&
                                   addWOEProgress(+verse_key?.split(":")[0], 1);
                                 addScore(
