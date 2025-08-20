@@ -47,6 +47,7 @@ const storage: PersistStorage<PreferenceStore> = {
     return superJson.parse(str);
   },
   setItem: async (name, value) => {
+    value.state.lastModified = new Date();
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -108,6 +109,7 @@ type PreferenceStore = {
   setWOEProgress: (chapter: number, progress: number) => void;
   addWOEProgress: (chapter: number, progress: number) => void;
   resetWOEProgress: () => void;
+  lastModified: Date;
 };
 export const useOnlineStorage = create<PreferenceStore>()(
   persist(
@@ -198,11 +200,12 @@ export const useOnlineStorage = create<PreferenceStore>()(
               ])
             ),
           }),
+        lastModified: new Date(),
       };
     },
 
     {
-      version: 7,
+      version: 8,
       name: "preference-storage",
       skipHydration: true,
       storage: storage,
@@ -220,9 +223,15 @@ useOnlineStorage.persist.onHydrate(async () => {
       .select("*")
       .single();
     if (data?.preference && !error) {
-      useOnlineStorage.setState(
-        (state) => (superJson.parse(data.preference as string) as any).state
-      );
+      useOnlineStorage.setState((state) => {
+        const serverState = (superJson.parse(data.preference as string) as any)
+          .state as PreferenceStore;
+        if (state.lastModified > serverState.lastModified) {
+          // If the local state is newer, keep it
+          return state;
+        }
+        return serverState;
+      });
     }
   }
 });
