@@ -10,7 +10,6 @@ export default async function setJuzData(juz_number: number) {
     verses_count: number;
   }[] = (await (await fetch("https://api.quran.com/api/v4/juzs")).json()).juzs;
   const data: string[] = [];
-  console.log(juzs);
   for (const juz of juzs) {
     if (juz.juz_number == juz_number) {
       for (const surah in juz.verse_mapping) {

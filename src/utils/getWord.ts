@@ -1,7 +1,9 @@
 import { WORD } from "@/types/types";
 import { cache } from "react";
 
-async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
+async function getWord(
+  index: `${string}:${string}:${string}`
+): Promise<WORD | null> {
   const [surahI, ayahI, wordI] = index.split(":");
   try {
     const verse = (
@@ -39,7 +41,10 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD> {
     console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`
     );
-    return getWord(index);
+    if (confirm("Failed to fetch word. Retry?")) {
+      return getWord(index);
+    }
+    return null;
   }
 }
 export default cache(getWord);

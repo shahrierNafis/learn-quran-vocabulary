@@ -24,6 +24,9 @@ export default async function getTranslationInfo() {
     console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/resources/translations \n`
     );
-    return getTranslationInfo();
+    if (confirm("Failed to fetch translation info. Retry?")) {
+      return getTranslationInfo();
+    }
+    return [];
   }
 }

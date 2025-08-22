@@ -35,6 +35,9 @@ export default cache(async function getVerseWords(
     console.log(
       `Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`
     );
-    return getVerseWords(index);
+    if (confirm("Failed to fetch verse words. Retry?"))
+      return getVerseWords(index);
+
+    return [];
   }
 });

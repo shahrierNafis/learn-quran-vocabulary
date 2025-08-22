@@ -51,13 +51,18 @@ const storage: PersistStorage<PreferenceStore> = {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    if (user) {
-      supabase
-        .from("user_preference")
-        .upsert({ preference: superJson.stringify(value), user_id: user.id })
-        .then();
+    async function setUserPreference() {
+      if (user) {
+        const a = await supabase
+          .from("user_preference")
+          .upsert({ preference: superJson.stringify(value), user_id: user.id })
+          .then();
+        if (a.error && confirm("Failed to save preference to server. Retry?")) {
+          await setUserPreference();
+        }
+      }
     }
+    await setUserPreference();
     localStorage.setItem(name, superJson.stringify(value) as string);
   },
   removeItem: (name: string) => {
