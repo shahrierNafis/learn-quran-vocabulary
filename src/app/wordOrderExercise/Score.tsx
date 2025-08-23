@@ -24,7 +24,7 @@ export default function Score() {
   return (
     <AlertDialog>
       <AlertDialogTrigger>
-        <Button variant={"outline"}> Score: {score}</Button>
+        <Button variant={"outline"}> Score: {Math.round(score)}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="max-w-fit">
         <AlertDialogHeader>
@@ -35,13 +35,13 @@ export default function Score() {
               language="mathematica"
               style={androidstudio}
             >
-              (penalty ? (verse.length * (extraWordsPerWord+1))**2 :
-              verse.length * (extraWordsPerWord+1))
+              (penalty ? (verse.length * (extraWordsPerWord/2+1))**2 :
+              verse.length * (extraWordsPerWord/2+1))
             </SyntaxHighlighter>
             <br />
             If penalty is turned on Score is squared [(verse.length *
-            (extraWordsPerWord+1))**2]. Or else just [verse.length *
-            (extraWordsPerWord+1)] is the score.
+            (extraWordsPerWord/2+1))**2]. Or else just [verse.length *
+            (extraWordsPerWord/2+1)] is the score.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

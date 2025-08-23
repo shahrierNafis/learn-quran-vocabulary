@@ -48,6 +48,7 @@ const storage: PersistStorage<PreferenceStore> = {
   },
   setItem: async (name, value) => {
     value.state.lastModified = new Date();
+    localStorage.setItem(name, superJson.stringify(value) as string);
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -63,7 +64,6 @@ const storage: PersistStorage<PreferenceStore> = {
       }
     }
     await setUserPreference();
-    localStorage.setItem(name, superJson.stringify(value) as string);
   },
   removeItem: (name: string) => {
     console.log(name, "has been deleted");

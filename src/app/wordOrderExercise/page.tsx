@@ -244,8 +244,8 @@ export default function Page() {
                   <>
                     Verse {verse_key} with length {verse.length} and{" "}
                     {penalty
-                      ? (verse.length * (extraWordsPerWord + 1)) ** 2
-                      : verse.length * (extraWordsPerWord + 1)}{" "}
+                      ? (verse.length * (extraWordsPerWord / 2 + 1)) ** 2
+                      : verse.length * (extraWordsPerWord / 2 + 1)}{" "}
                     score points
                   </>
                 ) : (
@@ -344,9 +344,9 @@ export default function Page() {
                                 addScore(
                                   penalty
                                     ? (verse.length *
-                                        (extraWordsPerWord + 1)) **
+                                        (extraWordsPerWord / 2 + 1)) **
                                         2
-                                    : verse.length * (extraWordsPerWord + 1)
+                                    : verse.length * (extraWordsPerWord / 2 + 1)
                                 );
                               }
                               setUserWords((prev) => [...prev, word]);
@@ -376,7 +376,7 @@ export default function Page() {
                       ? ""
                       : Array(
                           verse.length > 0
-                            ? verse.length * (extraWordsPerWord + 1)
+                            ? verse.length * (extraWordsPerWord / 2 + 1)
                             : 40
                         )
                           .fill(1)
