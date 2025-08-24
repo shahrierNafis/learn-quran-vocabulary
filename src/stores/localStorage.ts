@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 export const useLocalStorage = create<{
-  penalty: boolean;
-  setPenalty: (penalty: boolean) => void;
+  difficulty: number;
+  setDifficulty: (difficulty: number) => void;
 
   extraWordsPerWord: number;
   setExtraWordsPerWord: (extraWordsPerWord: number) => void;
@@ -26,10 +26,8 @@ export const useLocalStorage = create<{
 }>()(
   persist(
     (set) => ({
-      penalty: true,
-      setPenalty: (penalty: boolean) => {
-        set({ penalty });
-      },
+      difficulty: 2,
+      setDifficulty: (difficulty: number) => set({ difficulty }),
 
       extraWordsPerWord: 0,
       setExtraWordsPerWord: (extraWordsPerWord: number) =>

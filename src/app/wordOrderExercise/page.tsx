@@ -27,16 +27,21 @@ export default function Page() {
     useOnlineStorage.persist.rehydrate();
   }, []);
 
-  const [extraWordsPerWord, chapters, VFSDialogOpen, penalty, setPenalty] =
-    useLocalStorage(
-      useShallow((state) => [
-        state.extraWordsPerWord,
-        state.chapters,
-        state.VFSDialogOpen,
-        state.penalty,
-        state.setPenalty,
-      ])
-    );
+  const [
+    extraWordsPerWord,
+    chapters,
+    VFSDialogOpen,
+    difficulty,
+    setDifficulty,
+  ] = useLocalStorage(
+    useShallow((state) => [
+      state.extraWordsPerWord,
+      state.chapters,
+      state.VFSDialogOpen,
+      state.difficulty,
+      state.setDifficulty,
+    ])
+  );
   const [addScore, addWOEProgress] = useOnlineStorage(
     useShallow((state) => [state.addWOEscore, state.addWOEProgress])
   );
@@ -158,7 +163,7 @@ export default function Page() {
       userWords.length && // if userWords is not empty
       openedVerse !== verse_key // if audio is not playing
     ) {
-      if (penalty) {
+      if (difficulty === 2) {
         setUserWords([]); // penalty
         setWords((prev) => {
           return _.shuffle([...prev, ...userWords]);
@@ -174,10 +179,13 @@ export default function Page() {
           <Button
             variant={"outline"}
             onClick={() => {
-              setPenalty(!penalty);
+              const myArray = [0.5, 1, 2];
+              const nextIndex =
+                (myArray.indexOf(difficulty) + 1) % myArray.length;
+              setDifficulty(myArray[nextIndex]);
             }}
           >
-            {penalty ? "penalty:on" : "penalty:off"}
+            penalty: {difficulty}
           </Button>
           <ExtraWords />
           <Score />
@@ -243,9 +251,7 @@ export default function Page() {
                 {verse.length ? (
                   <>
                     Verse {verse_key} with length {verse.length} and{" "}
-                    {penalty
-                      ? (verse.length * (extraWordsPerWord / 2 + 1)) ** 2
-                      : verse.length * (extraWordsPerWord / 2 + 1)}{" "}
+                    {(verse.length * (extraWordsPerWord / 2 + 1)) ** difficulty}{" "}
                     score points
                   </>
                 ) : (
@@ -311,7 +317,7 @@ export default function Page() {
                           size={"lg"}
                           disabled={userWords.length == verse.length}
                           onClick={() => {
-                            setShow(false); // hide verse
+                            difficulty > 0.5 && setShow(false); // hide verse if difficulty is high
                             setOpenedVerse(undefined); // close audio
                             if (
                               //mistake
@@ -342,11 +348,9 @@ export default function Page() {
                                 verse_key &&
                                   addWOEProgress(+verse_key?.split(":")[0], 1);
                                 addScore(
-                                  penalty
-                                    ? (verse.length *
-                                        (extraWordsPerWord / 2 + 1)) **
-                                        2
-                                    : verse.length * (extraWordsPerWord / 2 + 1)
+                                  (verse.length *
+                                    (extraWordsPerWord / 2 + 1)) **
+                                    difficulty
                                 );
                               }
                               setUserWords((prev) => [...prev, word]);
