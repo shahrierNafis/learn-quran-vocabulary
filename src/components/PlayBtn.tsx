@@ -19,17 +19,28 @@ import { Label } from "./ui/label";
 export default function PlayBtn({
   children,
   type,
-  className, collection_id
+  className,
+  collection_id,
 }: {
-  children: React.ReactNode,
-  type: "review" | "play",
-  className?: string; collection_id?: number
-
+  children: React.ReactNode;
+  type: "review" | "play";
+  className?: string;
+  collection_id?: number;
 }) {
-  useEffect(() => { useLocalStorage.persist.rehydrate() }, [])
-  const [versesPerRound, setVersesPerRound, mode, setMode, skill, setSkill] = useLocalStorage(
-    useShallow((state) => [state.versesPerRound, state.setVersesPerRound, state.mode, state.setMode, state.skill, state.setSkill])
-  );
+  useEffect(() => {
+    useLocalStorage.persist.rehydrate();
+  }, []);
+  const [versesPerRound, setVersesPerRound, mode, setMode, skill, setSkill] =
+    useLocalStorage(
+      useShallow((state) => [
+        state.versesPerRound,
+        state.setVersesPerRound,
+        state.mode,
+        state.setMode,
+        state.skill,
+        state.setSkill,
+      ])
+    );
   return (
     <>
       <Dialog>
@@ -52,10 +63,28 @@ export default function PlayBtn({
             />
           </div>
 
-          <Label className="flex items-center gap-2"> <Checkbox checked={mode === "textInput"} onCheckedChange={(textInput) => setMode(textInput ? "textInput" : "")} /> text Input (hard)</Label>
-          <Label className="flex items-center gap-2"> <Checkbox checked={skill === "listening"} onCheckedChange={(listening) => setSkill(listening ? "listening" : "")} /> learn listening skill</Label>
+          <Label className="flex items-center gap-2">
+            {" "}
+            <Checkbox
+              checked={mode === "textInput"}
+              onCheckedChange={(textInput) =>
+                setMode(textInput ? "textInput" : "")
+              }
+            />{" "}
+            text Input (hard)
+          </Label>
+          <Label className="flex items-center gap-2">
+            {" "}
+            <Checkbox
+              checked={skill === "listening"}
+              onCheckedChange={(listening) =>
+                setSkill(listening ? "listening" : "")
+              }
+            />{" "}
+            learn listening skill
+          </Label>
           <Link
-            href={`/${type}/${versesPerRound}?collection_id=${collection_id ?? ""}&mode=${mode}&skill=${skill}`}
+            href={`/spacedRepetition/${type}/${versesPerRound}?collection_id=${collection_id ?? ""}&mode=${mode}&skill=${skill}`}
           >
             <Button className="w-fit ml-auto">Start</Button>
           </Link>

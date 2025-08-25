@@ -104,16 +104,16 @@ type PreferenceStore = {
   reciter_id: string;
   setReciter_id: (reciter_id: string) => void;
 
-  WOEscore: number; // initial state
-  setWOEscore: (score: number) => void;
-  addWOEscore: (score: number) => void;
+  ARScore: number; // initial state
+  setARScore: (score: number) => void;
+  addARScore: (score: number) => void;
 
-  WOEProgress: {
+  ARProgress: {
     [key: number]: number;
   };
-  setWOEProgress: (chapter: number, progress: number) => void;
-  addWOEProgress: (chapter: number, progress: number) => void;
-  resetWOEProgress: () => void;
+  setARProgress: (chapter: number, progress: number) => void;
+  addARProgress: (chapter: number, progress: number) => void;
+  resetARProgress: () => void;
   lastModified: Date;
 };
 export const useOnlineStorage = create<PreferenceStore>()(
@@ -166,11 +166,11 @@ export const useOnlineStorage = create<PreferenceStore>()(
           set(() => ({
             intervals,
           })),
-        WOEscore: 0, // initial state
-        setWOEscore: (WOEscore: number) => set({ WOEscore }),
-        addWOEscore: (WOEscore: number) => {
+        ARScore: 0, // initial state
+        setARScore: (ARScore: number) => set({ ARScore }),
+        addARScore: (ARScore: number) => {
           set((state) => ({
-            WOEscore: state.WOEscore + WOEscore,
+            ARScore: state.ARScore + ARScore,
           }));
         },
         reviewOrder: "next_review ASC",
@@ -178,27 +178,31 @@ export const useOnlineStorage = create<PreferenceStore>()(
         reciter_id: 7 + "",
         setReciter_id: (reciter_id) => set({ reciter_id }),
 
-        WOEProgress: Object.fromEntries(
+        ARProgress: Object.fromEntries(
           Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
             chapter,
             0,
           ])
         ),
-        setWOEProgress: (chapter: number, progress: number) => {
+        setARProgress: (chapter: number, progress: number) => {
           set((state) => {
-            state.WOEProgress[chapter] = progress;
-            return { WOEProgress: Object.assign({}, state.WOEProgress) };
+            state.ARProgress[chapter] = progress;
+            return {
+              ARProgress: Object.assign({}, state.ARProgress),
+            };
           });
         },
-        addWOEProgress: (chapter: number, progress: number) => {
+        addARProgress: (chapter: number, progress: number) => {
           set((state) => {
-            state.WOEProgress[chapter] += progress;
-            return { WOEProgress: Object.assign({}, state.WOEProgress) };
+            state.ARProgress[chapter] += progress;
+            return {
+              ARProgress: Object.assign({}, state.ARProgress),
+            };
           });
         },
-        resetWOEProgress: () =>
+        resetARProgress: () =>
           set({
-            WOEProgress: Object.fromEntries(
+            ARProgress: Object.fromEntries(
               Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
                 chapter,
                 0,

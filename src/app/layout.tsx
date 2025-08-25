@@ -38,7 +38,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <CheckAuth />
-          {/* <NavigationBar /> */}
           <SidebarProvider defaultOpen={false}>
             <AppSidebar />
             <div className="absolute md:m-4 md:hidden">

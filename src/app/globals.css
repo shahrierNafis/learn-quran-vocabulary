@@ -75,3 +75,15 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+@keyframes background-move {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}

@@ -18,7 +18,7 @@ import { useOnlineStorage } from "@/stores/onlineStorage";
 
 export default function Score() {
   const [score, setScore] = useOnlineStorage(
-    useShallow((state) => [state.WOEscore, state.setWOEscore])
+    useShallow((state) => [state.ARScore, state.setARScore])
   );
 
   return (

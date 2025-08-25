@@ -34,8 +34,8 @@ export default function SelectChapters() {
       state.setChapters,
     ])
   );
-  const [WOEProgress, setWOEProgress] = useOnlineStorage(
-    useShallow((state) => [state.WOEProgress, state.setWOEProgress])
+  const [ARProgress, setARProgress] = useOnlineStorage(
+    useShallow((state) => [state.ARProgress, state.setARProgress])
   );
   const totalPercentage = (
     Array.from({ length: 114 }, (_, i) => i + 1).reduce(
@@ -99,7 +99,7 @@ export default function SelectChapters() {
                   iteration{" "}
                   {_.min(
                     Array.from({ length: 114 }, (_, i) => i + 1).map((i) => {
-                      return getPretendIterationNum(i, WOEProgress);
+                      return getPretendIterationNum(i, ARProgress);
                     })
                   )}
                 </div>
@@ -135,10 +135,10 @@ export default function SelectChapters() {
                     <div className="z-10 flex flex-col items-center w-full p-2">
                       <div>
                         {" "}
-                        iteration {getPretendIterationNum(chapter, WOEProgress)}
+                        iteration {getPretendIterationNum(chapter, ARProgress)}
                       </div>
                       <div className="flex">
-                        {WOEProgress[chapter]} /{getChapterLength(chapter)}
+                        {ARProgress[chapter]} /{getChapterLength(chapter)}
                       </div>
                     </div>{" "}
                     <Edit
@@ -147,10 +147,10 @@ export default function SelectChapters() {
                       onClick={() => {
                         const input = prompt(
                           "set progress",
-                          WOEProgress[chapter] + ""
+                          ARProgress[chapter] + ""
                         );
                         if (input === null) return;
-                        setWOEProgress(chapter, Number(input));
+                        setARProgress(chapter, Number(input));
                       }}
                     />
                     <div className="z-10 flex justify-center w-full p-2">
@@ -166,9 +166,9 @@ export default function SelectChapters() {
     </Dialog>
   );
   function getPretendProgressPercentage(chapter: number) {
-    if (WOEProgress[chapter] == 0) return 0;
+    if (ARProgress[chapter] == 0) return 0;
     return +(
-      (((WOEProgress[chapter] - 0.0000001) % getChapterLength(chapter)) * 100) /
+      (((ARProgress[chapter] - 0.0000001) % getChapterLength(chapter)) * 100) /
       getChapterLength(chapter)
     ).toFixed(2);
   }

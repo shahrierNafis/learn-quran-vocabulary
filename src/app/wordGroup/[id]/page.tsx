@@ -1,5 +1,4 @@
 "use client";
-import GotoDashboard from "@/components/GotoDashboard";
 import SimilarWordsTable from "@/components/SimilarWordsTable";
 import { Database, Tables } from "@/database.types";
 import { useOnlineStorage } from "@/stores/onlineStorage";
@@ -11,9 +10,7 @@ import React, { useEffect, useState, use } from "react";
 export default function Page(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
 
-  const {
-    id
-  } = params;
+  const { id } = params;
 
   const [translation_ids] = useOnlineStorage(
     useShallow((a) => [a.translation_ids])
@@ -29,7 +26,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
     supabase
       .from("word_groups")
       .select("*")
-      .eq("id", id)
+      .eq("id", +id)
       .then(({ data, error }) => {
         if (error) {
           console.log(error);

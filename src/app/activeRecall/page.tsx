@@ -42,12 +42,10 @@ export default function Page() {
       state.setDifficulty,
     ])
   );
-  const [addScore, addWOEProgress] = useOnlineStorage(
-    useShallow((state) => [state.addWOEscore, state.addWOEProgress])
+  const [addScore, addARProgress] = useOnlineStorage(
+    useShallow((state) => [state.addARScore, state.addARProgress])
   );
-  const WOEProgress = useOnlineStorage(
-    useShallow((state) => state.WOEProgress)
-  );
+  const ARProgress = useOnlineStorage(useShallow((state) => state.ARProgress));
   const [verse_key, setVerse_key] = useState<string | null>();
   const { openedVerse, setOpenedVerse } = useVerseAudio();
   const [hold, setHold] = useState(false);
@@ -67,8 +65,8 @@ export default function Page() {
 
   const setNextVerse = useCallback(() => {
     const nextChapter = chapters.sort((a, b) => {
-      const iterationA = Math.floor(WOEProgress[a] / getChapterLength(a));
-      const iterationB = Math.floor(WOEProgress[b] / getChapterLength(b));
+      const iterationA = Math.floor(ARProgress[a] / getChapterLength(a));
+      const iterationB = Math.floor(ARProgress[b] / getChapterLength(b));
       if (iterationA == iterationB) {
         return +a - +b; // put chapters with lower index first
       }
@@ -76,11 +74,11 @@ export default function Page() {
     })[0];
     nextChapter
       ? setVerse_key(
-          `${nextChapter}:${Math.trunc((WOEProgress[nextChapter] % getChapterLength(nextChapter)) + 1)}` // set the next verse
+          `${nextChapter}:${Math.trunc((ARProgress[nextChapter] % getChapterLength(nextChapter)) + 1)}` // set the next verse
         )
       : setVerse_key(null);
     setUserWords([]); // clear user input
-  }, [WOEProgress, chapters]);
+  }, [ARProgress, chapters]);
   useEffect(() => {
     if (VFSDialogOpen) return; // if dialog is open, do not set words
     !hold && chapters.length && setNextVerse(); // set a next verse if chapters is not empty and hold is false
@@ -185,7 +183,7 @@ export default function Page() {
               setDifficulty(myArray[nextIndex]);
             }}
           >
-            penalty: {difficulty}
+            difficulty: {difficulty}
           </Button>
           <ExtraWords />
           <Score />
@@ -251,7 +249,9 @@ export default function Page() {
                 {verse.length ? (
                   <>
                     Verse {verse_key} with length {verse.length} and{" "}
-                    {(verse.length * (extraWordsPerWord / 2 + 1)) ** difficulty}{" "}
+                    {Math.round(
+                      (verse.length * (extraWordsPerWord / 2 + 1)) ** difficulty
+                    )}{" "}
                     score points
                   </>
                 ) : (
@@ -346,7 +346,7 @@ export default function Page() {
                                 }, 1500);
                                 setHold(true); // hold till next button is clicked
                                 verse_key &&
-                                  addWOEProgress(+verse_key?.split(":")[0], 1);
+                                  addARProgress(+verse_key?.split(":")[0], 1);
                                 addScore(
                                   (verse.length *
                                     (extraWordsPerWord / 2 + 1)) **

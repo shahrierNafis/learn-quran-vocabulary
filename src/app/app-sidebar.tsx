@@ -1,5 +1,5 @@
 "use client";
-import { Home, ArrowLeftRight, LayoutDashboard } from "lucide-react";
+import { Home, BrainCircuit, Clock } from "lucide-react";
 
 import {
   Sidebar,
@@ -26,14 +26,14 @@ const items = [
     icon: Home,
   },
   {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
+    title: "Spaced Repetition",
+    url: "/spacedRepetition",
+    icon: Clock,
   },
   {
-    title: "Word Order Exercise",
-    url: "/wordOrderExercise",
-    icon: ArrowLeftRight,
+    title: "Active Recall",
+    url: "/activeRecall",
+    icon: BrainCircuit,
   },
 ];
 

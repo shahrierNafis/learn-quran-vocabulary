@@ -2,35 +2,42 @@
 import React, { useEffect, useState, use } from "react";
 import Round from "@/components/Round";
 import LoadingScreen from "@/components/ui/LoadingScreen";
-import { Tables } from "@/database.types";
-import getToReview from "@/utils/getToReview";
+import { Database, Tables } from "@/database.types";
+import { createClient } from "@/utils/supabase/clients";
 import PlayBtn from "@/components/PlayBtn";
-import { Button } from "@/components/ui/button";
 import Link from "@/components/ui/Link";
+import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 
-export default function Page(props: { params: Promise<{ number: string }> }) {
+export default function Page(props: {
+  params: Promise<{ id: string; number: string }>;
+}) {
   const params = use(props.params);
 
-  const { number } = params;
+  const { id, number } = params;
 
-  const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
-  const [toReviewCount, setToReviewCount] = useState<number>(0);
   const searchParams = useSearchParams();
-  const collection_id = searchParams.get("collection_id");
   const mode = searchParams.get("mode");
   const skill = searchParams.get("skill");
 
+  const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
+  const [count, setCount] = useState(0);
+  const supabase = createClient<Database>();
   //set wordGroups
   useEffect(() => {
-    getToReview(collection_id ? +collection_id : undefined).then(
-      (wordGroups) => {
-        setWordGroups(wordGroups.slice(0, +number));
-        setToReviewCount(wordGroups.length);
-      }
-    );
-    return () => { };
-  }, [collection_id, number]);
+    supabase
+      .rpc("get_0_word_groups", { collection_id: +id }, { count: "exact" })
+      .limit(+number)
+      .then(({ data, error, count }) => {
+        if (error) {
+          console.log(error);
+        } else {
+          setCount(count ?? 0);
+          setWordGroups(data);
+        }
+      });
+    return () => {};
+  }, [id, number, supabase]);
 
   async function callback(correct: boolean) {
     if (!wordGroups) {
@@ -64,40 +71,30 @@ export default function Page(props: { params: Promise<{ number: string }> }) {
               {...{
                 wordGroups,
                 callback,
-                textInput: mode == "text_input", listen: skill == "listening",
-
+                textInput: mode == "text_input",
+                listen: skill == "listening",
               }}
             />
           ) : (
             <>
-              {" "}
               <div className="flex-grow grid place-items-center">
                 <div>
                   <div>
                     Round Complete.
-                    {toReviewCount - +number > 0
-                      ? toReviewCount - +number
-                      : 0}{" "}
-                    left to review.
-                    {!!(toReviewCount - +number) && (
-                      <>
-                        {" "}
-                        <PlayBtn type="review"
-                          {...{
-                            collection_id: collection_id
-                              ? +collection_id
-                              : undefined,
-                          }}
-                        >Review them?</PlayBtn>{" "}
-
-                      </>
+                    {!!(count - +number) && (
+                      <div className="inline">
+                        <PlayBtn type="play" {...{ collection_id: +id }}>
+                          play again?
+                        </PlayBtn>
+                      </div>
                     )}
                   </div>
                   <div>
-                    {!!(toReviewCount - +number) ? "Or go to " : "Go to "}
+                    {!!(count - +number) && <div className="inline"> Or</div>}{" "}
+                    go to{" "}
                     <Link href={"/dashboard"}>
                       <Button size={"sm"} variant={"secondary"}>
-                        dashboard{" "}
+                        dashboard
                       </Button>
                     </Link>
                     ?

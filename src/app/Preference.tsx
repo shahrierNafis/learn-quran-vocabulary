@@ -9,8 +9,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import SelectTranslation from "./dashboard/SelectTranslation";
-import SetIntervals from "./dashboard/SetIntervals";
+import SelectTranslation from "./spacedRepetition/SelectTranslation";
+import SetIntervals from "./spacedRepetition/SetIntervals";
 import UpdatePassword from "@/components/ChangePassword";
 import ChangeColours from "@/components/ui/ChangeColours";
 import ChangeFont from "@/components/ui/ChangeFont";

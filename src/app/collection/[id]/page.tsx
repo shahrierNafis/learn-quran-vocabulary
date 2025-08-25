@@ -25,7 +25,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     getCollectionName(+id).then(setName);
-    return () => { };
+    return () => {};
   }, [id]);
 
   useEffect(() => {
@@ -43,14 +43,14 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   const [progressArr, setProgressArr] = useState<
     | {
-      progress: number;
-      word_group_id: number;
-      updated_at: string;
-      word_groups: {
-        collection_id: number;
-        id: number;
-      } | null;
-    }[]
+        progress: number;
+        word_group_id: number;
+        updated_at: string;
+        word_groups: {
+          collection_id: number;
+          id: number;
+        } | null;
+      }[]
     | null
   >([]);
 
@@ -93,7 +93,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
                   disabled={
                     (progressArr
                       ? wordGroups.length -
-                      progressArr?.filter((p) => p.progress != 0).length
+                        progressArr?.filter((p) => p.progress != 0).length
                       : 0) === 0
                   }
                   size={"default"}

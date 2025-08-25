@@ -23,7 +23,7 @@ export default function Review({
               Review{" "}
               {toReviewCount != undefined && toReviewCount > 0 && toReviewCount}
             </Button>
-          </PlayBtn >
+          </PlayBtn>
         </>
       ) : (
         "loading"

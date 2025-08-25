@@ -13,9 +13,7 @@ import { Button } from "@/components/ui/button";
 export default function Page(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
 
-  const {
-    id
-  } = params;
+  const { id } = params;
 
   const [name, setName] = useState<string | null>();
   const [wordGroups, setWordGroups] = useState<Tables<"word_groups">[]>();
@@ -25,7 +23,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   useEffect(() => {
     getCollectionName(+id).then(setName);
-    return () => { };
+    return () => {};
   }, [id]);
 
   useEffect(() => {
@@ -50,7 +48,9 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
               {name}
             </div>
             <div className="rounded-md border">
-              <PlayBtn type="play" className="float-right" {...{ id }} ><Button>play</Button></PlayBtn>
+              <PlayBtn type="play" className="float-right" {...{ id }}>
+                <Button>play</Button>
+              </PlayBtn>
               <DataTable
                 {...{
                   columns,
