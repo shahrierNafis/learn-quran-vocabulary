@@ -19,7 +19,7 @@ export default function ExtraWords() {
             placeholder="extra words per word"
             value={extraWordsPerWord}
             onInput={(event) =>
-              setExtraWordsPerWord(+event.currentTarget.value)
+              setExtraWordsPerWord(Math.abs(+event.currentTarget.value))
             }
           ></Input>
         </Label>

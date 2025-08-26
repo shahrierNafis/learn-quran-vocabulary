@@ -35,7 +35,8 @@ export default function Score() {
               language="mathematica"
               style={androidstudio}
             >
-              (verse.length * (extraWordsPerWord/2+1))** difficulty
+              (verseLength * (Math.min(extraWordsPerWord / 2, verseLength / 10)
+              + 1)) ** difficulty
             </SyntaxHighlighter>
             <br />
           </AlertDialogDescription>

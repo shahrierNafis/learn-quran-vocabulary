@@ -250,7 +250,7 @@ export default function Page() {
                   <>
                     Verse {verse_key} with length {verse.length} and{" "}
                     {Math.round(
-                      (verse.length * (extraWordsPerWord / 2 + 1)) ** difficulty
+                      getScore(verse.length, extraWordsPerWord, difficulty)
                     )}{" "}
                     score points
                   </>
@@ -348,9 +348,11 @@ export default function Page() {
                                 verse_key &&
                                   addARProgress(+verse_key?.split(":")[0], 1);
                                 addScore(
-                                  (verse.length *
-                                    (extraWordsPerWord / 2 + 1)) **
+                                  getScore(
+                                    verse.length,
+                                    extraWordsPerWord,
                                     difficulty
+                                  )
                                 );
                               }
                               setUserWords((prev) => [...prev, word]);
@@ -380,7 +382,7 @@ export default function Page() {
                       ? ""
                       : Array(
                           verse.length > 0
-                            ? verse.length * (extraWordsPerWord / 2 + 1)
+                            ? verse.length * (extraWordsPerWord + 1)
                             : 40
                         )
                           .fill(1)
@@ -400,5 +402,16 @@ export default function Page() {
         </div>
       </div>{" "}
     </>
+  );
+}
+
+function getScore(
+  verseLength: number,
+  extraWordsPerWord: number,
+  difficulty: number
+) {
+  return (
+    (verseLength * (Math.min(extraWordsPerWord / 2, verseLength / 10) + 1)) **
+    difficulty
   );
 }
