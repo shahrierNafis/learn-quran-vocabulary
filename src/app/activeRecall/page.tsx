@@ -410,8 +410,5 @@ function getScore(
   extraWordsPerWord: number,
   difficulty: number
 ) {
-  return (
-    (verseLength * (Math.min(extraWordsPerWord / 2, verseLength / 10) + 1)) **
-    difficulty
-  );
+  return (verseLength * (extraWordsPerWord + 1)) ** difficulty;
 }
