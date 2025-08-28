@@ -9,13 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import SelectTranslation from "./spacedRepetition/SelectTranslation";
-import SetIntervals from "./spacedRepetition/SetIntervals";
+import SelectTranslation from "./oldSpacedRepetition/SelectTranslation";
+import SetIntervals from "./oldSpacedRepetition/SetIntervals";
 import UpdatePassword from "@/components/ChangePassword";
 import ChangeColours from "@/components/ui/ChangeColours";
 import ChangeFont from "@/components/ui/ChangeFont";
 import { useEffect } from "react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import { Switch } from "@/components/ui/switch";

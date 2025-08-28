@@ -7,17 +7,7 @@ import useFont from "@/utils/useFont";
 import WordInfo from "./WordInfo";
 import { buckwalterToArabic } from "@/utils/arabic-buckwalter-transliteration";
 
-function Word({
-  wordSegments,
-  noWordInfo,
-  word,
-  size,
-}: {
-  wordSegments: WordData;
-  noWordInfo?: boolean;
-  word?: WORD;
-  size?: "default" | "sm" | "lg" | "icon" | null | undefined;
-}) {
+function Word({ wordSegments, noWordInfo, word, size }: { wordSegments: WordData; noWordInfo?: boolean; word?: WORD; size?: "default" | "sm" | "lg" | "icon" | null | undefined }) {
   const [colours] = useOnlineStorage(useShallow((a) => [a.colours]));
   const { systemTheme, theme } = useTheme();
   const [font] = useFont();
@@ -31,22 +21,16 @@ function Word({
           size,
         }}
       >
-        <div className={font?.className}>
+        <div dir="rtl" className={font?.className}>
           {wordSegments.map((segment, index) => (
             <div
               key={segment.position + ":" + index}
               style={{
-                color: (colours[segment.partOfSpeech] ?? colours.others)[
-                  (theme == "system" ? systemTheme : theme) == "dark" ? 1 : 0
-                ],
+                color: (colours[segment.partOfSpeech] ?? colours.others)[(theme == "system" ? systemTheme : theme) == "dark" ? 1 : 0],
               }}
               className="inline"
             >
-              {buckwalterToArabic(
-                segment.buckwalter,
-                wordSegments.length - 1 > index,
-                index != 0
-              ).trim()}
+              {buckwalterToArabic(segment.buckwalter, wordSegments.length - 1 > index, index != 0).trim()}
             </div>
           ))}
         </div>

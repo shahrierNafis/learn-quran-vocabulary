@@ -25,14 +25,9 @@ export default function Verse({
   children?: ReactNode;
 }) {
   const [switchOn, setSwitchOn] = useState(false);
-  const [showTranslation, showTransliteration, showTranslationOnHiddenWords] =
-    useOnlineStorage(
-      useShallow((a) => [
-        a.showTranslation,
-        a.showTransliteration,
-        a.showTranslationOnHiddenWords,
-      ])
-    );
+  const [showTranslation, showTransliteration, showTranslationOnHiddenWords] = useOnlineStorage(
+    useShallow((a) => [a.showTranslation, a.showTransliteration, a.showTranslationOnHiddenWords])
+  );
   useEffect(() => {
     useOnlineStorage.persist.rehydrate();
   }, []);
@@ -43,7 +38,7 @@ export default function Verse({
   const [surah, ayah] = verse?.length ? verse[0].index.split(":") : ["1", "1"];
   return (
     <>
-      <div className="flex justify-center items-center">
+      <div dir={"rtl"} className="flex justify-center items-center">
         <div
           dir={switchOn ? "ltr" : "rtl"}
           // style={{
@@ -63,24 +58,10 @@ export default function Verse({
                   <>{children}</>
                 ) : (
                   <>
-                    <div
-                      key={word.index}
-                      className="flex flex-col justify-center items-center "
-                    >
-                      <div className={""}>{"_?_?_?_"}</div>{" "}
-                      {showTransliteration && (
-                        <div className="dark:text-green-100 text-green-950  text-sm">
-                          _ _ _ _
-                        </div>
-                      )}
+                    <div key={word.index} className="flex flex-col justify-center items-center ">
+                      <div className={""}>{"_?_?_?_"}</div> {showTransliteration && <div className="dark:text-green-100 text-green-950  text-sm">_ _ _ _</div>}
                       {showTranslation && (
-                        <div className="dark:text-red-100 text-red-950 text-xs justify-self-end">
-                          {showTranslationOnHiddenWords ? (
-                            word.translation.text
-                          ) : (
-                            <>_ _ _ _</>
-                          )}
-                        </div>
+                        <div className="dark:text-red-100 text-red-950 text-xs justify-self-end">{showTranslationOnHiddenWords ? word.translation.text : <>_ _ _ _</>}</div>
                       )}{" "}
                     </div>
                   </>
@@ -88,52 +69,22 @@ export default function Verse({
               if (switchOn && index != switchIndex) {
                 return (
                   <>
-                    <div
-                      key={word.index}
-                      className="flex flex-col justify-center items-center"
-                    >
-                      <div className="dark:text-red-100 text-red-950 p-3">
-                        {word.translation.text}
-                      </div>
-                      {showTransliteration && (
-                        <div className="dark:text-green-100 text-green-950 px-0 h-5 text-sm">
-                          {" "}
-                        </div>
-                      )}
-                      {showTranslation && (
-                        <div className="dark:text-red-100 text-red-950 h-4 justify-self-end">
-                          {" "}
-                        </div>
-                      )}
+                    <div key={word.index} className="flex flex-col justify-center items-center">
+                      <div className="dark:text-red-100 text-red-950 p-3">{word.translation.text}</div>
+                      {showTransliteration && <div className="dark:text-green-100 text-green-950 px-0 h-5 text-sm"> </div>}
+                      {showTranslation && <div className="dark:text-red-100 text-red-950 h-4 justify-self-end"> </div>}
                     </div>
                   </>
                 );
               }
               return (
                 <>
-                  <div
-                    key={word.index}
-                    className="flex flex-col justify-center items-center"
-                  >
-                    <div
-                      className={cn(
-                        index == highlightIndex &&
-                          "border-2 rounded border-green-500"
-                      )}
-                      dir="rtl"
-                    >
+                  <div key={word.index} className="flex flex-col justify-center items-center">
+                    <div className={cn(index == highlightIndex && "border-2 rounded border-green-500")} dir="rtl">
                       <Word {...{ wordSegments: word.wordSegments, word }} />
                     </div>
-                    {showTransliteration && (
-                      <div className="dark:text-green-100 text-green-950  text-sm px-1">
-                        {word.transliteration.text}
-                      </div>
-                    )}
-                    {showTranslation && (
-                      <div className="dark:text-red-100 text-red-950 text-xs px-1">
-                        {word.translation.text}{" "}
-                      </div>
-                    )}
+                    {showTransliteration && <div className="dark:text-green-100 text-green-950  text-sm px-1">{word.transliteration.text}</div>}
+                    {showTranslation && <div className="dark:text-red-100 text-red-950 text-xs px-1">{word.translation.text} </div>}
                   </div>
                 </>
               );
@@ -145,18 +96,11 @@ export default function Verse({
           )}
         </div>{" "}
         {
-          <Button
-            size={"icon"}
-            variant={switchOn ? "default" : "ghost"}
-            className="rounded-full"
-            onClick={() => setSwitchOn(!switchOn)}
-          >
+          <Button size={"icon"} variant={switchOn ? "default" : "ghost"} className="rounded-full" onClick={() => setSwitchOn(!switchOn)}>
             <ArrowLeftRight />
           </Button>
         }{" "}
-        {verse && !hideAudioPlayer && (
-          <VerseAudioBtn verse_key={`${surah}:${ayah}`} />
-        )}
+        {verse && !hideAudioPlayer && <VerseAudioBtn verse_key={`${surah}:${ayah}`} />}
       </div>
     </>
   );

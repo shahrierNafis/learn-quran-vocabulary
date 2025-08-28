@@ -35,6 +35,7 @@ const defaultColours: { [key: string]: [string, string] } = {
   others: ["#a8017b", "#FE48CE"],
 };
 import superJson from "superjson";
+import { Card, createEmptyCard, RecordLog } from "ts-fsrs";
 
 // jsonString === '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{date:"Date"}}}'
 const supabase = createClient<Database>();
@@ -69,12 +70,7 @@ const storage: PersistStorage<PreferenceStore> = {
     console.log(name, "has been deleted");
   },
 };
-type reviewOrderType =
-  | "next_review ASC"
-  | "next_review DESC"
-  | "level ASC"
-  | "level DESC"
-  | "random";
+type reviewOrderType = "next_review ASC" | "next_review DESC" | "level ASC" | "level DESC" | "random";
 type PreferenceStore = {
   translation_ids: string[];
   setTranslation_ids: (translation_ids: string[]) => void;
@@ -82,9 +78,7 @@ type PreferenceStore = {
   setShowTranslation: (showTranslation: boolean) => void;
 
   showTranslationOnHiddenWords: boolean;
-  setShowTranslationOnHiddenWords: (
-    showTranslationOnHiddenWords: boolean
-  ) => void;
+  setShowTranslationOnHiddenWords: (showTranslationOnHiddenWords: boolean) => void;
 
   showTransliteration: boolean;
   setShowTransliteration: (showTranslation: boolean) => void;
@@ -115,24 +109,30 @@ type PreferenceStore = {
   addARProgress: (chapter: number, progress: number) => void;
   resetARProgress: () => void;
   lastModified: Date;
+
+  wordList: {
+    [key: string]: { card: Card; index: string; isSuspended: boolean };
+  };
+  addToWordList: (key: string, word: { card: Card; index: string; isSuspended?: boolean }) => void;
+  updateCard: (key: string, card: Card) => void;
+  toggleSuspend: (key: string) => void;
+  removeFromWordList: (key: string) => void;
+  resetWordList: () => void;
+  maximumInterval: number;
+  setMaximumInterval: (maximumInterval: number) => void;
 };
 export const useOnlineStorage = create<PreferenceStore>()(
   persist(
     (set) => {
       return {
         translation_ids: ["20"],
-        setTranslation_ids: (translation_ids: string[]) =>
-          set({ translation_ids }),
+        setTranslation_ids: (translation_ids: string[]) => set({ translation_ids }),
         showTranslation: false,
-        setShowTranslation: (showTranslation: boolean) =>
-          set({ showTranslation }),
+        setShowTranslation: (showTranslation: boolean) => set({ showTranslation }),
         showTranslationOnHiddenWords: false,
-        setShowTranslationOnHiddenWords: (
-          showTranslationOnHiddenWords: boolean
-        ) => set({ showTranslationOnHiddenWords }),
+        setShowTranslationOnHiddenWords: (showTranslationOnHiddenWords: boolean) => set({ showTranslationOnHiddenWords }),
         showTransliteration: false,
-        setShowTransliteration: (showTransliteration: boolean) =>
-          set({ showTransliteration }),
+        setShowTransliteration: (showTransliteration: boolean) => set({ showTransliteration }),
         colours: defaultColours,
         setColours: (pos, value, value2) => {
           set((state) => {
@@ -178,12 +178,7 @@ export const useOnlineStorage = create<PreferenceStore>()(
         reciter_id: 7 + "",
         setReciter_id: (reciter_id) => set({ reciter_id }),
 
-        ARProgress: Object.fromEntries(
-          Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
-            chapter,
-            0,
-          ])
-        ),
+        ARProgress: Object.fromEntries(Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [chapter, 0])),
         setARProgress: (chapter: number, progress: number) => {
           set((state) => {
             state.ARProgress[chapter] = progress;
@@ -202,17 +197,57 @@ export const useOnlineStorage = create<PreferenceStore>()(
         },
         resetARProgress: () =>
           set({
-            ARProgress: Object.fromEntries(
-              Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [
-                chapter,
-                0,
-              ])
-            ),
+            ARProgress: Object.fromEntries(Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => [chapter, 0])),
           }),
         lastModified: new Date(),
+
+        wordList: {},
+        addToWordList: (key: string, word: { card: Card; index: string; isSuspended?: boolean }) => {
+          set((state) => {
+            state.wordList[key] = {
+              isSuspended: false,
+              ...word,
+            };
+            return {
+              wordList: { ...state.wordList },
+            };
+          });
+        },
+        updateCard: (key: string, card: Card) => {
+          set((state) => {
+            if (state.wordList[key]) {
+              state.wordList[key].card = card;
+            }
+            return {
+              wordList: { ...state.wordList },
+            };
+          });
+        },
+        toggleSuspend: (key: string) => {
+          set((state) => {
+            state.wordList[key].isSuspended = !state.wordList[key].isSuspended;
+            return {
+              wordList: { ...state.wordList },
+            };
+          });
+        },
+        removeFromWordList: (key: string) => {
+          set((state) => {
+            delete state.wordList[key];
+            return {
+              wordList: { ...state.wordList },
+            };
+          });
+        },
+        resetWordList: () => {
+          set(() => ({
+            wordList: {},
+          }));
+        },
+        maximumInterval: 365,
+        setMaximumInterval: (maximumInterval: number) => set({ maximumInterval }),
       };
     },
-
     {
       version: 8,
       name: "preference-storage",
@@ -227,14 +262,10 @@ useOnlineStorage.persist.onHydrate(async () => {
     data: { user },
   } = await supabase.auth.getUser();
   if (user) {
-    const { data, error } = await supabase
-      .from("user_preference")
-      .select("*")
-      .single();
+    const { data, error } = await supabase.from("user_preference").select("*").single();
     if (data?.preference && !error) {
       useOnlineStorage.setState((state) => {
-        const serverState = (superJson.parse(data.preference as string) as any)
-          .state as PreferenceStore;
+        const serverState = (superJson.parse(data.preference as string) as any).state as PreferenceStore;
         if (state.lastModified > serverState.lastModified) {
           // If the local state is newer, keep it
           return state;

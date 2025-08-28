@@ -40,18 +40,8 @@ export default function Home() {
       <ParticlesEffect />
       <div className="grid grid-rows-2 md:grid-cols-2 md:grid-rows-1 min-h-dvh">
         <div className="font-extrabold text-2xl p-8 text-justify content-center">
-          Learn{" "}
-          <span className="text-green-500 dark:text-green-300">
-            Quranic Arabic
-          </span>{" "}
-          Faster And More Effectively Using{" "}
-          <span className="text-green-500 dark:text-green-300">
-            Spaced Repetition
-          </span>{" "}
-          And{" "}
-          <span className="text-green-500 dark:text-green-300">
-            Active Recall
-          </span>
+          Learn <span className="text-green-500 dark:text-green-300">Quranic Arabic</span> Faster And More Effectively Using{" "}
+          <span className="text-green-500 dark:text-green-300">Spaced Repetition</span> And <span className="text-green-500 dark:text-green-300">Active Recall</span>
         </div>
         <div className="flex flex-col gap-2 justify-center items-center min-h-dvh">
           {user === undefined ? (
@@ -59,31 +49,23 @@ export default function Home() {
           ) : (
             <>
               {user === null ? (
-                <Auth
-                  supabaseClient={supabase}
-                  appearance={{ theme: ThemeSupa }}
-                  providers={["github"]}
-                  theme="dark"
-                  redirectTo="/dashboard"
-                />
+                <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} providers={["github"]} theme="dark" redirectTo="/dashboard" />
               ) : (
                 <>
                   <div className="grid grid-cols-2 relative">
-                    <div></div>{" "}
-                    <div className="text-sm relative bottom-0 mt-auto mx-auto text-red-500 animate-pulse">
-                      *new
-                    </div>
-                    <Link href={"/spacedRepetition"}>
-                      <Button className="" variant={"outline"}>
-                        Spaced Repetition
-                      </Button>
-                    </Link>
+                    <div className="text-sm relative bottom-0 mt-auto mx-auto text-red-500 animate-pulse">*start here</div>
+                    <div></div>
                     <Link
                       className="mx-auto animate-background-move block rounded-md bg-gradient-to-r from-green-300 via-white to-green-500 bg-[length:_400%_400%] p-px [animation-duration:_3s]"
                       href={"/activeRecall"}
                     >
                       <Button variant={"outline"}>
                         <div> Active Recall </div>
+                      </Button>
+                    </Link>
+                    <Link href={"/spacedRepetition"}>
+                      <Button className="" variant={"outline"}>
+                        Spaced Repetition
                       </Button>
                     </Link>
                   </div>

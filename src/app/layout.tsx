@@ -5,6 +5,7 @@ import CheckAuth from "@/components/CheckAuth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/app/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const comfortaa = Comfortaa({ subsets: ["latin"] });
 
@@ -30,7 +31,6 @@ export default function RootLayout({
         />
       </head>
       <body className={comfortaa.className}>
-        {" "}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -45,6 +45,7 @@ export default function RootLayout({
             </div>
 
             <main className="w-full">{children}</main>
+            <Toaster position="bottom-right" richColors />
           </SidebarProvider>
         </ThemeProvider>
       </body>

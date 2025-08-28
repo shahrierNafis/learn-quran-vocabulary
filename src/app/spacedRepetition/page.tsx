@@ -1,72 +1,71 @@
 "use client";
+import { useOnlineStorage } from "@/stores/onlineStorage";
+import { useShallow } from "zustand/react/shallow";
+import React, { useEffect } from "react";
+import StudyDialog from "./studyDialog";
+import BrowseDialog from "./BrowseDialog";
+import { createEmptyCard } from "ts-fsrs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
-import Collections from "@/components/Collections";
-import Review from "./Review";
-import Count from "./Count";
-import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/clients";
-import { Database } from "@/database.types";
-import getToReviewIds from "@/utils/getToReviewIds";
-
-export default function PrivatePage() {
-  const [wordGroups, setWordGroups] = useState<
-    { id: number; words: string[]; collection_id: number }[]
-  >([]);
-  const [progressArr, setProgressArr] = useState<
-    | {
-        progress: number;
-        word_group_id: number;
-        updated_at: string;
-        word_groups: {
-          collection_id: number;
-          id: number;
-        } | null;
-      }[]
-    | null
-  >([]);
-  const supabase = createClient<Database>();
-  const [toReviewCount, setToReviewCount] = useState<number>();
+export default function Page() {
+  const router = useRouter();
 
   useEffect(() => {
-    supabase
-      .from("word_groups")
-      .select("id,words,collection_id ")
-      .limit(10000)
-      .then(({ error, data }) => {
-        if (error || !data) {
-          console.log(error);
-        } else {
-          setWordGroups(data);
-        }
-      });
-  }, [supabase]);
-  useEffect(() => {
-    supabase
-      .from("user_progress")
-      .select(
-        "progress,word_group_id,updated_at,word_groups(collection_id, id)"
-      )
-      .then(({ error, data }) => {
-        if (error || !data) {
-          console.log(error);
-        } else {
-          setProgressArr(data);
-        }
-      });
-  }, [supabase, wordGroups]);
-  useEffect(() => {
-    progressArr &&
-      getToReviewIds(progressArr).then((ids) => setToReviewCount(ids.length));
+    useOnlineStorage.persist.rehydrate();
+  }, []);
+  const [wordList] = useOnlineStorage(useShallow((a) => [a.wordList]));
+  const [updateCard, maximumInterval, setMaximumInterval] = useOnlineStorage(useShallow((a) => [a.updateCard, a.maximumInterval, a.setMaximumInterval]));
+  let newWords = 0;
+  let learning = 0;
+  let review = 0;
+  let relearning = 0;
+  let studiedToday = 0;
 
-    return () => {};
-  }, [progressArr]);
+  for (const [lemma, word] of Object.entries(wordList)) {
+    if (word.isSuspended) {
+      continue;
+    }
+    if (!word.card.due) {
+      updateCard(lemma, createEmptyCard());
+    }
+    if (word.card.last_review && word.card.last_review.toDateString() === new Date().toDateString()) studiedToday++;
+    switch (word.card.state) {
+      case 0:
+        newWords++;
+        break;
+      case 1:
+        learning++;
+        break;
+      case 2:
+        if (word.card.due.toDateString() === new Date().toDateString()) review++;
+        break;
+      case 3:
+        relearning++;
+        break;
+    }
+  }
+
   return (
-    <>
-      <div className="grid grid-cols-2 w-full">
-        <Count />
-        <Review {...{ toReviewCount }} />
+    <div className="w-full flex justify-center gap-32 sm:gap-4 items-center my-auto h-[100vh]  sm:flex-row flex-col ">
+      <div className="grid grid-cols-2 justify-items-start gap-2 sm:border-0 border">
+        <div>New:</div> <div className="text-blue-500 font-bold">{newWords}</div>
+        <div>Learning:</div> <div className="text-red-500 font-bold">{learning}</div>
+        <div>To Review:</div> <div className="text-green-500 font-bold">{review}</div>
+        <div>Relearning:</div> <div className="text-yellow-500 font-bold">{relearning}</div>
+        <div>Studied Today:</div> <div className="font-bold">{studiedToday}</div>
       </div>
-      <Collections {...{ wordGroups, progressArr }} />
-    </>
+      <div className="">
+        <div className="flex justify-around gap-4">
+          <StudyDialog {...{ wordList }} />
+          <BrowseDialog {...{ wordList }} />
+        </div>
+        <Label>
+          Maximum interval
+          <Input type="number" value={maximumInterval} onInput={(event) => setMaximumInterval(Math.abs(+event.currentTarget.value))} placeholder="Maximum interval"></Input>
+        </Label>
+      </div>
+    </div>
   );
 }
