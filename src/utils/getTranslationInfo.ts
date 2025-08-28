@@ -1,3 +1,5 @@
+import reportIssue from "./reportIssue";
+
 let cache: {
   translations: {
     id: number;
@@ -13,20 +15,13 @@ let cache: {
 };
 export default async function getTranslationInfo() {
   try {
-    const { translations } =
-      cache ??
-      (await (
-        await fetch(`https://api.quran.com/api/v4/resources/translations`)
-      ).json());
+    const { translations } = cache ?? (await (await fetch(`https://api.quran.com/api/v4/resources/translations`)).json());
     cache = { translations };
     return translations;
   } catch (error) {
-    console.log(
-      `Error while fetching the data: https://api.quran.com/api/v4/resources/translations \n`
-    );
-    if (confirm("Failed to fetch translation info. Retry?")) {
-      return getTranslationInfo();
-    }
+    console.log(`Error while fetching the data: https://api.quran.com/api/v4/resources/translations \n`);
+    if (confirm("Failed to fetch translation info. Retry?")) return getTranslationInfo();
+    else reportIssue();
     return [];
   }
 }

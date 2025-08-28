@@ -1,5 +1,6 @@
 import { WORD } from "@/types/types";
 import { cache } from "react";
+import reportIssue from "./reportIssue";
 
 export default cache(async function getVerseWords(index: `${string}:${string}`, signal?: AbortSignal): Promise<WORD[]> {
   const [surahI, ayahI, wordI] = index.split(":");
@@ -26,7 +27,7 @@ export default cache(async function getVerseWords(index: `${string}:${string}`, 
     } else {
       console.log(`Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`);
       if (confirm("Failed to fetch verse words. Retry?")) return getVerseWords(index);
-
+      else reportIssue();
       return [];
     }
   }

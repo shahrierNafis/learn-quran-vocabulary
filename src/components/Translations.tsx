@@ -14,7 +14,8 @@ function Translations({ translations, index }: { translations?: Awaited<ReturnTy
       return;
     }
     // fetch translations if not provided
-    translation_ids && index && getVerseTranslations(translation_ids, index as `${string}:${string}`).then((r) => setTranslations(r));
+    const [surah, verse] = index?.split(":") ?? [];
+    translation_ids && index && getVerseTranslations(translation_ids, surah, verse).then((r) => setTranslations(r));
 
     return () => {};
   }, [translation_ids, index, translations]);

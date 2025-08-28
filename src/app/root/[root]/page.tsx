@@ -18,9 +18,7 @@ export type TableData = {
 export default function Page(props: { params: Promise<{ root: string }> }) {
   const params = use(props.params);
   const { root } = params;
-  const translation_ids = useOnlineStorage(
-    useShallow((a) => a.translation_ids)
-  );
+  const translation_ids = useOnlineStorage(useShallow((a) => a.translation_ids));
 
   const [rootData, setRootData] = useState<
     {
@@ -39,7 +37,7 @@ export default function Page(props: { params: Promise<{ root: string }> }) {
       })
       .then(setRootData);
 
-    return () => { };
+    return () => {};
   }, [root]);
   const columns: ColumnDef<TableData>[] = useMemo(
     () => [
@@ -55,26 +53,16 @@ export default function Page(props: { params: Promise<{ root: string }> }) {
           const [font] = useFont();
           return (
             <>
-              <div
-                className={`flex items-center justify-center gap-2`}
-                style={{ paddingLeft: `${row.depth * 2}rem` }}
-                key={row.id}
-              >
+              <div className={`flex items-center justify-center gap-2`} style={{ paddingLeft: `${row.depth * 2}rem` }} key={row.id}>
                 <>
                   {row.getCanExpand() ? (
-                    <button
-                      className="cursor-pointer"
-                      onClick={row.getToggleExpandedHandler()}
-                    >
+                    <button className="cursor-pointer" onClick={row.getToggleExpandedHandler()}>
                       {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
                     </button>
                   ) : (
                     <ChevronRight className="opacity-25" />
                   )}
-                  <div className={cn(font?.className, "text-3xl")}>
-                    {row.depth == 0 &&
-                      buckwalterToArabic((getValue() as string) ?? "")}
-                  </div>
+                  <div className={cn(font?.className, "text-3xl")}>{row.depth == 0 && buckwalterToArabic((getValue() as string) ?? "")}</div>
                 </>
               </div>
             </>
@@ -92,9 +80,7 @@ export default function Page(props: { params: Promise<{ root: string }> }) {
             return (
               <>
                 <div className="flex gap-1 flex-col">
-                  <div className="text-xs text-center text-gray-400">
-                    {getValue() as string}
-                  </div>
+                  <div className="text-xs text-center text-gray-400">{getValue() as string}</div>
                   <CellComponent
                     {...{
                       translation_ids,

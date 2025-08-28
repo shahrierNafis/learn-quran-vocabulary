@@ -36,6 +36,7 @@ const defaultColours: { [key: string]: [string, string] } = {
 };
 import superJson from "superjson";
 import { Card, createEmptyCard, RecordLog } from "ts-fsrs";
+import reportIssue from "@/utils/reportIssue";
 
 // jsonString === '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{date:"Date"}}}'
 const supabase = createClient<Database>();
@@ -59,9 +60,9 @@ const storage: PersistStorage<PreferenceStore> = {
           .from("user_preference")
           .upsert({ preference: superJson.stringify(value), user_id: user.id })
           .then();
-        if (a.error && confirm("Failed to save preference to server. Retry?")) {
-          await setUserPreference();
-        }
+        if (a.error)
+          if (confirm("Failed to save preference to server. Retry?")) await setUserPreference();
+          else reportIssue();
       }
     }
     await setUserPreference();
