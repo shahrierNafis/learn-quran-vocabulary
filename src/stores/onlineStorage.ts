@@ -61,8 +61,9 @@ const storage: PersistStorage<PreferenceStore> = {
           .upsert({ preference: superJson.stringify(value), user_id: user.id })
           .then();
         if (a.error)
-          if (confirm("Failed to save preference to server. Retry?")) await setUserPreference();
-          else reportIssue();
+          if (!navigator.onLine)
+            if (confirm("Failed to save preference to server. Retry?")) await setUserPreference();
+            else reportIssue();
       }
     }
     await setUserPreference();
@@ -254,6 +255,12 @@ export const useOnlineStorage = create<PreferenceStore>()(
       name: "preference-storage",
       skipHydration: true,
       storage: storage,
+      merge: (persistedState, currentState) => {
+        return {
+          ...(typeof currentState === "object" && currentState !== null ? currentState : {}),
+          ...(typeof persistedState === "object" && persistedState !== null ? persistedState : {}),
+        } as PreferenceStore;
+      },
     }
   )
 );

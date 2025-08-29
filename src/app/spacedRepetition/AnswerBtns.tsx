@@ -4,7 +4,6 @@ import { useShallow } from "zustand/react/shallow";
 import React from "react";
 import { RatingType, Rating, IPreview, RecordLogItem } from "ts-fsrs";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import MotionDiv from "@/components/MotionDiv";
 
 export default function AnswerBtns({
@@ -36,8 +35,8 @@ export default function AnswerBtns({
                       variant={"outline"}
                       className="rounded-full px-4"
                       onClick={() => {
-                        onClick();
                         updateCard(wordLemma, (schedulingCards[Rating[i] as keyof IPreview] as RecordLogItem).card);
+                        onClick();
                       }}
                     >
                       {i}

@@ -19,7 +19,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
         .join(",") !== translation_ids.sort().join(",") &&
       wordGroups
     ) {
-      getVerseTranslations(translation_ids, surah, verse).then(setTranslations);
+      surah && verse && getVerseTranslations(translation_ids, surah, verse).then(setTranslations);
     }
     return () => {};
   }, [translation_ids, translations, wordGroups]);
@@ -28,7 +28,7 @@ function useTranslations(wordGroups: Tables<"word_groups">[]) {
   useEffect(() => {
     if (wordGroups.length > 1) {
       const [surah, verse] = wordGroups[1].words[0].split(":");
-      setPreLoadedT(getVerseTranslations(translation_ids, surah, verse));
+      surah && verse && setPreLoadedT(getVerseTranslations(translation_ids, surah, verse));
     }
     return () => {};
   }, [translation_ids, translations, wordGroups]);

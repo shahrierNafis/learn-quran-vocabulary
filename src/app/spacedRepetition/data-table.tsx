@@ -39,6 +39,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       sorting,
       columnFilters,
     },
+    autoResetPageIndex: false,
   });
 
   return (

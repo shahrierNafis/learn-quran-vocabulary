@@ -26,8 +26,9 @@ export default cache(async function getVerseWords(index: `${string}:${string}`, 
       return [];
     } else {
       console.log(`Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`);
-      if (confirm("Failed to fetch verse words. Retry?")) return getVerseWords(index);
-      else reportIssue();
+      if (!navigator.onLine)
+        if (confirm("Failed to fetch verse words. Retry?")) return getVerseWords(index);
+        else reportIssue();
       return [];
     }
   }

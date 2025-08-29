@@ -36,7 +36,7 @@ export default memo(
     // set translation
     useEffect(() => {
       const [surah, verse] = verse_key.split(":");
-      getVerseTranslations(translation_ids, surah, verse).then((r) => setTranslations(r));
+      surah && verse && getVerseTranslations(translation_ids, surah, verse).then((r) => setTranslations(r));
 
       return () => {};
     }, [translation_ids, verse_key]);

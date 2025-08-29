@@ -25,8 +25,9 @@ async function getWord(index: `${string}:${string}:${string}`): Promise<WORD | n
     };
   } catch (error) {
     console.log(`Error while fetching the data: https://api.quran.com/api/v4/verses/by_key/${surahI}:${ayahI}?words=true&word_fields=text_imlaei \n ${error}`);
-    if (confirm("Failed to fetch word. Retry?")) return getWord(index);
-    else reportIssue();
+    if (!navigator.onLine)
+      if (confirm("Failed to fetch word. Retry?")) return getWord(index);
+      else reportIssue();
     return null;
   }
 }

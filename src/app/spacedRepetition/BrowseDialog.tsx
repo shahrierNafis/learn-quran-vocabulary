@@ -1,20 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import React from "react";
-import { Card } from "ts-fsrs";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-export default function BrowseDialog({
-  wordList,
-}: {
-  wordList: {
-    [key: string]: {
-      card: Card;
-      index: string;
-      isSuspended: boolean;
-    };
-  };
-}) {
+import { useOnlineStorage } from "@/stores/onlineStorage";
+import { useShallow } from "zustand/shallow";
+export default function BrowseDialog() {
+  const wordList = useOnlineStorage(useShallow((a) => a.wordList));
   return (
     <>
       <Dialog>

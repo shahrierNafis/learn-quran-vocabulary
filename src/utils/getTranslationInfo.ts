@@ -20,8 +20,9 @@ export default async function getTranslationInfo() {
     return translations;
   } catch (error) {
     console.log(`Error while fetching the data: https://api.quran.com/api/v4/resources/translations \n`);
-    if (confirm("Failed to fetch translation info. Retry?")) return getTranslationInfo();
-    else reportIssue();
+    if (!navigator.onLine)
+      if (confirm("Failed to fetch translation info. Retry?")) return getTranslationInfo();
+      else reportIssue();
     return [];
   }
 }

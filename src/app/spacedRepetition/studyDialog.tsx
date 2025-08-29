@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card, IPreview } from "ts-fsrs";
+import { IPreview } from "ts-fsrs";
 import Word from "@/components/Word";
 import { WORD } from "@/types/types";
 import getWord from "@/utils/getWord";
@@ -13,54 +13,25 @@ import { useShallow } from "zustand/react/shallow";
 import AnswerBtns from "./AnswerBtns";
 import { preconfiguredFsrs } from "./getFsrs";
 import Translations from "@/components/Translations";
-import { motion } from "framer-motion";
 import MotionDiv from "@/components/MotionDiv";
 import Link from "@/components/ui/Link";
-export default function StudyDialog({
-  wordList,
-}: {
-  wordList: {
-    [key: string]: {
-      card: Card;
-      index: string;
-      isSuspended: boolean;
-    };
-  };
-}) {
+import getCount from "./getCount";
+export default function StudyDialog() {
+  const [wordList] = useOnlineStorage(useShallow((a) => [a.wordList]));
+
   const [verse, setVerse] = useState<WORD[]>();
-  const [word, setWord] = useState<WORD | null>(null);
+  const [word, setWord] = useState<WORD | null>();
   const [show, setShow] = useState(false);
-  const [state, setState] = useState<number | null>(null);
+  const [state, setState] = useState<number>();
   const [schedulingCards, setSchedulingCards] = useState<IPreview>();
   const [now, setNow] = useState(Date.now());
   const [toggleSuspend] = useOnlineStorage(useShallow((a) => [a.toggleSuspend]));
-  const [currentWordLemma, setCurrentWordLemma] = useState<string | null>(null);
-  let newWords = 0;
-  let learning = 0;
-  let review = 0;
-  let relearning = 0;
-  let studiedToday = 0;
+  const [currentWordLemma, setCurrentWordLemma] = useState<string>();
 
-  for (const word of Object.values(wordList)) {
-    if (word.isSuspended) {
-      continue;
-    }
-    if (word.card.last_review && word.card.last_review.toDateString() === new Date().toDateString()) studiedToday++;
-    switch (word.card.state) {
-      case 0:
-        newWords++;
-        break;
-      case 1:
-        learning++;
-        break;
-      case 2:
-        if (word.card.due.toDateString() === new Date().toDateString()) review++;
-        break;
-      case 3:
-        relearning++;
-        break;
-    }
-  }
+  const { newWords, learning, review, relearning } = getCount(wordList);
+  useEffect(() => {
+    return () => {};
+  }, [wordList]);
 
   // main loop
   useEffect(() => {
@@ -71,29 +42,39 @@ export default function StudyDialog({
     (async () => {
       if (Object.keys(wordList).length === 0) return;
 
-      const sortedWordList = Object.entries(wordList)
-        .filter((a) => {
-          if (a[1].isSuspended) return false; // skip suspended cards
-          if (a[1].card.state === 0) return false; // skip new words
-          if (a[1].card.due.getTime() > Date.now()) return false; // skip cards that are not due
-          return true;
-        })
-        .sort((a, b) => {
-          return a[1].card.due.getTime() - b[1].card.due.getTime();
-        });
-      if (sortedWordList.length === 0) {
+      const filteredCards = Object.entries(wordList).filter((a) => {
+        if (a[1].isSuspended) return false; // skip suspended cards
+        if (a[1].card.state === 0) return false; // skip new words
+        if (a[1].card.due.getTime() > Date.now()) return false; // skip cards that are not due
+        return true;
+      });
+      if (filteredCards.length === 0) {
         // if there are no cards that are due
-        sortedWordList.push(
-          Object.entries(wordList).filter((a) => {
+        filteredCards.push(
+          ...Object.entries(wordList).filter((a) => {
             if (a[1].isSuspended) return false; // skip suspended cards
             if (a[1].card.state !== 0) return false; // skip cards that are not in new state
             return true;
-          })[0]
+          })
         );
       }
-      const currentWord = sortedWordList[0];
-      const verseKey = currentWord[1].index as `${string}:${string}:${string}`;
+      if (filteredCards.length === 0) {
+        // if there are no new cards also
+        filteredCards.push(
+          ...Object.entries(wordList).filter((a) => {
+            if (a[1].isSuspended) return false; // skip suspended cards
+            if (!(a[1].card.state === 1 || a[1].card.state === 3)) return false; // skip cards that are not in Learning state
+            return true;
+          })
+        );
+      }
+      if (filteredCards.length === 0) return; // if there are no cards at all
 
+      // sort by due date
+      const sortedCards = filteredCards.sort((a, b) => a[1].card.due.getTime() - b[1].card.due.getTime());
+      const currentWord = sortedCards[0];
+
+      const verseKey = currentWord[1].index as `${string}:${string}:${string}`;
       setState(currentWord[1].card.state);
       setSchedulingCards(preconfiguredFsrs.repeat(currentWord[1].card, new Date()));
       setCurrentWordLemma(currentWord[0]);
@@ -131,7 +112,7 @@ export default function StudyDialog({
                   }}
                 />
               </MotionDiv>
-            ) : state === null ? (
+            ) : state === undefined ? (
               <MotionDiv className="text-base text-center">
                 No words are due. Go to
                 <Link href="/activeRecall">
@@ -169,9 +150,11 @@ export default function StudyDialog({
                       wordLemma: currentWordLemma,
                       onClick: () => {
                         setShow(false);
-                        setWord(null);
+                        setState(undefined);
+                        setSchedulingCards(undefined);
+                        setCurrentWordLemma(undefined);
                         setVerse(undefined);
-                        setState(null);
+                        setWord(undefined);
                       },
                     }}
                   />
