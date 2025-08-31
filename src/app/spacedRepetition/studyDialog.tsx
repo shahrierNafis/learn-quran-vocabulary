@@ -16,8 +16,9 @@ import Translations from "@/components/Translations";
 import MotionDiv from "@/components/MotionDiv";
 import Link from "@/components/ui/Link";
 import getCount from "./getCount";
+import deepEqual from "deep-equal";
 export default function StudyDialog() {
-  const [wordList] = useOnlineStorage(useShallow((a) => [a.wordList]));
+  const wordList = useOnlineStorage((a) => a.wordList, deepEqual);
 
   const [verse, setVerse] = useState<WORD[]>();
   const [word, setWord] = useState<WORD | null>();
@@ -221,6 +222,7 @@ export default function StudyDialog() {
                 </MotionDiv>
                 <MotionDiv>
                   <Button
+                    disabled={state === undefined}
                     variant={"outline"}
                     className="rounded-full"
                     onClick={() => {

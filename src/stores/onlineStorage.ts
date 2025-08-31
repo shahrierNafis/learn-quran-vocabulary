@@ -1,9 +1,10 @@
 // src/stores/counter-store.ts
 import { persist, PersistStorage } from "zustand/middleware";
 import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
 import { fontNames } from "@/utils/fontNames";
 import { createClient } from "@/utils/supabase/clients";
-import { Database, Json } from "@/database.types";
+import { Database } from "@/database.types";
 const defaultColours: { [key: string]: [string, string] } = {
   ADJ: ["#832CC2", "#B87EE2"],
   CIRC: ["#1604B9", "#9388FC"],
@@ -35,12 +36,12 @@ const defaultColours: { [key: string]: [string, string] } = {
   others: ["#a8017b", "#FE48CE"],
 };
 import superJson from "superjson";
-import { Card, createEmptyCard, RecordLog } from "ts-fsrs";
+import { Card } from "ts-fsrs";
 import reportIssue from "@/utils/reportIssue";
 
-// jsonString === '{"json":{"date":"1970-01-01T00:00:00.000Z"},"meta":{"values":{date:"Date"}}}'
 const supabase = createClient<Database>();
 // Custom storage object
+// --- in-memory cache ---
 const storage: PersistStorage<PreferenceStore> = {
   getItem: (name: string) => {
     const str = localStorage.getItem(name);
@@ -50,7 +51,11 @@ const storage: PersistStorage<PreferenceStore> = {
   },
   setItem: async (name, value) => {
     value.state.lastModified = new Date();
+
+    // 1. Write to localStorage
     localStorage.setItem(name, superJson.stringify(value) as string);
+
+    // 2. Write to Supabase
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -123,7 +128,7 @@ type PreferenceStore = {
   maximumInterval: number;
   setMaximumInterval: (maximumInterval: number) => void;
 };
-export const useOnlineStorage = create<PreferenceStore>()(
+export const useOnlineStorage = createWithEqualityFn<PreferenceStore>()(
   persist(
     (set) => {
       return {
@@ -255,12 +260,6 @@ export const useOnlineStorage = create<PreferenceStore>()(
       name: "preference-storage",
       skipHydration: true,
       storage: storage,
-      merge: (persistedState, currentState) => {
-        return {
-          ...(typeof currentState === "object" && currentState !== null ? currentState : {}),
-          ...(typeof persistedState === "object" && persistedState !== null ? persistedState : {}),
-        } as PreferenceStore;
-      },
     }
   )
 );

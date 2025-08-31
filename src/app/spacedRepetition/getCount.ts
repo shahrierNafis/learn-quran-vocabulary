@@ -23,7 +23,7 @@ export default function getCount(wordList: { [key: string]: { card: Card; index:
         learning++;
         break;
       case 2:
-        if (word.card.due.toDateString() === new Date().toDateString()) review++;
+        if (word.card.due <= new Date()) review++;
         break;
       case 3:
         relearning++;
