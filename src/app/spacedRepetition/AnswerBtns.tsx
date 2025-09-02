@@ -1,30 +1,29 @@
 import { Button } from "@/components/ui/button";
 import { useOnlineStorage } from "@/stores/onlineStorage";
-import { useShallow } from "zustand/react/shallow";
 import React from "react";
-import { RatingType, Rating, IPreview, RecordLogItem } from "ts-fsrs";
+import { RatingType, Rating, IPreview, RecordLogItem, Card } from "ts-fsrs";
 import { cn } from "@/lib/utils";
 import MotionDiv from "@/components/MotionDiv";
+import { preconfiguredFsrs } from "./getFsrs";
 
 export default function AnswerBtns({
-  schedulingCards,
+  card,
   now = Date.now(),
   wordLemma,
   onClick = () => {},
   className,
 }: {
-  schedulingCards: IPreview;
+  card: Card;
   now: number;
   wordLemma: string;
   onClick?: () => void;
   className?: string;
 }) {
-  const [updateCard] = useOnlineStorage(useShallow((a) => [a.updateCard]));
-
+  const schedulingCards = preconfiguredFsrs.repeat(card, now) as IPreview;
   return (
     <>
       <div className={cn("flex gap-2 items-center justify-center w-full", className)}>
-        {schedulingCards &&
+        {card &&
           (["Again", "Hard", "Good", "Easy"] as RatingType[]).map((i: RatingType) => {
             return (
               <>
@@ -35,7 +34,7 @@ export default function AnswerBtns({
                       variant={"outline"}
                       className="rounded-full px-4"
                       onClick={() => {
-                        updateCard(wordLemma, (schedulingCards[Rating[i] as keyof IPreview] as RecordLogItem).card);
+                        useOnlineStorage.getState().updateCard(wordLemma, (schedulingCards[Rating[i] as keyof IPreview] as RecordLogItem).card);
                         onClick();
                       }}
                     >

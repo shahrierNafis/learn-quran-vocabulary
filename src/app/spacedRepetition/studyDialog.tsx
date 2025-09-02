@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { IPreview } from "ts-fsrs";
+import { Card } from "ts-fsrs";
 import Word from "@/components/Word";
 import { WORD } from "@/types/types";
 import getWord from "@/utils/getWord";
@@ -11,7 +11,6 @@ import Verse from "@/components/Verse";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 import AnswerBtns from "./AnswerBtns";
-import { preconfiguredFsrs } from "./getFsrs";
 import Translations from "@/components/Translations";
 import MotionDiv from "@/components/MotionDiv";
 import Link from "@/components/ui/Link";
@@ -23,8 +22,7 @@ export default function StudyDialog() {
   const [verse, setVerse] = useState<WORD[]>();
   const [word, setWord] = useState<WORD | null>();
   const [show, setShow] = useState(false);
-  const [state, setState] = useState<number>();
-  const [schedulingCards, setSchedulingCards] = useState<IPreview>();
+  const [card, setCard] = useState<Card>();
   const [now, setNow] = useState(Date.now());
   const [toggleSuspend] = useOnlineStorage(useShallow((a) => [a.toggleSuspend]));
   const [currentWordLemma, setCurrentWordLemma] = useState<string>();
@@ -39,10 +37,11 @@ export default function StudyDialog() {
     const abortController = new AbortController();
     const signal = abortController.signal;
 
-    // set Verse, Word, State and SchedulingCards
+    // set Verse, Word and card
     (async () => {
       if (Object.keys(wordList).length === 0) return;
 
+      if (signal.aborted) return;
       const filteredCards = Object.entries(wordList).filter((a) => {
         if (a[1].isSuspended) return false; // skip suspended cards
         if (a[1].card.state === 0) return false; // skip new words
@@ -50,34 +49,35 @@ export default function StudyDialog() {
         return true;
       });
       if (filteredCards.length === 0) {
+        if (signal.aborted) return;
         // if there are no cards that are due
         filteredCards.push(
           ...Object.entries(wordList).filter((a) => {
             if (a[1].isSuspended) return false; // skip suspended cards
-            if (a[1].card.state !== 0) return false; // skip cards that are not in new state
+            if (a[1].card.state !== 0) return false; // skip cards that are not new
             return true;
           })
         );
       }
       if (filteredCards.length === 0) {
+        if (signal.aborted) return;
         // if there are no new cards also
         filteredCards.push(
           ...Object.entries(wordList).filter((a) => {
             if (a[1].isSuspended) return false; // skip suspended cards
-            if (!(a[1].card.state === 1 || a[1].card.state === 3)) return false; // skip cards that are not in Learning state
+            if (!(a[1].card.state === 1 || a[1].card.state === 3)) return false; // skip cards that are not in the Learning state
             return true;
           })
         );
       }
       if (filteredCards.length === 0) return; // if there are no cards at all
-
+      if (signal.aborted) return;
       // sort by due date
       const sortedCards = filteredCards.sort((a, b) => a[1].card.due.getTime() - b[1].card.due.getTime());
       const currentWord = sortedCards[0];
 
       const verseKey = currentWord[1].index as `${string}:${string}:${string}`;
-      setState(currentWord[1].card.state);
-      setSchedulingCards(preconfiguredFsrs.repeat(currentWord[1].card, new Date()));
+      setCard(currentWord[1].card);
       setCurrentWordLemma(currentWord[0]);
 
       // fetch verse and word
@@ -113,7 +113,7 @@ export default function StudyDialog() {
                   }}
                 />
               </MotionDiv>
-            ) : state === undefined ? (
+            ) : card?.state === undefined ? (
               <MotionDiv className="text-base text-center">
                 No words are due. Go to
                 <Link href="/activeRecall">
@@ -143,16 +143,15 @@ export default function StudyDialog() {
           <div className="flex h-fit w-full flex-col mt-auto justify-center items-center">
             {show ? ( // answer is shown
               <>
-                {schedulingCards && currentWordLemma && (
+                {card && currentWordLemma && (
                   <AnswerBtns
                     {...{
-                      schedulingCards,
+                      card,
                       now,
                       wordLemma: currentWordLemma,
                       onClick: () => {
                         setShow(false);
-                        setState(undefined);
-                        setSchedulingCards(undefined);
+                        setCard(undefined);
                         setCurrentWordLemma(undefined);
                         setVerse(undefined);
                         setWord(undefined);
@@ -186,7 +185,7 @@ export default function StudyDialog() {
                 <MotionDiv className="">
                   <span
                     style={{
-                      textDecoration: state === 0 ? "underline" : "none",
+                      textDecoration: card?.state === 0 ? "underline" : "none",
                     }}
                     className="text-blue-500"
                   >
@@ -195,7 +194,7 @@ export default function StudyDialog() {
                   -
                   <span
                     style={{
-                      textDecoration: state === 1 ? "underline" : "none",
+                      textDecoration: card?.state === 1 ? "underline" : "none",
                     }}
                     className="text-red-500"
                   >
@@ -204,7 +203,7 @@ export default function StudyDialog() {
                   -
                   <span
                     style={{
-                      textDecoration: state === 2 ? "underline" : "none",
+                      textDecoration: card?.state === 2 ? "underline" : "none",
                     }}
                     className="text-green-500"
                   >
@@ -213,7 +212,7 @@ export default function StudyDialog() {
                   -
                   <span
                     style={{
-                      textDecoration: state === 3 ? "underline" : "none",
+                      textDecoration: card?.state === 3 ? "underline" : "none",
                     }}
                     className="text-yellow-500"
                   >
@@ -222,7 +221,7 @@ export default function StudyDialog() {
                 </MotionDiv>
                 <MotionDiv>
                   <Button
-                    disabled={state === undefined}
+                    disabled={card?.state === undefined}
                     variant={"outline"}
                     className="rounded-full"
                     onClick={() => {

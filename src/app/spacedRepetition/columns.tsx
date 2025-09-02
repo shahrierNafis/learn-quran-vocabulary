@@ -110,8 +110,7 @@ export const columns: ColumnDef<word>[] = [
     header: "Proceed",
     accessorKey: "card.due",
     cell: ({ row }) => {
-      const schedulingCards = preconfiguredFsrs.repeat(row.original.card, row.original.card.due);
-      return <AnswerBtns className="mx-auto text-center w-fit" {...{ schedulingCards, now: row.original.card.due.getTime(), wordLemma: row.original.lemma }} />;
+      return <AnswerBtns className="mx-auto text-center w-fit" {...{ card: row.original.card, now: row.original.card.due.getTime(), wordLemma: row.original.lemma }} />;
     },
   },
 ];
