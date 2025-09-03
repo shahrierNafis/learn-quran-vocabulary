@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { WORD } from "@/types/types";
 import Word from "@/components/Word";
 import getVerseWords from "@/utils/getVerseWords";
-import { motion } from "framer-motion";
 import Translations from "@/components/Translations";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -65,17 +64,16 @@ export default function Page() {
       : setVerse_key(null);
     setUserWords([]); // clear user input
   }, [ARProgress, chapters]);
-  useEffect(() => {
-    if (VFSDialogOpen) return; // if dialog is open, do not set words
-    !hold && chapters.length && setNextVerse(); // set a next verse if chapters is not empty and hold is false
-    return () => {};
-  }, [VFSDialogOpen, chapters.length, hold, setNextVerse]);
+
+  const reset = useCallback(() => {
+    setUserWords([]);
+    setWords([]);
+    setVerse([]);
+  }, []);
 
   const reload = useCallback(
     async (signal: AbortSignal) => {
-      setUserWords([]); //reset
-      setWords([]);
-      setVerse([]);
+      reset();
       if (!verse_key) return; // if verse_key is null, do not set words
       try {
         if (signal.aborted) return;
@@ -104,9 +102,28 @@ export default function Page() {
         }
       }
     },
-    [extraWordsPerWord, verse_key]
+    [extraWordsPerWord, reset, verse_key]
   );
+  function penaltyFunc() {
+    if (
+      userWords.length !== verse.length && // if verse is not complete
+      userWords.length && // if userWords is not empty
+      openedVerse !== verse_key // if audio is not playing
+    ) {
+      if (difficulty >= 2) {
+        setUserWords([]); // penalty
+        setWords((prev) => {
+          return _.shuffle([...prev, ...userWords]);
+        });
+      }
+    }
+  }
 
+  useEffect(() => {
+    if (VFSDialogOpen) return; // if dialog is open, do not set words
+    !hold && chapters.length && setNextVerse(); // set a next verse if chapters is not empty and hold is false
+    return () => {};
+  }, [VFSDialogOpen, chapters.length, hold, setNextVerse]);
   useEffect(() => {
     // Create an AbortController for this effect instance
     const abortController = new AbortController();
@@ -117,20 +134,9 @@ export default function Page() {
     };
   }, [extraWordsPerWord, reload, verse_key]);
 
-  function penaltyFunc() {
-    if (
-      userWords.length !== verse.length && // if verse is not complete
-      userWords.length && // if userWords is not empty
-      openedVerse !== verse_key // if audio is not playing
-    ) {
-      if (difficulty === 2) {
-        setUserWords([]); // penalty
-        setWords((prev) => {
-          return _.shuffle([...prev, ...userWords]);
-        });
-      }
-    }
-  }
+  useEffect(() => {
+    reset();
+  }, [reset, difficulty]);
   return (
     <>
       <div className="p-2 ">
