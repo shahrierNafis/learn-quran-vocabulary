@@ -10,9 +10,6 @@ import { useRouter } from "next/navigation";
 import getCount from "./getCount";
 
 export default function Page() {
-  useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
   const [wordList] = useOnlineStorage(useShallow((a) => [a.wordList]));
   const [maximumInterval, setMaximumInterval] = useOnlineStorage(useShallow((a) => [a.maximumInterval, a.setMaximumInterval]));
   const { newWords, learning, review, relearning, studiedToday } = getCount(wordList);

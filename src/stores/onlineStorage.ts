@@ -222,11 +222,12 @@ export const useOnlineStorage = createWithEqualityFn<PreferenceStore>()(
         },
         updateCard: (key: string, card: Card) => {
           set((state) => {
-            if (state.wordList[key]) {
-              state.wordList[key].card = card;
+            const wordList = superJson.parse<typeof state.wordList>(superJson.stringify(state.wordList)); // deep copy
+            if (wordList[key]) {
+              wordList[key].card = card;
             }
             return {
-              wordList: { ...state.wordList },
+              wordList: wordList,
             };
           });
         },
@@ -258,7 +259,6 @@ export const useOnlineStorage = createWithEqualityFn<PreferenceStore>()(
     {
       version: 8,
       name: "preference-storage",
-      skipHydration: true,
       storage: storage,
     }
   )

@@ -29,9 +29,6 @@ export default function Verse({
     useShallow((a) => [a.showTranslation, a.showTransliteration, a.showTranslationOnHiddenWords])
   );
   useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
-  useEffect(() => {
     setSwitchOn(false);
   }, [verse]);
 

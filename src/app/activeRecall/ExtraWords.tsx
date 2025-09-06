@@ -4,9 +4,7 @@ import { useShallow } from "zustand/react/shallow";
 import { Label } from "@/components/ui/label";
 import { useLocalStorage } from "@/stores/localStorage";
 export default function ExtraWords() {
-  const [setExtraWordsPerWord, extraWordsPerWord] = useLocalStorage(
-    useShallow((state) => [state.setExtraWordsPerWord, state.extraWordsPerWord])
-  );
+  const extraWordsPerWord = useLocalStorage(useShallow((state) => state.extraWordsPerWord));
 
   return (
     <>
@@ -18,9 +16,7 @@ export default function ExtraWords() {
             size={3}
             placeholder="extra words per word"
             value={extraWordsPerWord}
-            onInput={(event) =>
-              setExtraWordsPerWord(Math.abs(+event.currentTarget.value))
-            }
+            onInput={(event) => useLocalStorage.getState().setExtraWordsPerWord(Math.abs(+event.currentTarget.value))}
           ></Input>
         </Label>
       </div>

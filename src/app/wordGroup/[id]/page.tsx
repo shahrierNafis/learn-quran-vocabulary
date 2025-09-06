@@ -12,13 +12,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
 
   const { id } = params;
 
-  const [translation_ids] = useOnlineStorage(
-    useShallow((a) => [a.translation_ids])
-  );
-
-  useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
+  const [translation_ids] = useOnlineStorage(useShallow((a) => [a.translation_ids]));
 
   const supabase = createClient<Database>();
   const [wordGroup, setWordGroup] = useState<Tables<"word_groups">>();
@@ -42,9 +36,7 @@ export default function Page(props: { params: Promise<{ id: string }> }) {
         <>
           <div className="p-4">
             <div className="text-center text-3xl">{wordGroup.name}</div>
-            <div className={`${!wordGroup.name && "text-center text-3xl"}`}>
-              {wordGroup.description}
-            </div>
+            <div className={`${!wordGroup.name && "text-center text-3xl"}`}>{wordGroup.description}</div>
             <SimilarWordsTable
               {...{
                 wordGroup,

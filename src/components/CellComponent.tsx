@@ -23,10 +23,6 @@ export default memo(
     const [translations, setTranslations] = useState<Awaited<ReturnType<typeof getVerseTranslations>>>();
     const [showTranslation, showTransliteration] = useOnlineStorage(useShallow((a) => [a.showTranslation, a.showTransliteration]));
 
-    useEffect(() => {
-      useOnlineStorage.persist.rehydrate();
-    }, []);
-
     // set verse
     useEffect(() => {
       getVerseWords(verse_key as `${string}:${string}${string}`).then(setVerse);

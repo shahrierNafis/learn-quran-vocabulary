@@ -20,9 +20,6 @@ export default function Preference() {
     useShallow((a) => [a.setShowTransliteration, a.showTransliteration, a.setShowTranslation, a.showTranslation, a.setShowTranslationOnHiddenWords, a.showTranslationOnHiddenWords])
   );
 
-  useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
   return (
     <>
       <Dialog>

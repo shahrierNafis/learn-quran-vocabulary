@@ -17,7 +17,13 @@ import Link from "@/components/ui/Link";
 import getCount from "./getCount";
 import deepEqual from "deep-equal";
 export default function StudyDialog() {
-  const wordList = useOnlineStorage((a) => a.wordList, deepEqual);
+  const wordList = useOnlineStorage(
+    (a) => a.wordList,
+    (a, b) => {
+      const c = deepEqual(a, b);
+      return c;
+    }
+  );
 
   const [verse, setVerse] = useState<WORD[]>();
   const [word, setWord] = useState<WORD | null>();
@@ -76,16 +82,16 @@ export default function StudyDialog() {
       const sortedCards = filteredCards.sort((a, b) => a[1].card.due.getTime() - b[1].card.due.getTime());
       const currentWord = sortedCards[0];
 
-      const verseKey = currentWord[1].index as `${string}:${string}:${string}`;
+      const wordIndex = currentWord[1].index as `${string}:${string}:${string}`;
       setCard(currentWord[1].card);
       setCurrentWordLemma(currentWord[0]);
 
       // fetch verse and word
       const words: WORD[] = [];
-      words.push(...(await getVerseWords(verseKey as `${string}:${string}`, signal)).filter((word) => word.char_type_name == "word"));
+      words.push(...(await getVerseWords(wordIndex as `${string}:${string}`, signal)).filter((word) => word.char_type_name == "word"));
       if (signal.aborted) return;
       setVerse(words.filter((word) => word.char_type_name == "word"));
-      getWord(verseKey).then(setWord);
+      setWord(words.filter((word) => word.index == wordIndex)[0]);
     })();
 
     return () => {
@@ -113,7 +119,7 @@ export default function StudyDialog() {
                   }}
                 />
               </MotionDiv>
-            ) : card?.state === undefined ? (
+            ) : card === undefined ? (
               <MotionDiv className="text-base text-center">
                 No words are due. Go to
                 <Link href="/activeRecall">

@@ -2,45 +2,28 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/utils/cn";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 
 export function SetReviewOrder({ className }: { className?: string }) {
-  const [reviewOrder, setReviewOrder] = useOnlineStorage(
-    useShallow((state) => [state.reviewOrder, state.setReviewOrder])
-  );
+  const [reviewOrder, setReviewOrder] = useOnlineStorage(useShallow((state) => [state.reviewOrder, state.setReviewOrder]));
 
-  React.useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-    return () => { };
-  }, []);
   return (
     <div className={cn(className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <div className="flex flex-col items-center justify-center border p-2">
             <div>Play review verses ordered by</div>
-            <Button
-              className="flex grow justify-center gap-2 flex-col"
-              variant="outline"
-            >
+            <Button className="flex grow justify-center gap-2 flex-col" variant="outline">
               <div>{obj[reviewOrder]}</div>
             </Button>
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           {Object.entries(obj).map(([key, value]) => (
-            <DropdownMenuItem
-              key={key}
-              onClick={() => setReviewOrder(key as any)}
-            >
+            <DropdownMenuItem key={key} onClick={() => setReviewOrder(key as any)}>
               {value}
             </DropdownMenuItem>
           ))}

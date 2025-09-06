@@ -23,13 +23,8 @@ import { toast } from "sonner";
 import MotionDiv from "@/components/MotionDiv";
 const wc = wordCount as { [key: number]: { [key: number]: string } };
 export default function Page() {
-  useEffect(() => {
-    useLocalStorage.persist.rehydrate();
-    useOnlineStorage.persist.rehydrate();
-  }, []);
-
-  const [extraWordsPerWord, chapters, VFSDialogOpen, difficulty, setDifficulty] = useLocalStorage(
-    useShallow((state) => [state.extraWordsPerWord, state.chapters, state.VFSDialogOpen, state.difficulty, state.setDifficulty])
+  const [extraWordsPerWord, chapters, VFSDialogOpen, difficulty] = useLocalStorage(
+    useShallow((state) => [state.extraWordsPerWord, state.chapters, state.VFSDialogOpen, state.difficulty])
   );
 
   const [verse_key, setVerse_key] = useState<string | null>();
@@ -40,9 +35,8 @@ export default function Page() {
   const [words, setWords] = useState<WORD[]>([]); // the actual verse + extra words
   const [userWords, setUserWords] = useState<WORD[]>([]); // user input words
 
-  const [addARScore, addARProgress, addToWordList] = useOnlineStorage(useShallow((state) => [state.addARScore, state.addARProgress, state.addToWordList]));
   const ARProgress = useOnlineStorage(useShallow((state) => state.ARProgress));
-  const [wordList] = useOnlineStorage(useShallow((a) => [a.wordList]));
+  const wordList = useOnlineStorage(useShallow((a) => a.wordList));
 
   const [redIndex, setRedIndex] = useState<number>();
   const [show, setShow] = useState(false);
@@ -147,7 +141,7 @@ export default function Page() {
             onClick={() => {
               const myArray = [0.5, 1, 2];
               const nextIndex = (myArray.indexOf(difficulty) + 1) % myArray.length;
-              setDifficulty(myArray[nextIndex]);
+              useLocalStorage.getState().setDifficulty(myArray[nextIndex]);
             }}
           >
             difficulty: {difficulty}
@@ -257,8 +251,8 @@ export default function Page() {
 
                                 addNewCards(verse);
 
-                                verse_key && addARProgress(+verse_key?.split(":")[0], 1);
-                                addARScore(getScore(verse.length, extraWordsPerWord, difficulty));
+                                verse_key && useOnlineStorage.getState().addARProgress(+verse_key?.split(":")[0], 1);
+                                useOnlineStorage.getState().addARScore(getScore(verse.length, extraWordsPerWord, difficulty));
                               }
                               setUserWords((prev) => [...prev, word]);
                               setWords((prev) => {
@@ -306,7 +300,7 @@ export default function Page() {
         if (!(segment.arPartOfSpeech === "ism" || segment.arPartOfSpeech === "fiʿil")) continue; // if not a noun or verb
         if (!segment.lemma) continue;
         if (wordList[segment.lemma]) continue; // if already in wordList
-        addToWordList(segment.lemma, {
+        useOnlineStorage.getState().addToWordList(segment.lemma, {
           card: createEmptyCard(),
           index: word.index,
         });

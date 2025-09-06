@@ -3,13 +3,7 @@ import { MultiSelect } from "@/components/MultiSelect";
 import { useOnlineStorage } from "@/stores/onlineStorage";
 import { useShallow } from "zustand/react/shallow";
 export default function SelectTranslation() {
-  const [translation_ids, setTranslation_ids] = useOnlineStorage(
-    useShallow((a) => [a.translation_ids, a.setTranslation_ids])
-  );
-
-  useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
+  const [translation_ids, setTranslation_ids] = useOnlineStorage(useShallow((a) => [a.translation_ids, a.setTranslation_ids]));
 
   const [translations, setTranslations] = useState<
     {
@@ -24,7 +18,7 @@ export default function SelectTranslation() {
       })
       .then(({ translations }) => setTranslations(translations));
 
-    return () => { };
+    return () => {};
   }, []);
 
   return (

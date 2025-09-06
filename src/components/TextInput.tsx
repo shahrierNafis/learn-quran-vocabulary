@@ -4,28 +4,11 @@ import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { WORD } from "@/types/types";
 
-export default function TextInput({
-  text,
-  setText,
-  word,
-  isValid,
-}: {
-  text: string;
-  setText: (text: string) => void;
-  word: WORD;
-  isValid: () => void;
-}) {
-  const [showTranslation, showTransliteration] = useOnlineStorage(
-    useShallow((a) => [a.showTranslation, a.showTransliteration])
-  );
-  useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
+export default function TextInput({ text, setText, word, isValid }: { text: string; setText: (text: string) => void; word: WORD; isValid: () => void }) {
+  const [showTranslation, showTransliteration] = useOnlineStorage(useShallow((a) => [a.showTranslation, a.showTransliteration]));
 
   const [,] = useState();
-  if (
-    simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")) === text
-  ) {
+  if (simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")) === text) {
     isValid();
   }
   console.log(simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")));
@@ -39,19 +22,9 @@ export default function TextInput({
           size={5}
           onChange={(e) => setText(simplifyArabic(e.target.value))}
           placeholder="_?_?_?_"
-          className={cn(
-            "placeholder:text-center text-red-500",
-            `${simplifyArabic(
-              word.wordSegments.map((w) => w.arabic).join("")
-            ).startsWith(text) && "text-green-500 border "
-            }`
-          )}
+          className={cn("placeholder:text-center text-red-500", `${simplifyArabic(word.wordSegments.map((w) => w.arabic).join("")).startsWith(text) && "text-green-500 border "}`)}
         />
-        {showTransliteration && (
-          <div className="dark:text-green-100 text-green-950  text-sm">
-            _ _ _ _
-          </div>
-        )}
+        {showTransliteration && <div className="dark:text-green-100 text-green-950  text-sm">_ _ _ _</div>}
         {showTranslation && (
           <div className="dark:text-red-100 text-red-950 text-xs justify-self-end">
             <>_ _ _ _</>
@@ -75,15 +48,9 @@ export function simplifyArabic(text: string): string {
     .replace(/ة/g, "ت"); // Normalize Ta Marbuta to Ta
 
   // Remove diacritics (including dagger alef and superscript alef)
-  normalizedText = normalizedText.replace(
-    /[\u064B-\u065F\u0670\u06DF\u06E5\u06E2\u06ED\u06E6 ]/g,
-    ""
-  );
+  normalizedText = normalizedText.replace(/[\u064B-\u065F\u0670\u06DF\u06E5\u06E2\u06ED\u06E6 ]/g, "");
   //remove Hamza;
-  normalizedText = normalizedText
-    .replace(/ئ/g, "")
-    .replace(/ى/g, "")
-    .replace(/ء/g, "");
+  normalizedText = normalizedText.replace(/ئ/g, "").replace(/ى/g, "").replace(/ء/g, "");
 
   // Remove Tatweel (Kashida)
   normalizedText = normalizedText.replace(/ـ+/g, "");

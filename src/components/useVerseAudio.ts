@@ -6,15 +6,10 @@ import { useShallow } from "zustand/react/shallow";
 export default function useVerseAudio(verse_key?: string) {
   const [reciter_id] = useOnlineStorage(useShallow((s) => [s.reciter_id]));
   const [verseAudio, setVerseAudio] = useState<string>();
-  const [openedVerse, setOpenedVerse] = useLocalStorage(
-    useShallow((s) => [s.openedVerse, s.setOpenedVerse])
-  );
+  const [openedVerse, setOpenedVerse] = useLocalStorage(useShallow((s) => [s.openedVerse, s.setOpenedVerse]));
 
   useEffect(() => {
-    useOnlineStorage.persist.rehydrate();
-  }, []);
-  useEffect(() => {
-    if (!verse_key) return
+    if (!verse_key) return;
     const [s, v] = verse_key?.split(":") || [];
     let url = `https://api.quran.com/api/v4/recitations/${reciter_id}/by_ayah/${verse_key}`;
     if (+v == 0) {
@@ -33,10 +28,9 @@ export default function useVerseAudio(verse_key?: string) {
       .then((r) => {
         if ((r.audio_files[0].url as string).startsWith("//mirrors.")) {
           setVerseAudio(r.audio_files[0].url);
-        } else
-          setVerseAudio("https://audio.qurancdn.com/" + r.audio_files[0].url);
+        } else setVerseAudio("https://audio.qurancdn.com/" + r.audio_files[0].url);
       });
-    return () => { };
+    return () => {};
   }, [reciter_id, verse_key]);
 
   return {
