@@ -40,8 +40,6 @@ import { Card } from "ts-fsrs";
 import reportIssue from "@/utils/reportIssue";
 
 const supabase = createClient<Database>();
-// Custom storage object
-// --- in-memory cache ---
 const storage: PersistStorage<PreferenceStore> = {
   getItem: (name: string) => {
     const str = localStorage.getItem(name);
@@ -260,6 +258,7 @@ export const useOnlineStorage = createWithEqualityFn<PreferenceStore>()(
       version: 8,
       name: "preference-storage",
       storage: storage,
+      skipHydration: true,
     }
   )
 );

@@ -15,6 +15,8 @@ import UpdatePassword from "@/components/ChangePassword";
 import Link from "@/components/ui/Link";
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { useOnlineStorage } from "@/stores/onlineStorage";
+import superJson from "superjson";
 
 export default function Home() {
   const [user, setUser] = useState<User | null>();
@@ -23,18 +25,23 @@ export default function Home() {
     supabase.auth.getUser().then(({ data, error }) => {
       setUser(data.user);
     });
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
       if (event == "SIGNED_IN") {
         supabase.auth.getUser().then(({ data, error }) => {
           setUser(data.user);
         });
+
+        const { data, error } = await supabase.from("user_preference").select("*").single();
+        if (data?.preference && !error) {
+          useOnlineStorage.setState((superJson.parse(data.preference as string) as any).state);
+        }
       }
       setTimeout(async () => {
         // await on other Supabase function here
         // this runs right after the callback has finished
       }, 0);
     });
-  }, [supabase.auth]);
+  }, [supabase]);
   return (
     <>
       <ParticlesEffect />
