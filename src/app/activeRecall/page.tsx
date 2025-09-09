@@ -42,6 +42,13 @@ export default function Page() {
   const [show, setShow] = useState(false);
   const [green, setGreen] = useState(false);
 
+  const reset = useCallback(() => {
+    setUserWords((userWords) => {
+      setWords((words) => _.shuffle([...words, ...userWords]));
+      return [];
+    });
+  }, []);
+
   const setNextVerse = useCallback(() => {
     const nextChapter = chapters.sort((a, b) => {
       const iterationA = Math.floor(ARProgress[a] / getChapterLength(a));
@@ -56,18 +63,14 @@ export default function Page() {
           `${nextChapter}:${Math.trunc((ARProgress[nextChapter] % getChapterLength(nextChapter)) + 1)}` // set the next verse
         )
       : setVerse_key(null);
-    setUserWords([]); // clear user input
-  }, [ARProgress, chapters]);
-
-  const reset = useCallback(() => {
-    setUserWords([]);
-    setWords([]);
-    setVerse([]);
-  }, []);
+    reset(); // clear user input
+  }, [ARProgress, chapters, reset]);
 
   const reload = useCallback(
     async (signal: AbortSignal) => {
-      reset();
+      setWords([]);
+      setUserWords([]);
+      setVerse([]);
       if (!verse_key) return; // if verse_key is null, do not set words
       try {
         if (signal.aborted) return;
@@ -96,7 +99,7 @@ export default function Page() {
         }
       }
     },
-    [extraWordsPerWord, reset, verse_key]
+    [extraWordsPerWord, verse_key]
   );
   function penaltyFunc() {
     if (
@@ -104,12 +107,7 @@ export default function Page() {
       userWords.length && // if userWords is not empty
       openedVerse !== verse_key // if audio is not playing
     ) {
-      if (difficulty >= 2) {
-        setUserWords([]); // penalty
-        setWords((prev) => {
-          return _.shuffle([...prev, ...userWords]);
-        });
-      }
+      if (difficulty >= 2) reset();
     }
   }
 
@@ -130,7 +128,7 @@ export default function Page() {
 
   useEffect(() => {
     reset();
-  }, [reset, difficulty]);
+  }, [difficulty, reset]);
   return (
     <>
       <div className="p-2 ">

@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useShallow } from "zustand/react/shallow";
@@ -17,47 +10,19 @@ import getChapterLength from "./getChapterLength";
 import { Edit } from "lucide-react";
 import getPretendIterationNum from "./getPretendIterationNum";
 export default function SelectChapters() {
-  const [
-    chapters,
-    addChapter,
-    VFSDialogOpen,
-    removeChapter,
-    setVFSDialogOpen,
-    setChapters,
-  ] = useLocalStorage(
-    useShallow((state) => [
-      state.chapters,
-      state.addChapter,
-      state.VFSDialogOpen,
-      state.removeChapter,
-      state.setVFSDialogOpen,
-      state.setChapters,
-    ])
+  const [chapters, addChapter, VFSDialogOpen, removeChapter, setVFSDialogOpen, setChapters] = useLocalStorage(
+    useShallow((state) => [state.chapters, state.addChapter, state.VFSDialogOpen, state.removeChapter, state.setVFSDialogOpen, state.setChapters])
   );
-  const [ARProgress, setARProgress] = useOnlineStorage(
-    useShallow((state) => [state.ARProgress, state.setARProgress])
-  );
+  const [ARProgress, setARProgress] = useOnlineStorage(useShallow((state) => [state.ARProgress, state.setARProgress]));
   const totalPercentage = (
-    Array.from({ length: 114 }, (_, i) => i + 1).reduce(
-      (previousValue: number, currentValue: number) => {
-        return (
-          previousValue +
-          getPretendProgressPercentage(currentValue) *
-            getChapterLength(currentValue)
-        );
-      },
-      0
-    ) / 6236
+    Array.from({ length: 114 }, (_, i) => i + 1).reduce((previousValue: number, currentValue: number) => {
+      return previousValue + getPretendProgressPercentage(currentValue) * getChapterLength(currentValue);
+    }, 0) / 6236
   ).toFixed(2);
   return (
-    <Dialog
-      open={VFSDialogOpen}
-      onOpenChange={(open) => setVFSDialogOpen(open)}
-    >
+    <Dialog open={VFSDialogOpen} onOpenChange={(open) => setVFSDialogOpen(open)}>
       <DialogTrigger>
-        <Button variant={"outline"}>
-          chapters from {chapters.length} chapter/s
-        </Button>
+        <Button variant={"outline"}>chapters from {chapters.length} chapter/s</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -92,9 +57,7 @@ export default function SelectChapters() {
                     width: `${totalPercentage}%`,
                   }}
                 ></div>
-                <div className="z-10 flex justify-center w-full p-2">
-                  All 114 surahs :
-                </div>{" "}
+                <div className="z-10 flex justify-center w-full p-2">All 114 surahs :</div>{" "}
                 <div className="z-10 flex flex-col items-center justify-center w-full p-2 ">
                   iteration{" "}
                   {_.min(
@@ -103,9 +66,7 @@ export default function SelectChapters() {
                     })
                   )}
                 </div>
-                <div className="z-10 flex justify-center w-full p-2">
-                  {totalPercentage}%
-                </div>
+                <div className="z-10 flex justify-center w-full p-2">{+totalPercentage}%</div>
               </div>
             </div>
             {Array.from({ length: 114 }, (_, i) => i + 1).map((chapter) => (
@@ -129,14 +90,9 @@ export default function SelectChapters() {
                         width: `${getPretendProgressPercentage(chapter)}%`,
                       }}
                     ></div>
-                    <div className="z-10 flex justify-center w-full p-2">
-                      surah {chapter}:
-                    </div>
+                    <div className="z-10 flex justify-center w-full p-2">surah {chapter}:</div>
                     <div className="z-10 flex flex-col items-center w-full p-2">
-                      <div>
-                        {" "}
-                        iteration {getPretendIterationNum(chapter, ARProgress)}
-                      </div>
+                      <div> iteration {getPretendIterationNum(chapter, ARProgress)}</div>
                       <div className="flex">
                         {ARProgress[chapter]} /{getChapterLength(chapter)}
                       </div>
@@ -145,17 +101,12 @@ export default function SelectChapters() {
                       className="z-10 hover:cursor-pointer"
                       size={64}
                       onClick={() => {
-                        const input = prompt(
-                          "set progress",
-                          ARProgress[chapter] + ""
-                        );
+                        const input = prompt("set progress", ARProgress[chapter] + "");
                         if (input === null) return;
                         setARProgress(chapter, Number(input));
                       }}
                     />
-                    <div className="z-10 flex justify-center w-full p-2">
-                      {getPretendProgressPercentage(chapter)}%
-                    </div>
+                    <div className="z-10 flex justify-center w-full p-2">{getPretendProgressPercentage(chapter)}%</div>
                   </div>
                 </div>
               </>
@@ -167,9 +118,6 @@ export default function SelectChapters() {
   );
   function getPretendProgressPercentage(chapter: number) {
     if (ARProgress[chapter] == 0) return 0;
-    return +(
-      (((ARProgress[chapter] - 0.0000001) % getChapterLength(chapter)) * 100) /
-      getChapterLength(chapter)
-    ).toFixed(2);
+    return +((((ARProgress[chapter] - 0.0000001) % getChapterLength(chapter)) * 100) / getChapterLength(chapter)).toFixed(2);
   }
 }
